@@ -215,6 +215,11 @@
   .audiobar .ab-speed input{width:84px;accent-color:var(--brand)}
   .audio-warn{font-size:11.5px;color:var(--ng);margin-top:6px;display:none}
   .audio-warn.show{display:block}
+  .voice-lab{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);flex-basis:100%}
+  .voice-lab select{flex:1;max-width:230px;font-family:inherit;font-size:12.5px;padding:7px 8px;
+    border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+  .audio-tip{font-size:11.5px;color:var(--sub);margin:7px 2px 0;line-height:1.5}
+  .audio-tip b{color:var(--brand)}
 
   /* dialogue transcript */
   .dlg-pick{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}
@@ -465,9 +470,11 @@
     <div class="audiobar">
       <button class="ab-play" id="readBtn" onclick="toggleRead()">▶ 音読する</button>
       <button class="ab-mini" id="readPause" onclick="togglePause()">⏸ 一時停止</button>
-      <label class="ab-speed">速さ <input type="range" min="0.6" max="1.4" step="0.1" value="1"
+      <label class="ab-speed">速さ <input type="range" min="0.6" max="1.4" step="0.05" value="0.95"
         oninput="TTS.setRate(+this.value)"></label>
+      <label class="voice-lab">声 <select class="voice-sel" onchange="chooseVoice(this.value)"></select></label>
     </div>
+    <p class="audio-tip">💡 声を切り替えると自然さが変わります。<b>「🌐」付き（オンライン音声）</b>が最も自然に聞こえます。</p>
     <p class="audio-warn" id="readWarn">お使いの端末で日本語の音声が見つかりませんでした。設定で日本語の音声を追加すると読み上げられます。</p>
   </div>
   <div class="card">
@@ -484,9 +491,11 @@
     <div class="audiobar">
       <button class="ab-play" id="dlgBtn" onclick="toggleDlg()">▶ 再生する</button>
       <button class="ab-mini" id="dlgPause" onclick="togglePause()">⏸ 一時停止</button>
-      <label class="ab-speed">速さ <input type="range" min="0.6" max="1.4" step="0.1" value="1"
+      <label class="ab-speed">速さ <input type="range" min="0.6" max="1.4" step="0.05" value="0.95"
         oninput="TTS.setRate(+this.value)"></label>
+      <label class="voice-lab">声 <select class="voice-sel" onchange="chooseVoice(this.value)"></select></label>
     </div>
+    <p class="audio-tip">💡 <b>「🌐」付きの声</b>を選ぶと、いちばん自然に聞こえます。先生と生徒で声色が変わります。</p>
     <p class="audio-warn" id="dlgWarn">お使いの端末で日本語の音声が見つかりませんでした。字幕を読んで学習してね。</p>
   </div>
   <div class="card">
@@ -805,19 +814,28 @@ buildTextPick();renderText();
 /* ============ 音声エンジン（Web Speech API） ============ */
 const TTS={
   synth:(typeof window!=='undefined')?window.speechSynthesis:null,
-  voT:null,voS:null,jaFound:false,
-  queue:[],i:0,playing:false,paused:false,rate:1,
+  jaVoices:[],voT:null,voS:null,jaFound:false,selURI:null,
+  queue:[],i:0,playing:false,paused:false,rate:0.95,_t:null,
   onhi:null,ondone:null,
   loadVoices(){
     if(!this.synth)return;
     const vs=this.synth.getVoices()||[];
-    const ja=vs.filter(v=>/^ja(-|_|$)/i.test(v.lang)||/japanese|日本語/i.test(v.name));
-    this.jaFound=ja.length>0;
-    // 先生は落ち着いた声、生徒は別の声（無ければピッチで区別）
-    this.voT=ja[0]||null;
-    this.voS=ja.find(v=>v!==this.voT)||ja[0]||null;
+    const ja=vs.filter(v=>/^ja(-|_|$)/i.test(v.lang)||/japanese|日本語/i.test(v.name||''));
+    // より自然な音声（オンライン/ニューラル系）を上位に
+    const score=v=>{let s=0;const n=(v.name||'').toLowerCase();
+      if(v.localService===false)s+=5;
+      if(/google/.test(n))s+=4;
+      if(/natural|neural|online|enhanced|premium|siri|wavenet|nanami|ayumi/.test(n))s+=4;
+      return s;};
+    ja.sort((a,b)=>score(b)-score(a));
+    this.jaVoices=ja;this.jaFound=ja.length>0;
+    const sel=this.selURI?ja.find(v=>v.voiceURI===this.selURI):null;
+    this.voT=sel||ja[0]||null;
+    this.voS=ja.find(v=>v!==this.voT)||this.voT;   // 生徒は別の声（無ければ同じ声＋高めピッチ）
   },
+  setVoice(uri){this.selURI=uri;this.loadVoices();},
   supported(){return !!this.synth;},
+  _voiceFor(who){return who==='S'?this.voS:this.voT;},
   play(items,opts){
     this.stop();
     if(!this.synth){if(opts&&opts.ondone)opts.ondone();return;}
@@ -832,19 +850,49 @@ const TTS={
     const it=this.queue[this.i];
     if(this.onhi)this.onhi(this.i,it);
     const u=new SpeechSynthesisUtterance(it.text);
-    u.lang='ja-JP';u.rate=this.rate;
-    if(it.who==='S'){u.pitch=1.4;if(this.voS)u.voice=this.voS;}
-    else{u.pitch=0.9;if(this.voT)u.voice=this.voT;}
-    u.onend=()=>{if(!this.playing)return;this.i++;this._next();};
+    u.lang='ja-JP';
+    u.rate=Math.max(.5,Math.min(1.6,this.rate*(it.rate||1)));
+    u.pitch=(it.pitch!=null)?it.pitch:1;
+    const v=this._voiceFor(it.who);if(v)u.voice=v;
+    u.onend=()=>{if(!this.playing)return;this.i++;const g=it.gap||0;
+      if(g>0){this._t=setTimeout(()=>this._next(),g);}else{this._next();}};
     u.onerror=()=>{if(!this.playing)return;this.i++;this._next();};
     this.synth.speak(u);
   },
   pause(){if(this.synth&&this.playing&&!this.paused){this.synth.pause();this.paused=true;}},
   resume(){if(this.synth&&this.paused){this.synth.resume();this.paused=false;}},
-  stop(){this.playing=false;this.paused=false;if(this.synth)this.synth.cancel();},
+  stop(){this.playing=false;this.paused=false;if(this._t){clearTimeout(this._t);this._t=null;}if(this.synth)this.synth.cancel();},
   setRate(r){this.rate=r;}
 };
-if(TTS.synth){TTS.loadVoices();TTS.synth.onvoiceschanged=()=>TTS.loadVoices();}
+function populateVoices(){
+  if(!TTS.supported())return;TTS.loadVoices();
+  const opts=TTS.jaVoices.map(v=>
+    `<option value="${v.voiceURI}">${v.name}${v.localService===false?' 🌐':''}</option>`).join('');
+  document.querySelectorAll('.voice-sel').forEach(sel=>{
+    sel.innerHTML=opts||'<option value="">（日本語音声なし）</option>';
+    if(TTS.voT)sel.value=TTS.voT.voiceURI;
+  });
+}
+function chooseVoice(uri){TTS.setVoice(uri);document.querySelectorAll('.voice-sel').forEach(s=>s.value=uri);}
+/* 文をフレーズに分け、間（gap）と抑揚（pitch）を付けて自然に読ませる */
+function phraseItems(text,who,ref){
+  const base=(who==='S')?1.2:1.0, rt=(who==='S')?1.03:1.0;
+  const out=[];
+  const sents=text.split(/(?<=[。！？」])/).map(s=>s.trim()).filter(Boolean);
+  (sents.length?sents:[text]).forEach(sent=>{
+    let phrases=[sent];
+    if(sent.length>26)phrases=sent.split(/(?<=、)/).map(s=>s.trim()).filter(Boolean);
+    phrases.forEach((ph,k)=>{
+      const last=(k===phrases.length-1);
+      const endsSent=/[。！？」]$/.test(ph);
+      const q=/[？?]$/.test(ph);
+      out.push({text:ph,who,rate:rt,pitch:base+(q?0.08:0),
+        gap:endsSent?210:95, ...ref});
+    });
+  });
+  return out;
+}
+if(TTS.synth){TTS.loadVoices();TTS.synth.onvoiceschanged=()=>{TTS.loadVoices();populateVoices();};}
 
 /* ---- 本文の音読 ---- */
 let readingOn=false;
@@ -856,16 +904,15 @@ function toggleRead(){
   if(readingOn){TTS.stop();clearReadHi();setReadBtn(false);return;}
   if(!TTS.supported()){alert('この端末は音声読み上げに対応していません。');return;}
   TTS.loadVoices();document.getElementById('readWarn').classList.toggle('show',!TTS.jaFound);
-  const ps=readParas();const items=[];
+  const ps=readParas();let items=[];
   ps.forEach((p,pi)=>{
     const clone=p.cloneNode(true);clone.querySelectorAll('rt').forEach(rt=>rt.remove());
     const txt=clone.textContent.replace(/\s+/g,'').trim();if(!txt)return;
-    const parts=txt.split(/(?<=[。！？」])/).map(s=>s.trim()).filter(Boolean);
-    (parts.length?parts:[txt]).forEach(s=>items.push({text:s,who:'T',pi}));
+    items=items.concat(phraseItems(txt,'T',{pi}));
   });
   if(!items.length)return;
   TTS.play(items,{
-    onhi:(idx)=>{clearReadHi();const p=ps[items[idx].pi];if(p){p.classList.add('reading');
+    onhi:(idx,it)=>{clearReadHi();const p=ps[it.pi];if(p){p.classList.add('reading');
       p.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}},
     ondone:()=>{clearReadHi();setReadBtn(false);}
   });
@@ -985,17 +1032,22 @@ function toggleDlg(){
     document.querySelectorAll('.dlg-line').forEach(e=>e.classList.remove('on'));return;}
   if(!TTS.supported()){alert('この端末は音声読み上げに対応していません。字幕で学習してね。');return;}
   TTS.loadVoices();document.getElementById('dlgWarn').classList.toggle('show',!TTS.jaFound);
-  const d=dialogues[curDlg];
-  TTS.play(d.lines.map(l=>({who:l.who,text:l.text})),{
-    onhi:(idx)=>{document.querySelectorAll('.dlg-line').forEach(e=>e.classList.remove('on'));
-      const el=document.getElementById('dl'+idx);
+  const d=dialogues[curDlg];let items=[];
+  d.lines.forEach((l,li)=>{
+    const it=phraseItems(l.text,l.who,{li});
+    if(it.length)it[it.length-1].gap=320;   // 会話の切れ目は少し長めの間
+    items=items.concat(it);
+  });
+  TTS.play(items,{
+    onhi:(idx,it)=>{document.querySelectorAll('.dlg-line').forEach(e=>e.classList.remove('on'));
+      const el=document.getElementById('dl'+it.li);
       if(el){el.classList.add('on');el.scrollIntoView({block:'center',behavior:'smooth'});}
       bumpProgress('listen');},
     ondone:()=>{setDlgBtn(false);document.querySelectorAll('.dlg-line').forEach(e=>e.classList.remove('on'));}
   });
   setDlgBtn(true);
 }
-buildDlgPick();renderDlgBody();
+buildDlgPick();renderDlgBody();populateVoices();
 
 /* ============ FLASHCARDS ============ */
 const decks={
