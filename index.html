@@ -37,10 +37,10 @@
   nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--card);
     border-top:1px solid var(--line);display:flex;z-index:50;
     box-shadow:0 -4px 20px rgba(31,39,51,.06);padding-bottom:env(safe-area-inset-bottom)}
-  nav.tabs button{flex:1;background:none;border:0;padding:9px 2px 8px;cursor:pointer;
-    color:var(--sub);font-size:10.5px;font-weight:700;display:flex;flex-direction:column;
+  nav.tabs button{flex:1;background:none;border:0;padding:9px 1px 8px;cursor:pointer;
+    color:var(--sub);font-size:9.5px;font-weight:700;display:flex;flex-direction:column;
     align-items:center;gap:3px;font-family:inherit}
-  nav.tabs button .ic{font-size:19px;line-height:1}
+  nav.tabs button .ic{font-size:18px;line-height:1}
   nav.tabs button.active{color:var(--brand)}
   nav.tabs button.active .ic{transform:translateY(-1px)}
 
@@ -200,6 +200,35 @@
   .reader-body.vertical::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
   .reader-note{font-size:12px;color:var(--sub);background:var(--soft);border-radius:10px;padding:9px 12px;margin-top:2px}
   .reader-body .ex-lead{text-indent:0;color:var(--accent);font-weight:800;font-size:.82em;margin:.4em 0 .1em}
+  .reader-body p.reading,.reader-body .ex-lead.reading{background:linear-gradient(90deg,#fff3d6,#fff);border-radius:8px}
+  .reader-body.vertical p.reading{background:linear-gradient(180deg,#fff3d6,#fff)}
+
+  /* audio bar */
+  .audiobar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;
+    background:var(--soft);border-radius:12px;padding:9px 11px}
+  .audiobar .ab-play{border:0;border-radius:10px;padding:10px 16px;font-family:inherit;font-weight:800;
+    font-size:14px;cursor:pointer;background:var(--brand);color:#fff}
+  .audiobar .ab-play.on{background:var(--ng)}
+  .audiobar .ab-mini{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;
+    font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;color:var(--brand)}
+  .audiobar .ab-speed{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);margin-left:auto}
+  .audiobar .ab-speed input{width:84px;accent-color:var(--brand)}
+  .audio-warn{font-size:11.5px;color:var(--ng);margin-top:6px;display:none}
+  .audio-warn.show{display:block}
+
+  /* dialogue transcript */
+  .dlg-pick{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}
+  .dlg-pick button{flex:1 1 46%;min-width:130px;padding:10px 8px;border-radius:12px;border:1px solid var(--line);
+    background:#fff;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;color:var(--sub);line-height:1.4}
+  .dlg-pick button.active{background:var(--brand2);color:#fff;border-color:var(--brand2)}
+  .dlg-line{display:flex;gap:9px;padding:9px 4px;border-radius:10px;transition:background .2s;align-items:flex-start}
+  .dlg-line .who{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-size:16px;color:#fff;font-weight:800}
+  .dlg-line.t .who{background:var(--brand)}
+  .dlg-line.s .who{background:var(--accent)}
+  .dlg-line .say{font-size:14px;flex:1;padding-top:3px}
+  .dlg-line.on{background:#fff3d6}
+  .dlg-line.on .say{font-weight:700}
 </style>
 </head>
 <body>
@@ -433,9 +462,35 @@
       </div>
     </div>
     <p class="reader-note" id="readerNote"></p>
+    <div class="audiobar">
+      <button class="ab-play" id="readBtn" onclick="toggleRead()">▶ 音読する</button>
+      <button class="ab-mini" id="readPause" onclick="togglePause()">⏸ 一時停止</button>
+      <label class="ab-speed">速さ <input type="range" min="0.6" max="1.4" step="0.1" value="1"
+        oninput="TTS.setRate(+this.value)"></label>
+    </div>
+    <p class="audio-warn" id="readWarn">お使いの端末で日本語の音声が見つかりませんでした。設定で日本語の音声を追加すると読み上げられます。</p>
   </div>
   <div class="card">
     <div class="reader-body vertical" id="readerBody">―</div>
+  </div>
+</section>
+
+<!-- ============ 解説音声 ============ -->
+<section class="view" id="v-kaisetsu">
+  <div class="card">
+    <h2>🎧 対話でわかる解説</h2>
+    <p class="lead">先生と生徒の会話で、内容と<b>テストのポイント</b>を音声解説。聞き流しながら覚えよう。</p>
+    <div class="dlg-pick" id="dlgPick"></div>
+    <div class="audiobar">
+      <button class="ab-play" id="dlgBtn" onclick="toggleDlg()">▶ 再生する</button>
+      <button class="ab-mini" id="dlgPause" onclick="togglePause()">⏸ 一時停止</button>
+      <label class="ab-speed">速さ <input type="range" min="0.6" max="1.4" step="0.1" value="1"
+        oninput="TTS.setRate(+this.value)"></label>
+    </div>
+    <p class="audio-warn" id="dlgWarn">お使いの端末で日本語の音声が見つかりませんでした。字幕を読んで学習してね。</p>
+  </div>
+  <div class="card">
+    <div id="dlgBody"></div>
   </div>
 </section>
 
@@ -487,6 +542,7 @@
   <button data-t="kiku" onclick="go('kiku')"><span class="ic">💬</span>問いかけ</button>
   <button data-t="yume" onclick="go('yume')"><span class="ic">🌙</span>夢十夜</button>
   <button data-t="text" onclick="go('text')"><span class="ic">📜</span>本文</button>
+  <button data-t="kaisetsu" onclick="go('kaisetsu')"><span class="ic">🎧</span>解説</button>
   <button data-t="cards" onclick="go('cards')"><span class="ic">🃏</span>カード</button>
   <button data-t="quiz" onclick="go('quiz')"><span class="ic">📝</span>テスト</button>
 </nav>
@@ -593,7 +649,7 @@ const quizData = [
 ];
 
 /* ============ NAV ============ */
-const tabOrder=["home","kiku","yume","text","cards","quiz"];
+const tabOrder=["home","kiku","yume","text","kaisetsu","cards","quiz"];
 function go(t){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('v-'+t).classList.add('active');
@@ -746,6 +802,201 @@ function renderText(){
 }
 buildTextPick();renderText();
 
+/* ============ 音声エンジン（Web Speech API） ============ */
+const TTS={
+  synth:(typeof window!=='undefined')?window.speechSynthesis:null,
+  voT:null,voS:null,jaFound:false,
+  queue:[],i:0,playing:false,paused:false,rate:1,
+  onhi:null,ondone:null,
+  loadVoices(){
+    if(!this.synth)return;
+    const vs=this.synth.getVoices()||[];
+    const ja=vs.filter(v=>/^ja(-|_|$)/i.test(v.lang)||/japanese|日本語/i.test(v.name));
+    this.jaFound=ja.length>0;
+    // 先生は落ち着いた声、生徒は別の声（無ければピッチで区別）
+    this.voT=ja[0]||null;
+    this.voS=ja.find(v=>v!==this.voT)||ja[0]||null;
+  },
+  supported(){return !!this.synth;},
+  play(items,opts){
+    this.stop();
+    if(!this.synth){if(opts&&opts.ondone)opts.ondone();return;}
+    this.loadVoices();
+    this.queue=items;this.i=0;this.playing=true;this.paused=false;
+    this.onhi=(opts&&opts.onhi)||null;this.ondone=(opts&&opts.ondone)||null;
+    this._next();
+  },
+  _next(){
+    if(!this.playing)return;
+    if(this.i>=this.queue.length){this.playing=false;if(this.ondone)this.ondone();return;}
+    const it=this.queue[this.i];
+    if(this.onhi)this.onhi(this.i,it);
+    const u=new SpeechSynthesisUtterance(it.text);
+    u.lang='ja-JP';u.rate=this.rate;
+    if(it.who==='S'){u.pitch=1.4;if(this.voS)u.voice=this.voS;}
+    else{u.pitch=0.9;if(this.voT)u.voice=this.voT;}
+    u.onend=()=>{if(!this.playing)return;this.i++;this._next();};
+    u.onerror=()=>{if(!this.playing)return;this.i++;this._next();};
+    this.synth.speak(u);
+  },
+  pause(){if(this.synth&&this.playing&&!this.paused){this.synth.pause();this.paused=true;}},
+  resume(){if(this.synth&&this.paused){this.synth.resume();this.paused=false;}},
+  stop(){this.playing=false;this.paused=false;if(this.synth)this.synth.cancel();},
+  setRate(r){this.rate=r;}
+};
+if(TTS.synth){TTS.loadVoices();TTS.synth.onvoiceschanged=()=>TTS.loadVoices();}
+
+/* ---- 本文の音読 ---- */
+let readingOn=false;
+function readParas(){return [...document.getElementById('readerBody').querySelectorAll('p,.ex-lead')];}
+function clearReadHi(){readParas().forEach(p=>p.classList.remove('reading'));}
+function setReadBtn(on){readingOn=on;const b=document.getElementById('readBtn');
+  b.textContent=on?'■ 停止':'▶ 音読する';b.classList.toggle('on',on);}
+function toggleRead(){
+  if(readingOn){TTS.stop();clearReadHi();setReadBtn(false);return;}
+  if(!TTS.supported()){alert('この端末は音声読み上げに対応していません。');return;}
+  TTS.loadVoices();document.getElementById('readWarn').classList.toggle('show',!TTS.jaFound);
+  const ps=readParas();const items=[];
+  ps.forEach((p,pi)=>{
+    const clone=p.cloneNode(true);clone.querySelectorAll('rt').forEach(rt=>rt.remove());
+    const txt=clone.textContent.replace(/\s+/g,'').trim();if(!txt)return;
+    const parts=txt.split(/(?<=[。！？」])/).map(s=>s.trim()).filter(Boolean);
+    (parts.length?parts:[txt]).forEach(s=>items.push({text:s,who:'T',pi}));
+  });
+  if(!items.length)return;
+  TTS.play(items,{
+    onhi:(idx)=>{clearReadHi();const p=ps[items[idx].pi];if(p){p.classList.add('reading');
+      p.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}},
+    ondone:()=>{clearReadHi();setReadBtn(false);}
+  });
+  setReadBtn(true);
+}
+function togglePause(){
+  if(TTS.paused){TTS.resume();}else{TTS.pause();}
+  const on=TTS.paused;
+  ['readPause','dlgPause'].forEach(id=>{const el=document.getElementById(id);
+    if(el)el.textContent=on?'▶ 再開':'⏸ 一時停止';});
+}
+
+/* ============ 対話解説 ============ */
+const T=(text)=>({who:'T',text});
+const S=(text)=>({who:'S',text});
+const dialogues={
+  kiku:{title:"問いかける言葉",lines:[
+    T("今日は「問いかける言葉」を復習しよう。まず作者は誰だったかな。"),
+    S("えっと、国谷裕子さん。ニュースキャスターの人ですよね。"),
+    T("そのとおり。SDGsにも関心が強い人だね。まず第二段落、海外の学校での経験。ここがなぜ大事かわかる？"),
+    S("自分の考えを聞かれて、必死に答えた、というところですか。"),
+    T("いいね。ポイントは、なぜ必死だったか。意見を持たない人は、存在しない人だと見なされてしまうからなんだ。"),
+    S("だから自分からも問いかけるようにした、と。"),
+    T("その結果どうなった？ここは記述で問われるよ。"),
+    S("自分の存在を意識して、自分の考えが形づくられるようになった。"),
+    T("完璧。次は第四段落、風向きの法則。情報が増えると人はどうなる？"),
+    S("情報が多すぎて、考える時間を奪われて、大勢に流される。"),
+    T("そう。それをせき止めるのが問いかける言葉だね。第五段落の確証バイアスは？"),
+    S("自分の考えを支持する情報ばかり集めてしまうこと。"),
+    T("閉鎖的な情報空間では、同じ考えの人としか話さず、違う人に不寛容になって、排除しようとする。だから最後の主張につながるんだ。主題は？"),
+    S("異質なものを無理に同調させないで、多様であることを尊重しよう。"),
+    T("それがこの文章の一番言いたいこと。テストでは、主題と、傍線部の理由説明が狙われるからね。"),
+    S("記述、がんばります。"),
+  ]},
+  yume1:{title:"夢十夜 第一夜",lines:[
+    T("夢十夜、第一夜。どの夜も共通の書き出しがあるよね。"),
+    S("こんな夢を見た、ですよね。"),
+    T("そう、頻出だから確実に。あらすじを言える？"),
+    S("死ぬ女の人が、百年待っていてと言って、自分は墓のそばで待つ話。"),
+    T("墓穴は何で掘った？"),
+    S("大きな真珠貝で。星の破片を墓標にしました。"),
+    T("長い時間が過ぎて、最後に何が咲く？"),
+    S("白い百合。それに口づけしたら、暁の星が見えて。"),
+    T("百年はもう来ていたんだな、と気づく。テーマは、永遠の愛、それに時間と、生と死だね。"),
+    S("象徴が問われそう。"),
+    T("そう。真珠貝、星の破片、白い百合。この三つはセットで覚えよう。"),
+    S("はい。"),
+  ]},
+  yume3:{title:"夢十夜 第三夜",lines:[
+    T("第三夜は少し怖い話だよ。自分は何を背負ってる？"),
+    S("六つになる自分の子供。でも目がつぶれた青坊主で。"),
+    T("声は子供なのに、言葉つきは大人。しかも自分の過去も未来も、全部見通しているんだ。"),
+    S("だんだん怖くなって、捨てようとするんですよね。"),
+    T("森の杉の根まで来ると、子供が言う。文化五年辰年、百年前におれを殺したね、と。"),
+    S("それで思い出すんだ。百年前にここで、盲人を殺したこと。"),
+    T("おれは人殺しであったんだな、と気づいた瞬間、背中の子はどうなる？"),
+    S("石地蔵のように重くなる。"),
+    T("その重さは、罪の重さなんだ。主題は、過去の罪、つまり罪悪感からは逃れられないという恐怖。"),
+    S("第一夜と、ぜんぜん雰囲気がちがいますね。"),
+    T("そこがテストで対比されやすいポイントだよ。"),
+  ]},
+  yume6:{title:"夢十夜 第六夜",lines:[
+    T("第六夜。誰が仁王を彫っている？"),
+    S("運慶。護国寺の山門で彫っています。"),
+    T("変なのは、時代が明治なのに、鎌倉時代の運慶が生きていること。運慶はどう彫る？"),
+    S("ノミと槌で、木の中に埋まっている眉や鼻を、掘り出すみたいに。"),
+    T("見物人がそう言うのを聞いて、自分も彫れると思うんだ。それで家で薪を彫るけど？"),
+    S("どの木にも、仁王がいない。"),
+    T("そこで悟る。明治の木には仁王は埋まっていない。つまり、近代には本物の芸術は宿らない、という文明批評なんだ。"),
+    S("運慶が生きている理由も分かった、というやつですね。"),
+    T("そう。本物の芸術は、才能のある者にしか生み出せない。これが主題。三つの夜、主題を並べて言えるようにしておこう。"),
+    S("はい、覚えます。"),
+  ]},
+  test:{title:"テスト直前ポイント総まとめ",lines:[
+    T("最後に、テスト直前チェックだよ。問いかける言葉の作者は？"),
+    S("国谷裕子。"),
+    T("夢十夜は？"),
+    S("夏目漱石。"),
+    T("問いかける言葉の主題は、ひと言で？"),
+    S("多様であることを尊重しよう。"),
+    T("よく出るキーワードは、確証バイアス、風向きの法則、閉鎖的な情報空間、不寛容、排除。意味を言えるようにね。"),
+    S("はい。"),
+    T("夢十夜の書き出しは、こんな夢を見た。第一夜のキーワードは？"),
+    S("百年と、白い百合。"),
+    T("第三夜は？"),
+    S("百年前の罪、人殺し。石地蔵のように重くなる。"),
+    T("第六夜は？"),
+    S("運慶と仁王。明治の木には仁王は埋まっていない。"),
+    T("三夜の主題も対比で。第一夜が愛と生死、第三夜が罪悪感、第六夜が芸術と文明批評だね。"),
+    S("記述は、答えの丸暗記じゃなくて、理由を自分の言葉で言えるかがカギ、でしたよね。"),
+    T("そのとおり。自信を持ってね。応援してるよ。"),
+    S("ありがとうございます、がんばります。"),
+  ]},
+};
+let curDlg="kiku";
+function buildDlgPick(){
+  const items=[["kiku","問いかける言葉"],["yume1","夢十夜 第一夜"],["yume3","夢十夜 第三夜"],
+    ["yume6","夢十夜 第六夜"],["test","テスト直前ポイント"]];
+  document.getElementById('dlgPick').innerHTML=items.map(([k,n])=>
+    `<button data-k="${k}" class="${k===curDlg?'active':''}" onclick="pickDlg('${k}')">${n}</button>`).join('');
+}
+function renderDlgBody(){
+  const d=dialogues[curDlg];
+  document.getElementById('dlgBody').innerHTML=
+    `<h3 style="margin-top:0">${d.title}</h3>`+
+    d.lines.map((l,i)=>`<div class="dlg-line ${l.who==='T'?'t':'s'}" id="dl${i}">
+      <span class="who">${l.who==='T'?'先':'生'}</span><span class="say">${l.text}</span></div>`).join('');
+}
+function pickDlg(k){
+  if(TTS.playing){TTS.stop();setDlgBtn(false);document.querySelectorAll('.dlg-line').forEach(e=>e.classList.remove('on'));}
+  curDlg=k;buildDlgPick();renderDlgBody();
+}
+function setDlgBtn(on){const b=document.getElementById('dlgBtn');
+  b.textContent=on?'■ 停止':'▶ 再生する';b.classList.toggle('on',on);}
+function toggleDlg(){
+  if(TTS.playing){TTS.stop();setDlgBtn(false);
+    document.querySelectorAll('.dlg-line').forEach(e=>e.classList.remove('on'));return;}
+  if(!TTS.supported()){alert('この端末は音声読み上げに対応していません。字幕で学習してね。');return;}
+  TTS.loadVoices();document.getElementById('dlgWarn').classList.toggle('show',!TTS.jaFound);
+  const d=dialogues[curDlg];
+  TTS.play(d.lines.map(l=>({who:l.who,text:l.text})),{
+    onhi:(idx)=>{document.querySelectorAll('.dlg-line').forEach(e=>e.classList.remove('on'));
+      const el=document.getElementById('dl'+idx);
+      if(el){el.classList.add('on');el.scrollIntoView({block:'center',behavior:'smooth'});}
+      bumpProgress('listen');},
+    ondone:()=>{setDlgBtn(false);document.querySelectorAll('.dlg-line').forEach(e=>e.classList.remove('on'));}
+  });
+  setDlgBtn(true);
+}
+buildDlgPick();renderDlgBody();
+
 /* ============ FLASHCARDS ============ */
 const decks={
   all:{name:"全部",data:[...kikuQA,...yumeQA]},
@@ -866,7 +1117,8 @@ const routeSteps=[
   {id:"r2",t:"重要語句・概念を覚える",tab:"kiku"},
   {id:"r3",t:"問いかける言葉の一問一答を解く",tab:"kiku"},
   {id:"r4",t:"「夢十夜」第一夜・第六夜のあらすじを読む",tab:"yume"},
-  {id:"r4b",t:"「本文」タブで夢十夜の全文を通読する",tab:"text"},
+  {id:"r4b",t:"「本文」タブで夢十夜の全文を通読する（音読機能つき）",tab:"text"},
+  {id:"r4c",t:"「解説」タブで対話解説を聞く（テストのポイントつき）",tab:"kaisetsu"},
   {id:"r5",t:"夢十夜の一問一答を解く",tab:"yume"},
   {id:"r6",t:"暗記カードを1周する",tab:"cards"},
   {id:"r7",t:"力だめしテストで80%以上をとる",tab:"quiz"}
