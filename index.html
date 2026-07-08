@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中3 現代文 テスト対策｜問いかける言葉・夢十夜</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2733; --sub:#5b6676;
+    --line:#e5e9f0; --brand:#3b6ef5; --brand2:#6a4cf5; --accent:#ff8a3d;
+    --ok:#1faa6b; --ng:#e5484d; --soft:#eef2fb; --shadow:0 6px 24px rgba(31,39,51,.08);
+    --a:#5b8dff; --b:#8a6bff; --c:#ff7a59; --d:#28b487;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",YuGothic,Meiryo,system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.75;-webkit-font-smoothing:antialiased;
+    padding-bottom:90px;
+  }
+  header.top{
+    background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;
+    padding:20px 18px 16px;position:relative;overflow:hidden;
+  }
+  header.top::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;
+    background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);}
+  header.top .kicker{font-size:12px;letter-spacing:.14em;opacity:.9;font-weight:700}
+  header.top h1{margin:4px 0 2px;font-size:20px;font-weight:800;letter-spacing:.02em}
+  header.top p{margin:0;font-size:13px;opacity:.92}
+  .wrap{max-width:760px;margin:0 auto;padding:0 14px}
+  .progress-wrap{max-width:760px;margin:12px auto 0;padding:0 14px}
+  .pbar{height:9px;background:rgba(255,255,255,.35);border-radius:99px;overflow:hidden}
+  .pbar > i{display:block;height:100%;width:0;background:#fff;border-radius:99px;transition:width .5s ease}
+  .pnote{font-size:11px;color:#fff;opacity:.9;margin-top:5px;text-align:right}
+
+  /* tabs */
+  nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--card);
+    border-top:1px solid var(--line);display:flex;z-index:50;
+    box-shadow:0 -4px 20px rgba(31,39,51,.06);padding-bottom:env(safe-area-inset-bottom)}
+  nav.tabs button{flex:1;background:none;border:0;padding:9px 2px 8px;cursor:pointer;
+    color:var(--sub);font-size:10.5px;font-weight:700;display:flex;flex-direction:column;
+    align-items:center;gap:3px;font-family:inherit}
+  nav.tabs button .ic{font-size:19px;line-height:1}
+  nav.tabs button.active{color:var(--brand)}
+  nav.tabs button.active .ic{transform:translateY(-1px)}
+
+  section.view{display:none;animation:fade .35s ease}
+  section.view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:16px 16px;margin:14px 0;box-shadow:var(--shadow)}
+  .card h2{font-size:17px;margin:2px 0 10px;display:flex;align-items:center;gap:8px}
+  .card h3{font-size:14.5px;margin:16px 0 6px;color:var(--brand2)}
+  .chip{display:inline-block;font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;
+    background:var(--soft);color:var(--brand);letter-spacing:.03em}
+  .muted{color:var(--sub);font-size:13px}
+  .lead{font-size:13.5px;color:var(--sub);margin:2px 0 4px}
+
+  .worklist{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+  .worktile{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:14px;
+    border:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfcff);cursor:pointer;
+    text-align:left;width:100%;font-family:inherit;transition:.15s}
+  .worktile:active{transform:scale(.99)}
+  .worktile .em{font-size:26px;flex:0 0 auto}
+  .worktile b{font-size:15px}
+  .worktile .d{font-size:12.5px;color:var(--sub);margin-top:2px}
+
+  ul.clean{margin:6px 0;padding-left:20px}
+  ul.clean li{margin:4px 0;font-size:14px}
+  .kv{font-size:14px;margin:5px 0}
+  .kv b{color:var(--brand2)}
+
+  /* paragraph map */
+  .para{border-left:4px solid var(--a);background:#fff;border:1px solid var(--line);
+    border-left-width:4px;border-radius:12px;padding:12px 14px;margin:10px 0}
+  .para .no{font-size:11px;font-weight:800;color:#fff;background:var(--a);
+    border-radius:99px;padding:2px 10px;display:inline-block;margin-bottom:6px}
+  .para h4{margin:0 0 6px;font-size:15px}
+  .para.p2{border-left-color:var(--a)} .para.p2 .no{background:var(--a)}
+  .para.p3{border-left-color:var(--b)} .para.p3 .no{background:var(--b)}
+  .para.p4{border-left-color:var(--c)} .para.p4 .no{background:var(--c)}
+  .para.p5{border-left-color:var(--d)} .para.p5 .no{background:var(--d)}
+  .para.p6{border-left-color:var(--brand)} .para.p6 .no{background:var(--brand)}
+  .para.p1{border-left-color:#9aa6bd} .para.p1 .no{background:#9aa6bd}
+  .takeaway{background:var(--soft);border-radius:10px;padding:8px 11px;margin-top:8px;font-size:13px}
+  .takeaway b{color:var(--brand)}
+
+  /* q&a accordion */
+  .qa{border:1px solid var(--line);border-radius:12px;margin:8px 0;overflow:hidden;background:#fff}
+  .qa > button{width:100%;text-align:left;background:none;border:0;padding:12px 14px;
+    font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;
+    justify-content:space-between;gap:10px;align-items:flex-start;color:var(--ink)}
+  .qa > button .q{flex:1}
+  .qa > button .arw{transition:.25s;color:var(--brand);flex:0 0 auto;font-size:13px;margin-top:2px}
+  .qa.open > button .arw{transform:rotate(180deg)}
+  .qa .ans{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 14px;
+    font-size:13.5px;color:var(--ink);background:#fbfcff}
+  .qa.open .ans{max-height:600px;padding:0 14px 13px}
+  .qa .ans .tag{font-size:11px;font-weight:800;color:var(--accent)}
+
+  /* key terms */
+  .term{border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin:8px 0;background:#fff}
+  .term b{font-size:15px;color:var(--brand2)}
+  .term .rd{font-size:11.5px;color:var(--sub);margin-left:6px}
+  .term p{margin:5px 0 0;font-size:13.5px}
+
+  /* flashcards */
+  .fc-stage{perspective:1200px;margin:12px 0}
+  .fc{position:relative;width:100%;min-height:220px;transition:transform .55s;
+    transform-style:preserve-3d;cursor:pointer}
+  .fc.flip{transform:rotateY(180deg)}
+  .fc .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;
+    padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;box-shadow:var(--shadow);border:1px solid var(--line)}
+  .fc .front{background:linear-gradient(160deg,#fff,#f2f6ff)}
+  .fc .back{background:linear-gradient(160deg,#eef7f1,#e5f2ff);transform:rotateY(180deg)}
+  .fc .lbl{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--brand);margin-bottom:10px}
+  .fc .front .qt{font-size:18px;font-weight:800;line-height:1.6}
+  .fc .back .at{font-size:16px;font-weight:700;line-height:1.7}
+  .fc .hint{position:absolute;bottom:12px;font-size:11px;color:var(--sub)}
+  .fc-controls{display:flex;gap:8px;margin-top:12px;align-items:center}
+  .fc-controls button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--line);
+    background:#fff;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;color:var(--ink)}
+  .fc-controls .know{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .fc-controls .dontknow{background:#fff4f4;color:var(--ng);border-color:#f6d3d4}
+  .fc-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:10px}
+  .deck-pick{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}
+  .deck-pick button{flex:1;min-width:120px;padding:10px;border-radius:12px;border:1px solid var(--line);
+    background:#fff;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;color:var(--sub)}
+  .deck-pick button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+  /* quiz */
+  .qz-q{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin:12px 0;
+    box-shadow:var(--shadow)}
+  .qz-q .num{font-size:11px;font-weight:800;color:var(--brand)}
+  .qz-q .stem{font-size:15px;font-weight:700;margin:6px 0 12px}
+  .opt{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);
+    border-radius:11px;padding:11px 13px;margin:7px 0;font-family:inherit;font-size:14px;cursor:pointer;
+    color:var(--ink);transition:.12s}
+  .opt:active{transform:scale(.99)}
+  .opt.correct{border-color:var(--ok);background:#eafaf2}
+  .opt.wrong{border-color:var(--ng);background:#fdeeee}
+  .opt.disabled{cursor:default;opacity:.85}
+  .expl{margin-top:8px;font-size:13px;background:var(--soft);border-radius:10px;padding:9px 12px;display:none}
+  .expl.show{display:block}
+  .expl b{color:var(--brand)}
+  .blankwrap{display:flex;gap:8px;margin:8px 0}
+  .blankwrap input{flex:1;padding:11px 12px;border-radius:11px;border:1.5px solid var(--line);
+    font-family:inherit;font-size:15px}
+  .blankwrap button{padding:0 16px;border-radius:11px;border:0;background:var(--brand);color:#fff;
+    font-family:inherit;font-weight:800;cursor:pointer}
+  .btn{display:inline-block;background:var(--brand);color:#fff;border:0;border-radius:12px;
+    padding:13px 20px;font-family:inherit;font-weight:800;font-size:15px;cursor:pointer;width:100%}
+  .btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+  .btn.small{width:auto;padding:9px 16px;font-size:13px}
+  .scorebox{text-align:center;padding:24px 16px}
+  .scorebox .big{font-size:44px;font-weight:900;color:var(--brand);line-height:1}
+  .scorebox .lbl{font-size:13px;color:var(--sub);margin-top:6px}
+  .comment{font-size:15px;font-weight:800;margin:10px 0}
+
+  .callout{background:linear-gradient(135deg,#fff7ef,#fff);border:1px solid #ffe2c6;
+    border-radius:14px;padding:14px;margin:14px 0}
+  .callout b{color:var(--accent)}
+  .checklist label{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;font-size:14px;
+    border-bottom:1px dashed var(--line);cursor:pointer}
+  .checklist label:last-child{border-bottom:0}
+  .checklist input{margin-top:4px;transform:scale(1.25);accent-color:var(--brand)}
+  .checklist label.done span{color:var(--sub);text-decoration:line-through}
+  footer{text-align:center;font-size:11px;color:var(--sub);padding:18px 10px 6px}
+  .pill-row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+  .pill{font-size:11.5px;background:var(--soft);color:var(--brand2);padding:4px 10px;border-radius:99px;font-weight:700}
+  .note-warn{font-size:11.5px;color:var(--sub);background:#fbfbfd;border:1px dashed var(--line);
+    border-radius:10px;padding:8px 11px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">中3 現代文 ★ テスト対策アプリ</div>
+    <h1>問いかける言葉 ＆ 夢十夜</h1>
+    <p>明日の朝までにマスターしよう。要点→一問一答→クイズの順で3周！</p>
+  </div>
+  <div class="progress-wrap">
+    <div class="pbar"><i id="pbar"></i></div>
+    <div class="pnote"><span id="pnote">学習スタート</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ HOME ============ -->
+<section class="view active" id="v-home">
+  <div class="card">
+    <h2>📌 テスト範囲</h2>
+    <p class="lead">今回の範囲は「現代文」の2作品。まずはここを押さえよう。</p>
+    <div class="worklist">
+      <button class="worktile" onclick="go('kiku')">
+        <span class="em">💬</span>
+        <span>
+          <b>①「問いかける言葉」</b><span class="chip" style="margin-left:6px">評論・論説文</span>
+          <span class="d">筆者：国谷裕子／6つの意味段落・キーワード・記述対策。ワークの中心はこちら。</span>
+        </span>
+      </button>
+      <button class="worktile" onclick="go('yume')">
+        <span class="em">🌙</span>
+        <span>
+          <b>②「夢十夜」第一夜・第六夜</b><span class="chip" style="margin-left:6px">小説</span>
+          <span class="d">作者：夏目漱石／あらすじ・象徴・主題をつかむ。</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🗺️ おすすめ勉強ルート</h2>
+    <div class="checklist" id="routelist"></div>
+    <p class="muted" style="margin-top:10px">✔ をタップして進み具合を記録。上のバーが100%になれば準備OK！</p>
+  </div>
+
+  <div class="callout">
+    <b>コツ：</b> 記述問題は「答えを覚える」より「なぜそうなるか」を自分の言葉で言えるかが大事。一問一答カードを声に出して答えてみよう。
+  </div>
+</section>
+
+<!-- ============ 問いかける言葉 ============ -->
+<section class="view" id="v-kiku">
+  <div class="card">
+    <h2>💬 問いかける言葉</h2>
+    <span class="chip">作者・作品</span>
+    <div style="margin-top:10px">
+      <p class="kv"><b>作者：</b>国谷裕子（くにや ひろこ）</p>
+      <ul class="clean">
+        <li>1957年、大阪府生まれ。<b>キャスター</b>（ニュースキャスター）。</li>
+        <li>日本社会の課題や世界の変化をテーマに活動。<b>SDGs</b>に強い関心を寄せる。</li>
+        <li>著書に『<b>キャスターという仕事</b>』などがある。</li>
+      </ul>
+    </div>
+    <div class="pill-row">
+      <span class="pill">キーワード：確証バイアス</span>
+      <span class="pill">風向きの法則</span>
+      <span class="pill">多様性の尊重</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧩 段落マップ（6つの意味段落）</h2>
+    <p class="lead">この文章は次の6つの段落に分けて読める。★の「言えること」がテストで狙われる！</p>
+
+    <div class="para p1"><span class="no">第一段落</span>
+      <h4>キャスターという仕事</h4>
+      <p class="muted">導入。筆者の仕事＝キャスターの紹介。</p>
+    </div>
+
+    <div class="para p2"><span class="no">第二段落</span>
+      <h4>筆者の経験①　海外の学校での経験</h4>
+      <p>外国人のクラスメイトから「あなたはどう考えるか」と<b>自分の考え</b>を問われた。意見を持たない＝<b>存在しない人</b>と見なされないよう必死に答えた。以後、自分から積極的に問いを投げかけるようにした。</p>
+      <div class="takeaway">★ 人に<b>問いかける</b>ことで、<b>自分の存在</b>を意識し、<b>自分の考えが形づくられる</b>。</div>
+    </div>
+
+    <div class="para p3"><span class="no">第三段落</span>
+      <h4>筆者の経験②　インタビューの経験</h4>
+      <p>キャスターの仕事を通じて学んだこと＝問いかける言葉は、<b>自分の考えを深め</b>、<b>相手の考えを引き出す</b>ことにつながる。</p>
+      <div class="takeaway">★ 問いかけることで、相手の考えを引き出し、自らの考えを<b>俯瞰</b>できる。</div>
+    </div>
+
+    <div class="para p4"><span class="no">第四段落</span>
+      <h4>「風向きの法則」</h4>
+      <p>情報の絶対量が増えるほど多くの可能性を吟味できるはずが、逆に<b>情報が多すぎて考える時間を奪われ</b>、人は<b>大勢（多数派）に流されて</b>自分で考え判断しなくなる。</p>
+      <div class="takeaway">★ 問いかけることで、<b>情報の流れをせき止め</b>、自分で考えることにつながる。</div>
+    </div>
+
+    <div class="para p5"><span class="no">第五段落</span>
+      <h4>「確証バイアス」</h4>
+      <p><b>閉鎖的な情報空間</b>では、同じ考えの人としか対話せず、異なる考えの人に<b>不寛容</b>になり、お互いを<b>排除</b>しようとする。だから異質なものに出会い、悩み、考える機会が失われる。</p>
+      <div class="takeaway">★ 異なる世界や考えの人にも<b>問いかけ、対話する</b>ことが、現実の問題に向き合うために必要。</div>
+    </div>
+
+    <div class="para p6"><span class="no">第六段落</span>
+      <h4>日本の社会に必要な、問いかける言葉（結論）</h4>
+      <p>「わからないものはわからない」と認め、<b>問いかけて対話する</b>ことが大切。日本では自分の意見を控える風潮があるが、これからは問い続ける姿勢が必要。</p>
+      <div class="takeaway">★ 問いかけ続け、対話することが、<b>多様な世界</b>を生きるために必要。</div>
+    </div>
+  </div>
+
+  <div class="card" style="border:2px solid var(--brand2)">
+    <h2>🎯 この文章の主題（＝主張）</h2>
+    <p style="font-size:15px;font-weight:700">
+      異質なものを無理に<span style="color:var(--brand2)">同調</span>させるのではなく、<span style="color:var(--brand2)">多様</span>であることを尊重しよう、という主張。</p>
+    <p class="muted">※ 教科書の坂本龍一『async — 同期しないこと』も、同じ内容の主張。あわせて覚えておくと関連問題に強い。</p>
+  </div>
+
+  <div class="card">
+    <h2>🔑 重要語句・概念</h2>
+    <div class="term"><b>確証バイアス</b><span class="rd">かくしょうバイアス</span>
+      <p>自分の考えや信じたいことを<b>支持する情報ばかり</b>を集め、反対の情報を無視してしまう心のかたより。</p></div>
+    <div class="term"><b>風向きの法則</b>
+      <p>人々が周りの<b>多数派・大勢の流れ</b>に流されていくこと。情報過多がこれを強める。</p></div>
+    <div class="term"><b>閉鎖的な情報空間</b>
+      <p>自分と<b>同じ意見</b>の情報にばかり触れ、異なる意見が入ってこない状態。</p></div>
+    <div class="term"><b>同調</b><span class="rd">どうちょう</span>
+      <p>自分の考えを抑えて、<b>周りに合わせる</b>こと。筆者が「無理にすべきでない」とするもの。</p></div>
+    <div class="term"><b>不寛容</b><span class="rd">ふかんよう</span>
+      <p>異なる意見や立場を<b>受け入れない</b>こと。</p></div>
+    <div class="term"><b>排除</b><span class="rd">はいじょ</span>
+      <p>仲間から外して<b>しめ出す</b>こと。</p></div>
+    <div class="term"><b>多様性</b><span class="rd">たようせい</span>
+      <p>いろいろな考え・立場・個性があること。筆者が<b>尊重すべき</b>とするもの。</p></div>
+    <div class="term"><b>対話</b><span class="rd">たいわ</span>
+      <p>向き合って<b>話し合う</b>こと。「問いかける言葉」が生み出すもの。</p></div>
+    <div class="term"><b>俯瞰</b><span class="rd">ふかん</span>
+      <p>高い所から見下ろすように、<b>全体を広く見渡す</b>こと。</p></div>
+    <div class="term"><b>委ねる</b><span class="rd">ゆだねる</span>
+      <p>判断や物事を<b>人に任せる</b>こと。</p></div>
+    <div class="term"><b>権威づけ</b>
+      <p>有名な人・偉い人の言葉を根拠にして正しいと思い込むこと（例：HIKAKINが絶賛しているから…）。</p></div>
+  </div>
+
+  <div class="card">
+    <h2>❓ 内容理解 一問一答（タップで答え）</h2>
+    <div id="kikuQA"></div>
+  </div>
+
+  <div class="callout">
+    <b>記述のヤマ：</b>「問いを出し続けることがとても重要」なのはなぜ？<br>
+    → 情報に流されず<b>自分で考え</b>、異なる考えの人と<b>対話</b>して<b>多様な世界</b>に向き合うために重要、と自分の言葉でまとめられるようにしよう。
+  </div>
+</section>
+
+<!-- ============ 夢十夜 ============ -->
+<section class="view" id="v-yume">
+  <div class="card">
+    <h2>🌙 夢十夜</h2>
+    <span class="chip">作者・作品</span>
+    <div style="margin-top:10px">
+      <p class="kv"><b>作者：</b>夏目漱石（なつめ そうせき）</p>
+      <ul class="clean">
+        <li>1867〜1916年。<b>明治〜大正</b>時代を代表する小説家。</li>
+        <li>代表作：『吾輩は猫である』『坊っちゃん』『こころ』『三四郎』など。</li>
+        <li>『夢十夜』は、<b>「こんな夢を見た」</b>で始まる、十の夢を描いた短編（1908年）。</li>
+      </ul>
+    </div>
+    <p class="note-warn">各夜の共通の書き出し <b>「こんな夢を見た」</b> は超頻出。必ず覚える！</p>
+  </div>
+
+  <div class="card">
+    <h2>💤 第一夜 ― あらすじ</h2>
+    <p>「自分」は、死のうとしている美しい女の枕元にすわっている。女は
+    <b>「もう死にます。死んだら、大きな真珠貝で墓穴を掘り、天から落ちてくる星の破片を墓標に置いて待っていてほしい。<span style="color:var(--brand2)">百年たったら、また会いに来ます</span>」</b>
+    と言い残して死ぬ。自分は言われたとおりに埋葬し、墓のそばで百年を待つ。日が昇っては沈むのをくり返すうち、石の下から一本の茎が伸び、<b>白い百合</b>の花が咲く。その花に口づけしたとき、空に<b>暁の星（明けの明星）</b>が光るのを見て、
+    <b>「百年はもう来ていたんだな」</b>と初めて気づく。</p>
+    <h3>ここが問われる</h3>
+    <ul class="clean">
+      <li>約束は「<b>百年</b>後にまた会いに来る」。</li>
+      <li>象徴：<b>真珠貝</b>（墓穴）／<b>星の破片</b>（墓標）／<b>白い百合</b>（よみがえった女・愛）。</li>
+      <li>テーマ：<b>永遠の愛・時間・生と死</b>を幻想的にえがく。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🗿 第六夜 ― あらすじ</h2>
+    <p>「自分」は、鎌倉時代の名仏師<b>運慶</b>が護国寺の山門で<b>仁王</b>を刻んでいるという評判を聞き、見物に行く。時代は<b>明治</b>なのに運慶が生きていることを不思議に思う。運慶はノミと槌で、木の中に<b>もともと埋まっている</b>眉や鼻を<b>「掘り出す」</b>ように無造作に彫っていく。見物人が「あんなものは木の中から掘り出すだけだ」と言うのを聞き、自分にもできると思って家で薪を彫るが、<b>どの木にも仁王は埋まっていなかった</b>。そして
+    <b>「明治の木には、仁王は埋まっていない。だから運慶が今日まで生きている理由も分かった」</b>と悟る。</p>
+    <h3>ここが問われる</h3>
+    <ul class="clean">
+      <li>仏師＝<b>運慶</b>／彫っていたもの＝<b>仁王</b>。</li>
+      <li>「掘り出す」…彫刻は木の中の形を掘り出すだけ、という運慶の(見物人の)考え。</li>
+      <li>主題：本物の<b>芸術は才能のある者にしか生み出せない</b>。近代（明治）には本物の仁王＝芸術は宿らない、という<b>文明批評</b>。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>❓ 夢十夜 一問一答（タップで答え）</h2>
+    <div id="yumeQA"></div>
+  </div>
+</section>
+
+<!-- ============ 一問一答（暗記カード） ============ -->
+<section class="view" id="v-cards">
+  <div class="card">
+    <h2>🃏 暗記カード</h2>
+    <p class="lead">デッキを選んで、カードをタップで裏返し。覚えた／まだ で仕分けしよう。</p>
+    <div class="deck-pick" id="deckPick"></div>
+    <div class="fc-stage">
+      <div class="fc" id="fcard" onclick="flipCard()">
+        <div class="face front"><div class="lbl">Q</div><div class="qt" id="fcQ">―</div><div class="hint">タップで答えを見る</div></div>
+        <div class="face back"><div class="lbl">A</div><div class="at" id="fcA">―</div><div class="hint">もう一度タップで戻る</div></div>
+      </div>
+    </div>
+    <div class="fc-controls">
+      <button class="dontknow" onclick="markCard(false)">△ まだ</button>
+      <button class="know" onclick="markCard(true)">◎ 覚えた</button>
+    </div>
+    <div class="fc-meta">
+      <span id="fcCount">0 / 0</span>
+      <span>覚えた：<span id="fcKnown">0</span></span>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn ghost small" style="flex:1" onclick="shuffleDeck()">🔀 シャッフル</button>
+      <button class="btn ghost small" style="flex:1" onclick="resetDeck()">↺ 最初から</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ クイズ ============ -->
+<section class="view" id="v-quiz">
+  <div class="card" id="quizIntro">
+    <h2>📝 力だめしテスト</h2>
+    <p class="lead">全<span id="qTotal">0</span>問。選択・穴埋めのミックス。1回で満点を目指そう！</p>
+    <div class="pill-row">
+      <span class="pill">問いかける言葉</span><span class="pill">夢十夜</span><span class="pill">語句</span>
+    </div>
+    <button class="btn" style="margin-top:14px" onclick="startQuiz()">テスト開始 ▶</button>
+  </div>
+  <div id="quizArea"></div>
+  <div id="quizResult"></div>
+</section>
+
+</main>
+
+<nav class="tabs">
+  <button data-t="home" class="active" onclick="go('home')"><span class="ic">🏠</span>ホーム</button>
+  <button data-t="kiku" onclick="go('kiku')"><span class="ic">💬</span>問いかけ</button>
+  <button data-t="yume" onclick="go('yume')"><span class="ic">🌙</span>夢十夜</button>
+  <button data-t="cards" onclick="go('cards')"><span class="ic">🃏</span>カード</button>
+  <button data-t="quiz" onclick="go('quiz')"><span class="ic">📝</span>テスト</button>
+</nav>
+
+<footer>中3 現代文 テスト対策 ｜ 問いかける言葉（国谷裕子）・夢十夜（夏目漱石）<br>がんばれ、応援しているよ！ 🌸</footer>
+
+<script>
+/* ============ DATA ============ */
+const kikuQA = [
+  {q:"「問いかける言葉」の作者は？", a:"国谷裕子（くにや ひろこ）。1957年大阪府生まれのキャスター。"},
+  {q:"第二段落「その問い」とは、何についての問いか？", a:"外国人のクラスメイトから聞かれた、「自分の考え」についての問い。"},
+  {q:"筆者が「必死になって答えようとした」のはなぜか？", a:"自分の意見を持たない人＝「存在しない人」と見なされないようにするため。",tag:"記述"},
+  {q:"積極的に問いを投げかけた結果、「私」にどんな変化があったか？", a:"自分の存在を意識し、自分の考えが形づくられるようになった。",tag:"記述"},
+  {q:"第三段落。キャスターの仕事を通じて「私」が学んだこととは？", a:"問いかける言葉は、自分の考えを深めたり、相手の考えを引き出すことにつながる、ということ。",tag:"記述"},
+  {q:"第四段落「情報が、かえって人々の考える時間を奪っている」とはどういうことか？", a:"情報が多すぎて処理しきれず、人が情報に流されて自分で考える時間を失い、大勢に流されてしまうということ。",tag:"記述"},
+  {q:"情報に流されるのを「抑制してくれる」ものは何か？", a:"問いかける言葉。"},
+  {q:"「確証バイアス」とはどんな心のかたよりか？", a:"自分の考えを支持する情報ばかりを集め、反対の情報を無視してしまうこと。"},
+  {q:"第五段落「そこ」とは何を指すか（本文の言葉で）？", a:"閉鎖的な情報空間。"},
+  {q:"異質なものに出会い考える機会がないのはなぜか？", a:"同じような考えの人としか対話せず、異なる考えの人に不寛容になり、お互いを排除しようとするから。",tag:"記述"},
+  {q:"第六段落。わからないことがあったとき、大切なことは何か？", a:"わからないと認め、問いかけて対話すること。"},
+  {q:"この文章全体の主題（主張）は？", a:"異質なものを無理に同調させるのではなく、多様であることを尊重しよう、という主張。",tag:"主題"},
+  {q:"同じ主張をもつ、教科書の別作品は？", a:"坂本龍一『async ― 同期しないこと』。"}
+];
+const yumeQA = [
+  {q:"『夢十夜』の作者は？", a:"夏目漱石（なつめ そうせき）。"},
+  {q:"各夜に共通する書き出しの一文は？", a:"「こんな夢を見た」。"},
+  {q:"第一夜。女は何年後にまた会いに来ると言ったか？", a:"百年後。"},
+  {q:"第一夜。墓穴を掘るのに使った貝は？", a:"大きな真珠貝。"},
+  {q:"第一夜。墓標に置いたものは？", a:"天から落ちてきた星の破片。"},
+  {q:"第一夜。墓のそばに咲いた花は？", a:"白い百合。"},
+  {q:"第一夜。最後に自分が気づいたことは？", a:"花に口づけしたとき暁の星を見て、「百年はもう来ていたんだな」と気づいた。"},
+  {q:"第一夜のテーマは？", a:"永遠の愛・時間・生と死を幻想的にえがく。",tag:"主題"},
+  {q:"第六夜に登場する名仏師は？", a:"運慶（うんけい）。"},
+  {q:"第六夜。運慶が刻んでいたものは？", a:"仁王（におう）。"},
+  {q:"第六夜。運慶は仁王をどのように彫ると表現されているか？", a:"木の中に埋まっている眉や鼻を「掘り出す」ように彫る。"},
+  {q:"第六夜。自分が薪を彫って悟ったことは？", a:"明治の木には仁王は埋まっていない（＝現代には本物の芸術は宿らない）ということ。",tag:"主題"},
+  {q:"第六夜の主題は？", a:"本物の芸術は才能ある者にしか生み出せない、という文明批評。",tag:"主題"}
+];
+
+const quizData = [
+  {type:"mc",stem:"「問いかける言葉」の作者・国谷裕子の職業は？",
+   opts:["小説家","キャスター","画家","政治家"],ans:1,
+   ex:"国谷裕子はニュースキャスター。著書に『キャスターという仕事』がある。"},
+  {type:"mc",stem:"第四段落「風向きの法則」で筆者が問題にしているのは？",
+   opts:["情報が少なすぎて判断できないこと","情報過多で人が自分で考えず大勢に流されること","外国語の情報が読めないこと","本を読む人が減ったこと"],ans:1,
+   ex:"情報が増えるほど考える時間が奪われ、人は多数派に流される。それをせき止めるのが問いかける言葉。"},
+  {type:"mc",stem:"「確証バイアス」の具体例として最も適切なのは？",
+   opts:[
+     "あのHIKAKINが絶賛しているから、この本は読む価値があるに違いない",
+     "ミサイルが発射されたらしいが、近所の誰も避難していないし多分大丈夫だろう",
+     "彼女はB型だったから、きっと無遠慮にものを言う人なんだろう",
+     "前から気になっていたゲームで、良い評判もあったし私も買おうかしら"],ans:3,
+   ex:"確証バイアス＝自分の考え（買いたい）を支持する情報（良い評判）だけを集める例＝エ。アは権威づけ、イは正常性バイアス、ウはステレオタイプ。"},
+  {type:"mc",stem:"第五段落「そこには、…考える機会はありません」の「そこ」が指すのは？",
+   opts:["海外の学校","閉鎖的な情報空間","テレビのスタジオ","図書館"],ans:1,
+   ex:"「そこ」＝閉鎖的な情報空間。同じ考えの人としか対話せず、異質なものに出会えない。"},
+  {type:"mc",stem:"この文章の主張（主題）として正しいのは？",
+   opts:[
+     "情報はできるだけ多く集めるべきだ",
+     "みんなと同じ意見に合わせることが大切だ",
+     "異質なものを無理に同調させず、多様であることを尊重すべきだ",
+     "外国の文化を積極的にまねるべきだ"],ans:2,
+   ex:"主題は「同調」ではなく「多様性の尊重」。坂本龍一『async』も同じ主張。"},
+  {type:"blank",stem:"第五段落。異なる考えの人に対して不寛容になり、お互いを◯◯しようとする。◯◯に入る二字は？",
+   ans:["排除"],ex:"排除（はいじょ）＝しめ出すこと。"},
+  {type:"blank",stem:"高い所から全体を広く見渡すことを表す二字熟語は？（読み：ふかん）",
+   ans:["俯瞰"],ex:"俯瞰（ふかん）。問いかけることで自らの考えを俯瞰できる。"},
+  {type:"mc",stem:"『夢十夜』各夜に共通する書き出しは？",
+   opts:["むかしむかし","こんな夢を見た","ある日のことである","吾輩は猫である"],ans:1,
+   ex:"「こんな夢を見た」。頻出なので確実に。"},
+  {type:"mc",stem:"第一夜で、女が「また会いに来る」と言ったのは何年後？",
+   opts:["十年後","五十年後","百年後","千年後"],ans:2,
+   ex:"百年後。自分は墓のそばで百年を待つ。"},
+  {type:"blank",stem:"第一夜で、墓のそばに咲いた花は「白い◯◯」。◯◯は？",
+   ans:["百合","ゆり","ユリ"],ex:"白い百合。よみがえった女・愛の象徴。"},
+  {type:"mc",stem:"第六夜に登場する、仁王を刻む名仏師は？",
+   opts:["運慶","快慶","世阿弥","雪舟"],ans:0,
+   ex:"運慶（うんけい）。鎌倉時代の仏師だが明治の世に生きている設定。"},
+  {type:"mc",stem:"第六夜で「自分」が最後に悟ったことは？",
+   opts:[
+     "自分にも立派な仏像が彫れる",
+     "運慶は本物の仏師ではなかった",
+     "明治の木には仁王は埋まっていない",
+     "彫刻より絵のほうが優れている"],ans:2,
+   ex:"明治の木には仁王は埋まっていない＝近代には本物の芸術は宿らない、という文明批評。"},
+  {type:"blank",stem:"『夢十夜』の作者の氏名は？（漢字）",
+   ans:["夏目漱石"],ex:"夏目漱石（なつめ そうせき）。"},
+  {type:"mc",stem:"「問いかける言葉」と同じ主張をもつ、教科書の作品の作者は？",
+   opts:["宮沢賢治","坂本龍一","村上春樹","太宰治"],ans:1,
+   ex:"坂本龍一『async ― 同期しないこと』。"}
+];
+
+/* ============ NAV ============ */
+const tabOrder=["home","kiku","yume","cards","quiz"];
+function go(t){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('v-'+t).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+  window.scrollTo({top:0,behavior:'smooth'});
+  markVisited(t);
+}
+
+/* ============ QA accordions ============ */
+function buildQA(list,elId){
+  const el=document.getElementById(elId);
+  el.innerHTML=list.map((o,i)=>`
+    <div class="qa" data-i="${i}">
+      <button onclick="this.parentNode.classList.toggle('open')">
+        <span class="q">Q${i+1}. ${o.q}</span><span class="arw">▼</span></button>
+      <div class="ans">${o.tag?`<span class="tag">［${o.tag}］</span> `:''}${o.a}</div>
+    </div>`).join('');
+}
+buildQA(kikuQA,'kikuQA');
+buildQA(yumeQA,'yumeQA');
+
+/* ============ FLASHCARDS ============ */
+const decks={
+  all:{name:"全部",data:[...kikuQA,...yumeQA]},
+  kiku:{name:"問いかける言葉",data:kikuQA},
+  yume:{name:"夢十夜",data:yumeQA}
+};
+let curDeckKey="all", order=[], idx=0, known=new Set(), flipped=false;
+function buildDeckPick(){
+  document.getElementById('deckPick').innerHTML=Object.entries(decks).map(([k,d])=>
+    `<button data-k="${k}" class="${k===curDeckKey?'active':''}" onclick="pickDeck('${k}')">${d.name}（${d.data.length}）</button>`).join('');
+}
+function pickDeck(k){curDeckKey=k;buildDeckPick();resetDeck();}
+function curData(){return decks[curDeckKey].data;}
+function resetDeck(){order=curData().map((_,i)=>i);idx=0;known=new Set();flipped=false;renderCard();}
+function shuffleDeck(){for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}idx=0;flipped=false;renderCard();}
+function renderCard(){
+  const d=curData();const c=document.getElementById('fcard');c.classList.remove('flip');flipped=false;
+  if(order.length===0||idx>=order.length){
+    document.getElementById('fcQ').textContent="🎉 このデッキは終了！";
+    document.getElementById('fcA').textContent="「最初から」でもう一周できるよ";
+    document.getElementById('fcCount').textContent=`${order.length} / ${order.length}`;
+    document.getElementById('fcKnown').textContent=known.size;return;
+  }
+  const o=d[order[idx]];
+  document.getElementById('fcQ').textContent=o.q;
+  document.getElementById('fcA').textContent=o.a;
+  document.getElementById('fcCount').textContent=`${idx+1} / ${order.length}`;
+  document.getElementById('fcKnown').textContent=known.size;
+}
+function flipCard(){const c=document.getElementById('fcard');flipped=!flipped;c.classList.toggle('flip',flipped);}
+function markCard(ok){
+  if(idx>=order.length)return;
+  if(ok)known.add(order[idx]);
+  idx++;renderCard();
+  bumpProgress('card');
+}
+buildDeckPick();resetDeck();
+
+/* ============ QUIZ ============ */
+document.getElementById('qTotal').textContent=quizData.length;
+let quizState=[];
+function startQuiz(){
+  document.getElementById('quizIntro').style.display='none';
+  document.getElementById('quizResult').innerHTML='';
+  quizState=quizData.map(()=>({done:false,correct:false}));
+  const area=document.getElementById('quizArea');
+  area.innerHTML=quizData.map((q,i)=>renderQ(q,i)).join('')+
+    `<button class="btn" id="qSubmit" style="margin:8px 0 24px" onclick="finishQuiz()">採点する ✔</button>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderQ(q,i){
+  if(q.type==='mc'){
+    return `<div class="qz-q" id="q${i}"><div class="num">第${i+1}問</div><div class="stem">${q.stem}</div>
+      ${q.opts.map((o,j)=>`<button class="opt" onclick="pickMC(${i},${j})">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}
+      <div class="expl" id="ex${i}"></div></div>`;
+  }else{
+    return `<div class="qz-q" id="q${i}"><div class="num">第${i+1}問</div><div class="stem">${q.stem}</div>
+      <div class="blankwrap"><input id="in${i}" placeholder="答えを入力" autocomplete="off">
+      <button onclick="pickBlank(${i})">解答</button></div>
+      <div class="expl" id="ex${i}"></div></div>`;
+  }
+}
+function pickMC(i,j){
+  if(quizState[i].done)return;
+  const q=quizData[i];quizState[i].done=true;quizState[i].correct=(j===q.ans);
+  const wrap=document.getElementById('q'+i);const opts=wrap.querySelectorAll('.opt');
+  opts.forEach((b,k)=>{b.classList.add('disabled');if(k===q.ans)b.classList.add('correct');});
+  if(j!==q.ans)opts[j].classList.add('wrong');
+  showEx(i,quizState[i].correct);bumpProgress('quiz');
+}
+function pickBlank(i){
+  if(quizState[i].done)return;
+  const q=quizData[i];const val=(document.getElementById('in'+i).value||'').trim();
+  const ok=q.ans.some(a=>norm(val)===norm(a));
+  quizState[i].done=true;quizState[i].correct=ok;
+  const inp=document.getElementById('in'+i);inp.disabled=true;
+  inp.style.borderColor=ok?'var(--ok)':'var(--ng)';
+  inp.style.background=ok?'#eafaf2':'#fdeeee';
+  showEx(i,ok,q.ans[0]);bumpProgress('quiz');
+}
+function norm(s){return s.replace(/\s|　/g,'').toLowerCase();}
+function showEx(i,ok,correctAns){
+  const ex=document.getElementById('ex'+i);ex.classList.add('show');
+  ex.innerHTML=`<b>${ok?'⭕ 正解！':'❌ 残念'}</b> ${correctAns?`正解：<b>${correctAns}</b>　`:''}${quizData[i].ex}`;
+}
+function finishQuiz(){
+  quizData.forEach((q,i)=>{
+    if(!quizState[i].done){
+      quizState[i].done=true;quizState[i].correct=false;
+      if(q.type==='mc'){const opts=document.getElementById('q'+i).querySelectorAll('.opt');
+        opts.forEach((b,k)=>{b.classList.add('disabled');if(k===q.ans)b.classList.add('correct');});}
+      else{const inp=document.getElementById('in'+i);inp.disabled=true;}
+      showEx(i,false,q.type==='mc'?q.opts[q.ans]:q.ans[0]);
+    }
+  });
+  const sc=quizState.filter(s=>s.correct).length;const tot=quizData.length;
+  const pct=Math.round(sc/tot*100);
+  let msg,emo;
+  if(pct===100){msg="満点！完璧だよ！自信をもってテストに臨もう🌸";emo="🏆";}
+  else if(pct>=80){msg="あと少し！間違えた問題の解説を見直そう。";emo="🎉";}
+  else if(pct>=50){msg="いい調子。要点ページとカードでもう一周しよう。";emo="💪";}
+  else{msg="まずは各段落の★『言えること』を音読して覚えよう。";emo="📖";}
+  document.getElementById('qSubmit').style.display='none';
+  document.getElementById('quizResult').innerHTML=
+    `<div class="card scorebox"><div style="font-size:34px">${emo}</div>
+     <div class="big">${sc}/${tot}</div><div class="lbl">正解率 ${pct}%</div>
+     <div class="comment">${msg}</div>
+     <button class="btn ghost small" style="margin-top:6px" onclick="retryQuiz()">↺ もう一回挑戦</button></div>`;
+  bumpProgress('quizdone');
+  document.getElementById('quizResult').scrollIntoView({behavior:'smooth'});
+}
+function retryQuiz(){document.getElementById('quizArea').innerHTML='';document.getElementById('quizResult').innerHTML='';
+  document.getElementById('quizIntro').style.display='block';go('quiz');startQuiz();}
+
+/* ============ PROGRESS + ROUTE ============ */
+const routeSteps=[
+  {id:"r1",t:"「問いかける言葉」の段落マップを読む",tab:"kiku"},
+  {id:"r2",t:"重要語句・概念を覚える",tab:"kiku"},
+  {id:"r3",t:"問いかける言葉の一問一答を解く",tab:"kiku"},
+  {id:"r4",t:"「夢十夜」第一夜・第六夜のあらすじを読む",tab:"yume"},
+  {id:"r5",t:"夢十夜の一問一答を解く",tab:"yume"},
+  {id:"r6",t:"暗記カードを1周する",tab:"cards"},
+  {id:"r7",t:"力だめしテストで80%以上をとる",tab:"quiz"}
+];
+const KEY="kikuyume_progress_v1";
+let store=JSON.parse(localStorage.getItem(KEY)||'{}');
+store.route=store.route||{};store.flags=store.flags||{};
+function save(){localStorage.setItem(KEY,JSON.stringify(store));}
+function buildRoute(){
+  document.getElementById('routelist').innerHTML=routeSteps.map(s=>
+    `<label class="${store.route[s.id]?'done':''}">
+      <input type="checkbox" ${store.route[s.id]?'checked':''} onchange="toggleRoute('${s.id}',this)">
+      <span>${s.t}</span></label>`).join('');
+}
+function toggleRoute(id,el){store.route[id]=el.checked;el.parentNode.classList.toggle('done',el.checked);save();updateProgress();}
+function markVisited(t){if(!store.flags['v_'+t]){store.flags['v_'+t]=true;save();}updateProgress();}
+function bumpProgress(kind){store.flags['did_'+kind]=true;save();updateProgress();}
+function updateProgress(){
+  const routeDone=routeSteps.filter(s=>store.route[s.id]).length;
+  const pct=Math.round(routeDone/routeSteps.length*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  let note=`勉強チェック ${routeDone}/${routeSteps.length} 完了`;
+  if(pct===100)note="準備OK！自信をもって！🌸";
+  document.getElementById('pnote').textContent=note;
+}
+buildRoute();updateProgress();
+</script>
+</body>
+</html>
