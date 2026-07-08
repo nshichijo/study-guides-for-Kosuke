@@ -172,6 +172,34 @@
   .pill{font-size:11.5px;background:var(--soft);color:var(--brand2);padding:4px 10px;border-radius:99px;font-weight:700}
   .note-warn{font-size:11.5px;color:var(--sub);background:#fbfbfd;border:1px dashed var(--line);
     border-radius:10px;padding:8px 11px;margin-top:8px}
+
+  /* reader / 本文 */
+  .text-pick{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+  .text-pick button{flex:1;min-width:110px;padding:10px 8px;border-radius:12px;border:1px solid var(--line);
+    background:#fff;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;color:var(--sub);line-height:1.4}
+  .text-pick button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .text-tools{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .text-tools .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .text-tools .seg button{background:#fff;border:0;padding:8px 14px;font-family:inherit;font-weight:700;
+    font-size:13px;cursor:pointer;color:var(--sub)}
+  .text-tools .seg button.active{background:var(--brand);color:#fff}
+  .text-tools .fz{display:flex;gap:6px;margin-left:auto;align-items:center}
+  .text-tools .fz button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;
+    font-family:inherit;font-weight:800;font-size:15px;cursor:pointer;color:var(--brand)}
+  .reader-body{--rfz:16px;font-size:var(--rfz);line-height:2.05;color:var(--ink);letter-spacing:.02em}
+  .reader-body h4{font-size:calc(var(--rfz) + 2px);margin:0 0 14px;color:var(--brand2);text-align:center}
+  .reader-body .byline{text-align:center;color:var(--sub);font-size:13px;margin:-8px 0 18px}
+  .reader-body p{margin:0 0 1.1em;text-indent:1em}
+  .reader-body ruby rt{font-size:.55em;color:var(--sub)}
+  .reader-body.vertical{writing-mode:vertical-rl;-webkit-writing-mode:vertical-rl;
+    height:68vh;overflow-x:auto;overflow-y:hidden;padding:6px 4px 12px;
+    text-orientation:upright;letter-spacing:.04em}
+  .reader-body.vertical h4,.reader-body.vertical .byline{text-align:start;margin:0 14px 0 0}
+  .reader-body.vertical p{text-indent:1em;margin:0 0 0 0}
+  .reader-body.vertical::-webkit-scrollbar{height:8px}
+  .reader-body.vertical::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+  .reader-note{font-size:12px;color:var(--sub);background:var(--soft);border-radius:10px;padding:9px 12px;margin-top:2px}
+  .reader-body .ex-lead{text-indent:0;color:var(--accent);font-weight:800;font-size:.82em;margin:.4em 0 .1em}
 </style>
 </head>
 <body>
@@ -207,7 +235,7 @@
         <span class="em">🌙</span>
         <span>
           <b>②「夢十夜」第一夜・第六夜</b><span class="chip" style="margin-left:6px">小説</span>
-          <span class="d">作者：夏目漱石／あらすじ・象徴・主題をつかむ。</span>
+          <span class="d">作者：夏目漱石／あらすじ・象徴・主題をつかむ。<b>「本文」タブで全文</b>も読めるよ。</span>
         </span>
       </button>
     </div>
@@ -376,6 +404,28 @@
   </div>
 </section>
 
+<!-- ============ 本文を読む ============ -->
+<section class="view" id="v-text">
+  <div class="card">
+    <h2>📜 本文を読む</h2>
+    <p class="lead">作品を選んで本文を読もう。縦書き／横書きと文字サイズを切り替えられます。</p>
+    <div class="text-pick" id="textPick"></div>
+    <div class="text-tools">
+      <div class="seg" id="dirSeg">
+        <button data-dir="v" class="active" onclick="setDir('v')">縦書き</button>
+        <button data-dir="h" onclick="setDir('h')">横書き</button>
+      </div>
+      <div class="fz">
+        <button onclick="fz(-1)">A−</button><button onclick="fz(1)">A＋</button>
+      </div>
+    </div>
+    <p class="reader-note" id="readerNote"></p>
+  </div>
+  <div class="card">
+    <div class="reader-body vertical" id="readerBody">―</div>
+  </div>
+</section>
+
 <!-- ============ 一問一答（暗記カード） ============ -->
 <section class="view" id="v-cards">
   <div class="card">
@@ -423,6 +473,7 @@
   <button data-t="home" class="active" onclick="go('home')"><span class="ic">🏠</span>ホーム</button>
   <button data-t="kiku" onclick="go('kiku')"><span class="ic">💬</span>問いかけ</button>
   <button data-t="yume" onclick="go('yume')"><span class="ic">🌙</span>夢十夜</button>
+  <button data-t="text" onclick="go('text')"><span class="ic">📜</span>本文</button>
   <button data-t="cards" onclick="go('cards')"><span class="ic">🃏</span>カード</button>
   <button data-t="quiz" onclick="go('quiz')"><span class="ic">📝</span>テスト</button>
 </nav>
@@ -516,7 +567,7 @@ const quizData = [
 ];
 
 /* ============ NAV ============ */
-const tabOrder=["home","kiku","yume","cards","quiz"];
+const tabOrder=["home","kiku","yume","text","cards","quiz"];
 function go(t){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('v-'+t).classList.add('active');
@@ -537,6 +588,98 @@ function buildQA(list,elId){
 }
 buildQA(kikuQA,'kikuQA');
 buildQA(yumeQA,'yumeQA');
+
+/* ============ READER / 本文 ============ */
+const R=(s)=>`<ruby>${s}</ruby>`;
+const texts={
+  yume1:{
+    title:"夢十夜　第一夜",author:"夏目漱石",
+    note:"※ パブリックドメイン（著作権の切れた作品）の全文です。むずかしい漢字にはふりがなを付けています。",
+    html:`
+<p>こんな夢を見た。</p>
+<p><ruby>腕組<rt>うでぐみ</rt></ruby>をして<ruby>枕元<rt>まくらもと</rt></ruby>に<ruby>坐<rt>すわ</rt></ruby>っていると、<ruby>仰向<rt>あおむけ</rt></ruby>に寝た女が、静かな声でもう死にますと云う。女は長い髪を枕に敷いて、<ruby>輪郭<rt>りんかく</rt></ruby>の柔らかな<ruby>瓜実顔<rt>うりざねがお</rt></ruby>をその中に横たえている。<ruby>真白<rt>まっしろ</rt></ruby>な頬の底に温かい血の色がほどよく差して、唇の色は無論赤い。とうてい死にそうには見えない。しかし女は静かな声で、もう死にますと<ruby>判然<rt>はっきり</rt></ruby>云った。自分も確かにこれは死ぬなと思った。そこで、そうかね、もう死ぬのかね、と上から<ruby>覗<rt>のぞ</rt></ruby>き込むようにして聞いて見た。死にますとも、と云いながら、女はぱっちりと眼を開けた。大きな<ruby>潤<rt>うるお</rt></ruby>いのある眼で、長い<ruby>睫<rt>まつげ</rt></ruby>に包まれた中は、ただ一面に<ruby>真黒<rt>まっくろ</rt></ruby>であった。その真黒な<ruby>眸<rt>ひとみ</rt></ruby>の奥に、自分の姿が<ruby>鮮<rt>あざや</rt></ruby>かに浮かんでいる。</p>
+<p>自分は透き<ruby>徹<rt>とお</rt></ruby>るほど深く見えるこの黒眼の<ruby>色沢<rt>つや</rt></ruby>を眺めて、これでも死ぬのかと思った。それで、ねんごろに枕の<ruby>傍<rt>そば</rt></ruby>へ口を付けて、死ぬんじゃなかろうね、大丈夫だろうね、とまた聞き返した。すると女は黒い眼を眠そうに<ruby>睜<rt>みは</rt></ruby>ったまま、やっぱり静かな声で、でも、死ぬんですもの、仕方がないわと云った。</p>
+<p>じゃ、私の顔が見えるかいと一心に聞くと、見えるかいって、そら、そこに、写ってるじゃありませんかと、にっこりして見せた。自分は黙って、顔を枕から離した。腕組をしながら、どうしても死ぬのかなと思った。</p>
+<p>しばらくして、女がまたこう云った。</p>
+<p>「死んだら、<ruby>埋<rt>うず</rt></ruby>めて下さい。大きな<ruby>真珠貝<rt>しんじゅがい</rt></ruby>で穴を掘って。そうして天から落ちて来る星の<ruby>破片<rt>かけ</rt></ruby>を<ruby>墓標<rt>はかじるし</rt></ruby>に置いて下さい。そうして墓の<ruby>傍<rt>そば</rt></ruby>に待っていて下さい。また<ruby>逢<rt>あ</rt></ruby>いに来ますから」</p>
+<p>自分は、いつ逢いに来るかねと聞いた。</p>
+<p>「日が出るでしょう。それから日が沈むでしょう。それからまた出るでしょう、そうしてまた沈むでしょう。――赤い日が東から西へ、東から西へと落ちて行くうちに、――あなた、待っていられますか」</p>
+<p>自分は黙って<ruby>首肯<rt>うなず</rt></ruby>いた。女は静かな調子を一段張り上げて、</p>
+<p>「百年待っていて下さい」と思い切った声で云った。</p>
+<p>「百年、私の墓の傍に坐って待っていて下さい。きっと逢いに来ますから」</p>
+<p>自分はただ待っていると答えた。すると、黒い<ruby>眸<rt>ひとみ</rt></ruby>の中に<ruby>鮮<rt>あざや</rt></ruby>かに見えた自分の姿が、ぼうっと崩れて来た。静かな水が動いて写る影を乱したように、流れ出したと思ったら、女の眼がぱちりと閉じた。長い<ruby>睫<rt>まつげ</rt></ruby>の間から涙が頬へ垂れた。――もう死んでいた。</p>
+<p>自分はそれから庭へ下りて、真珠貝で穴を掘った。真珠貝は大きな<ruby>滑<rt>なめ</rt></ruby>らかな<ruby>縁<rt>えん</rt></ruby>の鋭い貝であった。土をすくうたびに、貝の裏に月の光が差してきらきらした。湿った土の<ruby>匂<rt>におい</rt></ruby>もした。穴はしばらくして掘れた。女をその中に入れた。そうして柔らかい土を、上からそっと掛けた。掛けるたびに真珠貝の裏に月の光が差した。</p>
+<p>それから星の<ruby>破片<rt>かけ</rt></ruby>の落ちたのを拾って来て、かろく土の上へ乗せた。星の破片は丸かった。長い間大空を落ちている間に、角が取れて滑らかになったんだろうと思った。抱き上げて土の上へ置くうちに、自分の胸と手が少し暖かくなった。</p>
+<p>自分は<ruby>苔<rt>こけ</rt></ruby>の上に坐った。これから百年の間こうして待っているんだなと考えながら、腕組をして、丸い墓石を眺めていた。そのうちに、女の云った通り日が東から出た。大きな赤い日であった。それがまた女の云った通り、やがて西へ落ちた。赤いまんまでのっと落ちて行った。一つと自分は<ruby>勘定<rt>かんじょう</rt></ruby>した。</p>
+<p>しばらくするとまた<ruby>唐紅<rt>からくれない</rt></ruby>の<ruby>天道<rt>てんとう</rt></ruby>がのそりと上って来た。そうして黙ってまた沈んでしまった。二つとまた勘定した。</p>
+<p>自分はこう云う風に一つ二つと勘定して行くうちに、赤い日をいくつ見たか分らない。勘定しても、勘定しても、しつくせないほど赤い日が頭の上を通り越して行った。それでも百年がまだ来ない。しまいには、苔の生えた丸い石を眺めて、自分は女に<ruby>欺<rt>だま</rt></ruby>されたのではなかろうかと思い出した。</p>
+<p>すると石の下から<ruby>斜<rt>はす</rt></ruby>に自分の方へ向いて青い<ruby>茎<rt>くき</rt></ruby>が伸びて来た。見る間に長くなってちょうど自分の胸のあたりまで来て留まった。と思うと、すらりと<ruby>揺<rt>ゆら</rt></ruby>ぐ茎の<ruby>頂<rt>いただき</rt></ruby>に、心持首を<ruby>傾<rt>かたぶ</rt></ruby>けていた細長い一輪の<ruby>蕾<rt>つぼみ</rt></ruby>が、ふっくらと<ruby>弁<rt>はなびら</rt></ruby>を開いた。真白な<ruby>百合<rt>ゆり</rt></ruby>が鼻の先で骨に<ruby>徹<rt>こた</rt></ruby>えるほど<ruby>匂<rt>にお</rt></ruby>った。そこへ<ruby>遥<rt>はるか</rt></ruby>の上から、ぽたりと露が落ちたので、花は自分の重みでふらふらと動いた。自分は首を前へ出して冷たい露の<ruby>滴<rt>したた</rt></ruby>る、白い<ruby>花弁<rt>はなびら</rt></ruby>に<ruby>接吻<rt>キス</rt></ruby>した。自分が百合から顔を離す<ruby>拍子<rt>ひょうし</rt></ruby>に思わず、遠い空を見たら、<ruby>暁<rt>あかつき</rt></ruby>の星がたった一つ<ruby>瞬<rt>またた</rt></ruby>いていた。</p>
+<p>「百年はもう来ていたんだな」とこの時始めて気がついた。</p>`
+  },
+  yume6:{
+    title:"夢十夜　第六夜",author:"夏目漱石",
+    note:"※ パブリックドメイン（著作権の切れた作品）の全文です。むずかしい漢字にはふりがなを付けています。",
+    html:`
+<p><ruby>運慶<rt>うんけい</rt></ruby>が<ruby>護国寺<rt>ごこくじ</rt></ruby>の山門で<ruby>仁王<rt>におう</rt></ruby>を刻んでいるという評判だから、散歩ながら行って見ると、自分より先にもう大勢集まって、しきりに<ruby>下馬評<rt>げばひょう</rt></ruby>をやっていた。</p>
+<p>山門の前五六間の所には、大きな<ruby>赤松<rt>あかまつ</rt></ruby>があって、その幹が<ruby>斜<rt>はす</rt></ruby>に山門の<ruby>甍<rt>いらか</rt></ruby>を隠して、遠い青空まで伸びている。松の緑と朱塗の門が<ruby>互<rt>たがい</rt></ruby>に照り合ってみごとに見える。その上松の位置がいい。門の左の端を<ruby>眼障<rt>めざわり</rt></ruby>にならないように、斜に切って行って、上になるほど幅を広く屋根まで突き出しているのが何となく古風である。<ruby>鎌倉<rt>かまくら</rt></ruby>時代とも思われる。</p>
+<p>ところが見ているものは、みんな自分と同じく、明治の人間である。その中でも<ruby>車夫<rt>しゃふ</rt></ruby>が一番多い。<ruby>辻待<rt>つじまち</rt></ruby>をして退屈だから立っているに相違ない。</p>
+<p>「大きなもんだなあ」と云っている。</p>
+<p>「人間を<ruby>拵<rt>こしら</rt></ruby>えるよりもよっぽど骨が折れるだろう」とも云っている。</p>
+<p>そうかと思うと、「へえ仁王だね。今でも仁王を彫るのかね。へえそうかね。私ゃまた仁王はみんな古いのばかりかと思ってた」と云った男がある。</p>
+<p>「どうも強そうですね。なんだか、今の人間はとても<ruby>敵<rt>かな</rt></ruby>わない感じがしますね。昔から誰が強いと云って、仁王ほど強い人はないんだからね。何でも<ruby>日本武尊<rt>やまとたけるのみこと</rt></ruby>よりも強いんだって云いますぜ」と話しかけた男もある。この男は<ruby>尻<rt>しり</rt></ruby>を<ruby>端折<rt>はしょ</rt></ruby>って、帽子を<ruby>被<rt>かぶ</rt></ruby>らずにいた。よほど無教育な男と見える。</p>
+<p>運慶は見物人の評判には<ruby>委細<rt>いさい</rt></ruby><ruby>頓着<rt>とんじゃく</rt></ruby>なく<ruby>鑿<rt>のみ</rt></ruby>と<ruby>槌<rt>つち</rt></ruby>を動かしている。いっこう振り向きもしない。高い所に乗って仁王の顔の<ruby>辺<rt>あたり</rt></ruby>をしきりに彫り抜いていく。</p>
+<p>運慶は頭に小さい<ruby>烏帽子<rt>えぼし</rt></ruby>のようなものを乗せて、<ruby>素袍<rt>すおう</rt></ruby>だか何だかわからない大きな袖を背中でくくっている。その様子がいかにも古くさい。わいわい言ってる見物人とはまるで釣り合が取れないようである。自分はどうして今時分まで運慶が生きているのかなと思った。どうも不思議な事があるものだと考えながら、やはり立って見ていた。</p>
+<p>しかし運慶の方では不思議とも<ruby>奇体<rt>きたい</rt></ruby>ともとんと感じ得ない様子で一生懸命に彫っている。<ruby>仰向<rt>あおむ</rt></ruby>いてこの態度を眺めていた一人の若い男が、自分の方を振り向いて、</p>
+<p>「さすがは運慶だな。眼中に我々なしだ。天下の英雄はただ仁王と我とあるのみと云う態度だ。<ruby>天晴<rt>あっぱれ</rt></ruby>だ」と云って<ruby>賞<rt>ほ</rt></ruby>め出した。</p>
+<p>自分はこの言葉を面白いと思った。それでちょっと若い男の方を見ると、若い男は、すかさず、</p>
+<p>「あの<ruby>鑿<rt>のみ</rt></ruby>と<ruby>槌<rt>つち</rt></ruby>の使い方を見たまえ。<ruby>大自在<rt>だいじざい</rt></ruby>の<ruby>妙境<rt>みょうきょう</rt></ruby>に達している」と云った。</p>
+<p>運慶は今太い眉を一寸の高さに横へ彫り抜いて、鑿の歯を<ruby>竪<rt>たて</rt></ruby>に返すや否や斜に、上から槌を打ち下した。堅い木を一度に削って、厚い<ruby>木屑<rt>きくず</rt></ruby>が槌の声に応じて飛んだと思ったら、小鼻のおっ開いた怒り鼻の<ruby>側面<rt>そくめん</rt></ruby>が<ruby>忽<rt>たちま</rt></ruby>ち浮き上がって来た。その刀の入れ方がいかにも無遠慮であった。そうして少しも疑念を<ruby>挟<rt>さしはさ</rt></ruby>んでおらんように見えた。</p>
+<p>「よくああ<ruby>無造作<rt>むぞうさ</rt></ruby>に鑿を使って、思うような眉や鼻ができるものだ」と自分はあまり感心したから<ruby>独言<rt>ひとりごと</rt></ruby>のように言った。すると<ruby>先<rt>さっき</rt></ruby>の若い男が、</p>
+<p>「なに、あれは眉や鼻を鑿で作るんじゃない。あの通りの眉や鼻が木の中に<ruby>埋<rt>うず</rt></ruby>まっているのを、鑿と槌の力で掘り出すまでだ。まるで土の中から石を掘り出すようなものだからけっして間違うはずはない」と云った。</p>
+<p>自分はこの時始めて<ruby>彫刻<rt>ちょうこく</rt></ruby>とはそんなものかと思い出した。はたしてそうなら誰にでもできる事だと思い出した。それで急に自分も仁王が彫って見たくなったから見物をやめてさっそく<ruby>家<rt>うち</rt></ruby>へ帰った。</p>
+<p>道具箱から鑿と<ruby>金槌<rt>かなづち</rt></ruby>を持ち出して、裏へ出て見ると、<ruby>先達<rt>せんだって</rt></ruby>の<ruby>暴風<rt>あらし</rt></ruby>で倒れた<ruby>樫<rt>かし</rt></ruby>を、<ruby>薪<rt>まき</rt></ruby>にするつもりで、<ruby>木挽<rt>こびき</rt></ruby>に<ruby>挽<rt>ひ</rt></ruby>かせた<ruby>手頃<rt>てごろ</rt></ruby>な奴が、たくさん積んであった。</p>
+<p>自分は一番大きいのを選んで、<ruby>勢<rt>いきおい</rt></ruby>よく彫り始めて見たが、不幸にして、仁王は見当らなかった。その次のにも運悪く掘り当てる事ができなかった。三番目のにも仁王はいなかった。自分は積んである薪を<ruby>片<rt>かた</rt></ruby>っ端から彫って見たが、どれもこれも仁王を<ruby>蔵<rt>かく</rt></ruby>しているのはなかった。ついに明治の木にはとうてい仁王は<ruby>埋<rt>うず</rt></ruby>まっていないものだと<ruby>悟<rt>さと</rt></ruby>った。それで運慶が今日まで生きている理由もほぼ<ruby>解<rt>わか</rt></ruby>った。</p>`
+  },
+  kiku:{
+    title:"問いかける言葉（重要文の抜粋）",author:"国谷裕子",
+    note:"⚠️ この作品は著作権で保護されているため、全文は掲載できません。ワークの傍線部（テストで問われる重要文）だけを載せています。全文は教科書・ワークで読んでね。",
+    html:`
+<p class="ex-lead">▼ 傍線③（第二段落）</p>
+<p>「私は、その問いに<ruby>必死<rt>ひっし</rt></ruby>になって答えようとしました。」</p>
+<p class="ex-lead">▼ 傍線④（第二段落）</p>
+<p>「私自身も、何かがおかしいと感じたり、不思議に思えたりしたら、私以外の人はどう考えているのかと、<ruby>積極的<rt>せっきょくてき</rt></ruby>に<ruby>疑問<rt>ぎもん</rt></ruby>や問いを投げかけていくことにした。」</p>
+<p class="ex-lead">▼ 傍線⑩（第三段落）</p>
+<p>「キャスターの仕事」を通じて学んだこと。</p>
+<p class="ex-lead">▼ 傍線⑤（第四段落・風向きの法則）</p>
+<p>「情報が、かえって人々の考える時間を<ruby>奪<rt>うば</rt></ruby>っている。」</p>
+<p class="ex-lead">▼ 傍線⑨（第五段落・確証バイアス）</p>
+<p>「そこには、<ruby>異質<rt>いしつ</rt></ruby>なものに出会って<ruby>戸惑<rt>とまど</rt></ruby>い、悩み、考える機会はありません。」</p>
+<p class="ex-lead">▼ 傍線⑪（第六段落）</p>
+<p>「ぶしつけな質問をされることがたびたび起きた。」</p>
+<p class="ex-lead">▼ 傍線⑥（第六段落）</p>
+<p>「わからないものはわからないということ。」</p>
+<p class="ex-lead">▼ 傍線⑦（結び）</p>
+<p>「問いを出し続けることがとても重要なこと。」</p>`
+  }
+};
+let curText="yume1", curDir="v", curFz=16;
+function buildTextPick(){
+  const items=[["yume1","夢十夜 第一夜"],["yume6","夢十夜 第六夜"],["kiku","問いかける言葉（抜粋）"]];
+  document.getElementById('textPick').innerHTML=items.map(([k,n])=>
+    `<button data-k="${k}" class="${k===curText?'active':''}" onclick="pickText('${k}')">${n}</button>`).join('');
+}
+function pickText(k){curText=k;buildTextPick();renderText();}
+function setDir(d){curDir=d;document.querySelectorAll('#dirSeg button').forEach(b=>b.classList.toggle('active',b.dataset.dir===d));renderText();}
+function fz(n){curFz=Math.max(13,Math.min(26,curFz+n*2));renderText();}
+function renderText(){
+  const t=texts[curText];const body=document.getElementById('readerBody');
+  document.getElementById('readerNote').textContent=t.note;
+  body.className='reader-body'+(curDir==='v'?' vertical':'');
+  body.style.setProperty('--rfz',curFz+'px');
+  body.innerHTML=`<h4>${t.title}</h4><div class="byline">${t.author}</div>${t.html}`;
+  if(curDir==='v'){body.scrollLeft=body.scrollWidth;}else{body.scrollTop=0;}
+}
+buildTextPick();renderText();
 
 /* ============ FLASHCARDS ============ */
 const decks={
@@ -658,6 +801,7 @@ const routeSteps=[
   {id:"r2",t:"重要語句・概念を覚える",tab:"kiku"},
   {id:"r3",t:"問いかける言葉の一問一答を解く",tab:"kiku"},
   {id:"r4",t:"「夢十夜」第一夜・第六夜のあらすじを読む",tab:"yume"},
+  {id:"r4b",t:"「本文」タブで夢十夜の全文を通読する",tab:"text"},
   {id:"r5",t:"夢十夜の一問一答を解く",tab:"yume"},
   {id:"r6",t:"暗記カードを1周する",tab:"cards"},
   {id:"r7",t:"力だめしテストで80%以上をとる",tab:"quiz"}
