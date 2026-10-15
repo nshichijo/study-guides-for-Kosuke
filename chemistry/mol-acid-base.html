@@ -13,18 +13,19 @@
   --f-display:"Dela Gothic One","Zen Kaku Gothic New","Hiragino Sans",sans-serif;
   --f-body:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
   --r:12px;
+  --aH:#ffffff; --aC:#454b58; --aO:#e04a4a; --aN:#3d6fe0; --aCl:#43b05c; --aNa:#9a5bd6; --aMg:#9aa5b1; --aHe:#e9b949; --iso1:#9fd3e6; --iso2:#f4b183; --liquid:#dcecf5;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --paper:#11151d; --card:#1a202b; --ink:#e8ebf2; --muted:#9ba4b6; --line:#2c3443; --soft:#232a37;
   --accent:#4fb3d3; --accent-ink:#0b1a20; --accent-soft:#16323c;
   --acid:#ff7d92; --acid-soft:#3b1c24; --base:#7fa9ff; --base-soft:#1c2843; --neu:#6fd197; --neu-soft:#17321f;
-  --warn:#f0b257; --warn-soft:#3a2b14; color-scheme:dark;
+  --warn:#f0b257; --warn-soft:#3a2b14; --aH:#f4f6fa; --aC:#8d95a6; --aO:#ff6b6b; --aN:#6f96ff; --aCl:#5cc977; --aNa:#b585ee; --aMg:#aeb8c3; --aHe:#f0c75e; --liquid:#1d3a48; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --paper:#11151d; --card:#1a202b; --ink:#e8ebf2; --muted:#9ba4b6; --line:#2c3443; --soft:#232a37;
   --accent:#4fb3d3; --accent-ink:#0b1a20; --accent-soft:#16323c;
   --acid:#ff7d92; --acid-soft:#3b1c24; --base:#7fa9ff; --base-soft:#1c2843; --neu:#6fd197; --neu-soft:#17321f;
-  --warn:#f0b257; --warn-soft:#3a2b14; color-scheme:dark;
+  --warn:#f0b257; --warn-soft:#3a2b14; --aH:#f4f6fa; --aC:#8d95a6; --aO:#ff6b6b; --aN:#6f96ff; --aCl:#5cc977; --aNa:#b585ee; --aMg:#aeb8c3; --aHe:#f0c75e; --liquid:#1d3a48; color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;margin:0}
@@ -125,6 +126,95 @@ th{background:var(--soft);font-weight:700;white-space:nowrap}
 .reviewlist .qcard{padding:14px}
 .muted{color:var(--muted)}
 .small{font-size:.88rem}
+/* ---- 図解ラボ ---- */
+.labgroup{display:flex;flex-wrap:nowrap;gap:6px;align-items:center;margin-bottom:8px;overflow-x:auto;scrollbar-width:thin;padding-bottom:4px}
+.labgroup>*{flex:0 0 auto}
+.labch{font-size:.75rem;font-weight:700;background:var(--ink);color:var(--paper);border-radius:6px;padding:2px 8px}
+#labnav .chip{font-size:.82rem;padding:4px 11px}
+.lsn{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:10px;min-width:0}
+.lsn-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:8px}
+.lsn-head h2{font-family:var(--f-display);font-weight:400;font-size:1.35rem;margin:0;text-wrap:balance}
+.lsn-head .no{font-size:.78rem;color:var(--muted);font-weight:700;letter-spacing:.05em}
+.lsn p{margin:.45em 0}
+.labfoot{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:end;margin:12px 0}
+.ctrl label{display:grid;gap:3px;font-size:.85rem;color:var(--muted);font-weight:700;min-width:0;max-width:100%}
+.ctrl label.grow{flex:1 1 200px}
+.ctrl select,.ctrl input[type=number],.ctrl input[type=text]{font:inherit;font-size:.95rem;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);max-width:100%;min-width:0}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.fig{margin:10px 0;overflow-x:auto}
+.svg{width:100%;height:auto;display:block;max-width:600px;margin:0 auto}
+.svg text{font-family:var(--f-body);font-size:11px}
+.svg .tm{fill:var(--muted)} .svg .tb{fill:var(--ink);font-weight:700} .svg .ti{fill:var(--ink)} .svg .ta{fill:var(--accent);font-weight:700}
+.svg .tdot{fill:#1b2233;font-weight:700}
+.svg .ax{stroke:var(--muted);stroke-width:1.5;fill:none} .svg .gr{stroke:var(--line);stroke-width:1;fill:none}
+.svg .glass{fill:none;stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
+.svg .glassfill{fill:var(--card);stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
+.svg .liq{fill:var(--liquid)}
+.svg .mv{transition:transform .7s cubic-bezier(.3,1.4,.5,1);transform-box:view-box}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid var(--ink);margin-right:4px;vertical-align:-1px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:10px 0}
+.readout div{background:var(--soft);border-radius:10px;padding:8px 10px;min-width:0}
+.readout span{display:block;font-size:.75rem;color:var(--muted);font-weight:700}
+.readout b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.hub2{display:grid;gap:10px;margin:12px 0}
+.hcell{display:flex;flex-wrap:wrap;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:12px;padding:8px 12px;background:var(--card)}
+.hcell.center{background:var(--ink);color:var(--paper);justify-content:center}
+.hcell .hl{font-weight:700;font-size:.9rem;flex:1 1 100%}
+.hcell.center .hl{flex:0 0 auto}
+.hcell input{font:inherit;font-size:1.05rem;width:9.5em;max-width:100%;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.hcell input:disabled{opacity:.5}
+.hrow{display:grid;grid-template-columns:minmax(0,8.5em) 1fr;gap:8px;align-items:center}
+.harr{display:grid;gap:2px;font-size:.78rem;text-align:center}
+.harr .dn{color:var(--accent);font-weight:700}
+.harr .up{color:var(--muted)}
+.flash{animation:fl 1s ease}
+@keyframes fl{from{box-shadow:0 0 0 6px var(--accent-soft)}to{box-shadow:0 0 0 0 transparent}}
+.steps4{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.stepper{display:inline-grid;grid-template-columns:auto auto auto;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
+.stepper button{border:0;background:var(--soft);width:30px;height:34px;font-weight:900;cursor:pointer}
+.stepper b{min-width:28px;text-align:center;font-variant-numeric:tabular-nums;font-size:1.1rem}
+.eqline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:1.15rem;margin:10px 0}
+.atomtbl td.okc{color:var(--neu);font-weight:700}.atomtbl td.ngc{color:var(--acid);font-weight:700}
+.tl-wrap{position:relative;height:84px;margin:10px 4px 4px}
+.tl-line{position:absolute;left:4%;right:4%;top:22px;height:3px;background:var(--line)}
+.tl-btn{position:absolute;top:8px;transform:translateX(-50%);border:0;background:none;cursor:pointer;display:grid;justify-items:center;gap:2px;padding:0;width:20%}
+.tl-btn i{width:30px;height:30px;border-radius:50%;background:var(--card);border:3px solid var(--accent);display:block}
+.tl-btn[aria-pressed="true"] i{background:var(--accent)}
+.tl-btn span{font-size:.72rem;font-weight:700;line-height:1.25;text-align:center}
+.bars{display:grid;gap:6px;margin:8px 0}
+.bar{display:grid;grid-template-columns:7em 1fr;gap:8px;align-items:center;font-size:.85rem}
+.bar .track{height:22px;background:var(--soft);border-radius:6px;overflow:hidden;display:flex}
+.bar .track i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.72rem;font-weight:700;color:#1b2233;transition:width .4s}
+.bstage{position:relative;height:150px;margin:12px 0;background:var(--soft);border-radius:14px;overflow:hidden}
+.bmol{position:absolute;top:44px;width:40%;text-align:center;display:grid;gap:4px}
+.bmol .fm{font-size:1.5rem;font-weight:900}
+.bmol .role{font-size:.8rem;font-weight:700;min-height:1.3em}
+.bmol.l{left:4%}.bmol.r{right:4%}
+.hplus{position:absolute;top:8px;left:30%;transform:translateX(-50%);width:40px;height:40px;border-radius:50%;background:var(--acid);color:#fff;display:grid;place-items:center;font-weight:900;transition:left .9s cubic-bezier(.5,-0.4,.5,1.4)}
+.hplus.moved{left:70%}
+.phruler{position:relative;margin:26px 0 34px}
+.phruler .phbar{height:22px}
+.phmark{position:absolute;top:-8px;width:4px;height:38px;background:var(--ink);border-radius:2px;transform:translateX(-50%);transition:left .2s}
+.phex{position:absolute;top:28px;transform:translateX(-50%);font-size:.66rem;color:var(--muted);white-space:nowrap;text-align:center;line-height:1.1}
+.phex::before{content:"";display:block;width:1px;height:6px;background:var(--muted);margin:0 auto 1px}
+.matrix{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:.85rem;margin:10px 0}
+.matrix div{background:var(--soft);border-radius:8px;padding:6px 8px;text-align:center}
+.matrix .hd{background:none;font-weight:700;color:var(--muted)}
+.matrix .on{outline:3px solid var(--accent);background:var(--accent-soft);font-weight:700}
+.toolsvg g.tool{cursor:pointer}
+.toolsvg g.tool:focus{outline:none}
+.toolsvg g.tool:focus-visible .glass,.toolsvg g.tool.sel .glass{stroke:var(--accent);stroke-width:3}
+.wetgame{display:grid;gap:8px;margin-top:10px}
+.wetrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:var(--soft);border-radius:10px;padding:8px 10px}
+.wetrow .btn{padding:6px 12px;font-size:.88rem}
+.titgrid{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr);gap:12px;align-items:start}
+@media (max-width:560px){.titgrid{grid-template-columns:minmax(0,110px) minmax(0,1fr)}}
+.oktbl td{text-align:center}.oktbl td:first-child{text-align:left}
+@keyframes drip{0%{transform:translateY(0);opacity:1}100%{transform:translateY(26px);opacity:0}}
+.drop{animation:drip .35s linear infinite;transform-box:view-box}
+
 @media (max-width:520px){
   .hubrow{grid-template-columns:1fr 1.2fr 1fr}
   .hubbox{font-size:.82rem;padding:6px 4px}
@@ -140,7 +230,8 @@ th{background:var(--soft);font-weight:700;white-space:nowrap}
 </div></header>
 
 <nav class="tabs"><div class="wrap" role="tablist">
-  <button class="tab" role="tab" data-tab="sum" aria-selected="true">まとめ</button>
+  <button class="tab" role="tab" data-tab="lab" aria-selected="true">図解ラボ</button>
+  <button class="tab" role="tab" data-tab="sum" aria-selected="false">まとめ</button>
   <button class="tab" role="tab" data-tab="card" aria-selected="false">暗記カード</button>
   <button class="tab" role="tab" data-tab="calc" aria-selected="false">計算ドリル</button>
   <button class="tab" role="tab" data-tab="quiz" aria-selected="false">確認クイズ</button>
@@ -148,8 +239,15 @@ th{background:var(--soft);font-weight:700;white-space:nowrap}
 
 <main class="wrap">
 
+<!-- =================== 図解ラボ =================== -->
+<div id="p-lab">
+  <div id="labnav"></div>
+  <div class="lsn" id="labbody"></div>
+  <div class="labfoot"><button class="btn" type="button" id="labprev">← 前のレッスン</button><button class="btn primary" type="button" id="labnext">次のレッスン →</button></div>
+</div>
+
 <!-- =================== まとめ =================== -->
-<div id="p-sum">
+<div id="p-sum" hidden>
   <div class="toc" id="toc"></div>
 
   <div class="chapter"><span class="no">第4章</span>物質量と化学反応式</div>
@@ -362,7 +460,7 @@ function exact(x){return String(+x.toFixed(4));}
 
 /* ---------- storage (per-device convenience) ---------- */
 const KEY="mol-acid-base-v1";
-let S={cards:{},calc:{c:0,t:0,streak:0,best:0},quiz:{best:{}},tab:"sum"};
+let S={cards:{},calc:{c:0,t:0,streak:0,best:0},quiz:{best:{}},tab:"lab",lab:0};
 try{const v=JSON.parse(localStorage.getItem(KEY));if(v)S=Object.assign(S,v);}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}renderStats();}
 
@@ -812,6 +910,520 @@ function initQuiz(){
   $("#quizfilter").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;quizCat=b.dataset.q;quizFilterSet();startQuiz();});
 }
 
+/* =================== 図解ラボ =================== */
+const ACOL={H:"--aH",C:"--aC",O:"--aO",N:"--aN",Cl:"--aCl",Na:"--aNa",Mg:"--aMg",He:"--aHe"};
+const SHAPES={
+  H2:[["H",-.55,0],["H",.55,0]],O2:[["O",-.6,0],["O",.6,0]],N2:[["N",-.6,0],["N",.6,0]],Cl2:[["Cl",-.7,0],["Cl",.7,0]],
+  He:[["He",0,0]],HCl:[["H",-.85,0],["Cl",.3,0]],NO:[["N",-.55,0],["O",.6,0]],
+  H2O:[["O",0,-.15],["H",-.8,.5],["H",.8,.5]],CO2:[["O",-1.1,0],["C",0,0],["O",1.1,0]],
+  CH4:[["C",0,0],["H",-.75,-.75],["H",.75,-.75],["H",-.75,.75],["H",.75,.75]],
+  NH3:[["N",0,.1],["H",-.85,.55],["H",.85,.55],["H",0,-.9]],NO2:[["N",0,0],["O",-1,.45],["O",1,.45]]
+};
+function molSVG(f,x,y,r){
+  const sh=SHAPES[f];if(!sh)return"";
+  const at=sh.slice().sort((a,b)=>(a[0]==="H")-(b[0]==="H"));
+  return `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})">`+at.map(a=>{const k=a[0]==="H"?.62:(a[0]==="Cl"?1.15:1);
+    return `<circle cx="${(a[1]*r).toFixed(1)}" cy="${(a[2]*r).toFixed(1)}" r="${(r*k).toFixed(1)}" style="fill:var(${ACOL[a[0]]});stroke:var(--ink)" stroke-width="1"/>`;}).join("")+"</g>";
+}
+function atomLegend(els){return `<div class="legend">${els.map(e=>`<span><i style="background:var(${ACOL[e]})"></i>${e}</span>`).join("")}</div>`;}
+const qs=(el,s)=>el.querySelector(s);
+function fmtv(x){if(!isFinite(x))return"";if(x===0)return"0";if(Math.abs(x)>=1e5||Math.abs(x)<1e-3){const p=sciParts(x);return p[0]+"×10^"+p[1];}return String(+x.toPrecision(3));}
+function flashEl(e){if(!e)return;e.classList.remove("flash");void e.offsetWidth;e.classList.add("flash");}
+function lerpC(stops,t){t=Math.max(0,Math.min(1,t));const n=stops.length-1,i=Math.min(n-1,Math.floor(t*n)),u=t*n-i,a=stops[i],b=stops[i+1];
+  const c=[0,1,2].map(k=>Math.round(a[k]+(b[k]-a[k])*u));const al=(a[3]===undefined?1:a[3])+((b[3]===undefined?1:b[3])-(a[3]===undefined?1:a[3]))*u;return `rgba(${c[0]},${c[1]},${c[2]},${al.toFixed(2)})`;}
+const INDS={
+  BTB:{n:"BTB（ブロモチモールブルー）",a:6.0,b:7.6,st:[[232,196,40],[70,165,90],[40,100,210]],l:"黄→緑→青"},
+  MO:{n:"メチルオレンジ",a:3.1,b:4.4,st:[[220,50,60],[245,190,50]],l:"赤→黄"},
+  MR:{n:"メチルレッド",a:4.2,b:6.2,st:[[220,50,60],[245,200,50]],l:"赤→黄"},
+  PP:{n:"フェノールフタレイン",a:8.0,b:9.8,st:[[225,60,150,0],[225,60,150,.95]],l:"無色→赤"},
+  UNI:{n:"万能試験紙のイメージ",a:0,b:14,st:[[211,40,60],[235,100,45],[243,190,54],[160,200,60],[63,174,90],[42,150,190],[42,110,201],[70,70,190],[107,51,176]],l:"pHごとに色が変わる"}
+};
+function indColor(k,pH){const d=INDS[k];return lerpC(d.st,(pH-d.a)/(d.b-d.a));}
+function beakerSVG(id,w){return `<svg viewBox="0 0 120 130" class="svg" style="max-width:${w||150}px"><path d="M22,22 L22,112 Q22,122 32,122 L88,122 Q98,122 98,112 L98,22" class="glassfill"/><rect x="24" y="52" width="72" height="68" rx="6" class="liq"/><rect id="${id}" x="24" y="52" width="72" height="68" rx="6" style="fill:transparent;transition:fill .4s"/><path d="M22,22 L22,112 Q22,122 32,122 L88,122 Q98,122 98,112 L98,22" class="glass"/><line x1="16" y1="22" x2="104" y2="22" class="glass"/></svg>`;}
+
+/* ---- 1 原子量 ---- */
+function lsIsotope(el){
+  const ISO={Cl:{a:35.0,b:37.0,ma:35,mb:37,p:75,aw:"35.5"},Cu:{a:62.9,b:64.9,ma:63,mb:65,p:69,aw:"63.5"},B:{a:10.0,b:11.0,ma:10,mb:11,p:20,aw:"10.8"}};
+  el.innerHTML=`<p>同じ元素でも、中性子の数がちがう<b>同位体</b>がまざっている。原子量は、同位体の相対質量に<b>存在比</b>をかけて足した<b>平均値</b>（基準は [[^{12}C]] ＝ 12）。</p>
+  <div class="ctrl"><label>元素<select id="isoE"><option value="Cl">塩素 Cl</option><option value="Cu">銅 Cu</option><option value="B">ホウ素 B</option></select></label>
+  <label class="grow">軽い同位体の割合：<span id="isoPv"></span><input type="range" id="isoP" min="0" max="100" step="1"></label>
+  <button class="btn" id="isoR" type="button">自然界の割合</button></div>
+  <div class="fig" id="isoF"></div><div class="key" id="isoK"></div>
+  <div class="trap"><b>ポイント</b>　スライダーを動かすと、平均値（▼）は多いほうの同位体に近づく。原子量が整数にならないのはこのため。</div>`;
+  const E=qs(el,"#isoE"),P=qs(el,"#isoP");
+  function draw(){
+    const d=ISO[E.value],p=+P.value,avg=d.a*p/100+d.b*(100-p)/100,nA=Math.round(p/5);
+    qs(el,"#isoPv").textContent=p+"%";
+    let dots="";for(let i=0;i<20;i++){const x=24+(i%10)*28,y=22+Math.floor(i/10)*30,l=i<nA;
+      dots+=`<circle cx="${x}" cy="${y}" r="${l?11:13}" style="fill:var(${l?"--iso1":"--iso2"});stroke:var(--ink)" stroke-width="1"/><text x="${x}" y="${y+4}" text-anchor="middle" class="tdot" style="font-size:9px">${l?d.ma:d.mb}</text>`;}
+    const X=v=>24+(v-d.a)/(d.b-d.a)*252;
+    const ln=`<line x1="24" y1="112" x2="276" y2="112" class="ax"/><circle cx="24" cy="112" r="4" style="fill:var(--iso1)"/><circle cx="276" cy="112" r="4" style="fill:var(--iso2)"/><text x="24" y="130" text-anchor="middle" class="tm">${d.a.toFixed(1)}</text><text x="276" y="130" text-anchor="middle" class="tm">${d.b.toFixed(1)}</text>
+      <polygon points="${X(avg)-7},94 ${X(avg)+7},94 ${X(avg)},108" style="fill:var(--accent)"/><text x="${X(avg)}" y="88" text-anchor="middle" class="ta" style="font-size:13px">${avg.toFixed(2)}</text>`;
+    qs(el,"#isoF").innerHTML=`<svg viewBox="0 0 300 138" class="svg">${dots}${ln}</svg><div class="legend">${tx(`<span><i style="background:var(--iso1)"></i>[[^{${d.ma}}${E.value}]]（${d.a.toFixed(1)}）${p}%</span><span><i style="background:var(--iso2)"></i>[[^{${d.mb}}${E.value}]]（${d.b.toFixed(1)}）${100-p}%</span>`)}</div>`;
+    qs(el,"#isoK").innerHTML=`${d.a.toFixed(1)} × ${p}/100 ＋ ${d.b.toFixed(1)} × ${100-p}/100 ＝ <b>${avg.toFixed(2)}</b>`+(p===d.p?`<br>→ 自然界の割合なので、これが<b>原子量 ${d.aw}</b>`:"");
+  }
+  E.addEventListener("change",()=>{P.value=ISO[E.value].p;draw();});
+  P.addEventListener("input",draw);qs(el,"#isoR").addEventListener("click",()=>{P.value=ISO[E.value].p;draw();});
+  P.value=75;draw();
+}
+
+/* ---- 2 molの交差点 ---- */
+function lsHub(el){
+  const subs=ALL;
+  const rows=[["N","粒子の数","個","× 6.0×10^{23}","÷ 6.0×10^{23}"],["m","質量","g","× モル質量","÷ モル質量"],["V","気体の体積（標準状態）","L","× 22.4 L/mol","÷ 22.4 L/mol"]];
+  el.innerHTML=`<p>物質量 [mol] を<b>まん中</b>において、3つの量と行き来する。<b>どの欄に数字を入れても</b>、ほかの欄が自動で計算される。</p>
+  <div class="ctrl"><label>物質<select id="hubS">${subs.map((s,i)=>`<option value="${i}">${s.n}　${s.f}</option>`).join("")}</select></label></div>
+  <div class="hub2"><div class="hcell center" id="hcN0"><span class="hl">物質量</span><input id="hn" inputmode="decimal" value="0.50" aria-label="物質量"><span>mol</span></div>
+  ${rows.map(r=>`<div class="hrow"><div class="harr"><span class="dn">${tx(r[3])} ↓</span><span class="up">↑ ${tx(r[4])}</span></div><div class="hcell" id="hc${r[0]}"><span class="hl">${r[1]}</span><input id="h${r[0]}" inputmode="decimal" aria-label="${r[1]}"><span>${r[2]}</span></div></div>`).join("")}</div>
+  <div class="key" id="hubK"></div>
+  <p class="small muted">大きい数は「1.2×10^24」または「1.2e24」の形で入力できます。</p>
+  <div class="trap"><b>ポイント</b>　どんな問題も「まず mol に直す」→「求めたい量に直す」の2ステップ。</div>`;
+  const Sel=qs(el,"#hubS");Sel.value=String(subs.findIndex(s=>s.f==="H2O"));
+  let last="n";
+  function upd(src){
+    last=src;const s=subs[+Sel.value],gas=GASES.includes(s);
+    const v=parseUser(qs(el,"#h"+src).value);
+    const vin=qs(el,"#hV");vin.disabled=!gas;vin.placeholder=gas?"":"気体ではない";
+    if(isNaN(v)||v<0){qs(el,"#hubK").textContent="数字を入れてください";return;}
+    const n=src==="n"?v:src==="N"?v/AV:src==="m"?v/s.M:v/22.4;
+    const out={n:n,N:n*AV,m:n*s.M,V:n*22.4};
+    ["n","N","m","V"].forEach(k=>{if(k===src)return;const inp=qs(el,"#h"+k);if(k==="V"&&!gas){inp.value="";return;}inp.value=fmtv(out[k]);flashEl(qs(el,k==="n"?"#hcN0":"#hc"+k));});
+    const pn=s.p?s.n+s.p:s.n+"（組成式の単位）";
+    const toMol={n:"",N:`${sciH(out.N)} 個 ÷ 6.0×10<sup>23</sup> /mol ＝ `,m:`${fmtv(out.m)} g ÷ ${s.M} g/mol ＝ `,V:`${fmtv(out.V)} L ÷ 22.4 L/mol ＝ `}[src];
+    qs(el,"#hubK").innerHTML=`${toMol}<b>${fmtv(n)} mol</b><br><span class="small">粒子：${fmtv(n)} × 6.0×10<sup>23</sup> ＝ ${sciH(out.N)} 個（${pn}）／ 質量：${fmtv(n)} × ${s.M} ＝ ${fmtv(out.m)} g`+(gas?` ／ 体積：${fmtv(n)} × 22.4 ＝ ${fmtv(out.V)} L`:"")+`</span>`;
+  }
+  ["n","N","m","V"].forEach(k=>qs(el,"#h"+k).addEventListener("input",()=>upd(k)));
+  Sel.addEventListener("change",()=>{qs(el,"#hn").value=qs(el,"#hn").value||"0.50";upd("n");});
+  upd("n");
+}
+
+/* ---- 3 22.4 L の箱とてんびん ---- */
+function lsGas(el){
+  const G=GASES.filter(g=>SHAPES[g.f]);
+  const opt=G.map((g,i)=>`<option value="${i}">${g.n} ${g.f}（${g.M}）</option>`).join("");
+  el.innerHTML=`<p>標準状態（0 ℃, 1.013×10^{5} Pa）では、<b>どんな気体でも 1 mol ＝ 22.4 L</b>（アボガドロの法則）。箱の大きさと粒の数は同じでも、<b>質量はちがう</b>。</p>
+  <div class="ctrl"><label>左の箱<select id="gL">${opt}</select></label><label>右の箱<select id="gR">${opt}</select></label></div>
+  <div class="fig"><svg viewBox="0 0 320 230" class="svg" id="gSvg">
+    <polygon points="160,62 140,214 180,214" style="fill:var(--soft);stroke:var(--ink)" stroke-width="2"/><line x1="110" y1="216" x2="210" y2="216" class="glass"/>
+    <g class="mv" id="gBeam"><line x1="45" y1="62" x2="275" y2="62" style="stroke:var(--ink)" stroke-width="5" stroke-linecap="round"/><circle cx="160" cy="62" r="6" style="fill:var(--ink)"/></g>
+    <g class="mv" id="gBL"></g><g class="mv" id="gBR"></g></svg></div>
+  <div class="key" id="gK"></div>
+  <div class="trap"><b>ポイント</b>　気体の密度 [g/L] ＝ モル質量 ÷ 22.4。同温・同圧なら<b>密度の比 ＝ 分子量の比</b>。だから「水素の○倍の密度」から分子量がわかる。</div>`;
+  const L=qs(el,"#gL"),R=qs(el,"#gR");L.value=String(G.findIndex(g=>g.f==="O2"));R.value=String(G.findIndex(g=>g.f==="H2"));
+  function box(g,cx){let m="";for(let i=0;i<6;i++){m+=molSVG(g.f,cx-26+(i%3)*26,108+Math.floor(i/3)*30,7);}
+    return `<line x1="${cx}" y1="62" x2="${cx}" y2="84" style="stroke:var(--muted)" stroke-width="1.5"/><rect x="${cx-44}" y="84" width="88" height="76" rx="6" class="glassfill"/>${m}<text x="${cx}" y="176" text-anchor="middle" class="tb">${g.n} ${g.M} g</text><text x="${cx}" y="190" text-anchor="middle" class="tm">22.4 L・6.0×10²³個</text>`;}
+  function draw(){
+    const a=G[+L.value],b=G[+R.value];
+    let ang=(b.M-a.M)/Math.max(a.M,b.M)*14;ang=Math.max(-14,Math.min(14,ang));
+    const dy=Math.sin(ang*Math.PI/180)*110;
+    qs(el,"#gBeam").style.transform=`rotate(${ang}deg)`;qs(el,"#gBeam").style.transformOrigin="160px 62px";
+    qs(el,"#gBL").innerHTML=box(a,50);qs(el,"#gBR").innerHTML=box(b,270);
+    qs(el,"#gBL").style.transform=`translate(${(110-Math.cos(ang*Math.PI/180)*110).toFixed(1)}px,${(-dy).toFixed(1)}px)`;
+    qs(el,"#gBR").style.transform=`translate(${(-(110-Math.cos(ang*Math.PI/180)*110)).toFixed(1)}px,${dy.toFixed(1)}px)`;
+    const heavy=a.M>=b.M?a:b,light=a.M>=b.M?b:a;
+    qs(el,"#gK").innerHTML=tx(`${a.n} [[${a.f}]]：${a.M} ÷ 22.4 ＝ <b>${(a.M/22.4).toFixed(2)} g/L</b>　／　${b.n} [[${b.f}]]：${b.M} ÷ 22.4 ＝ <b>${(b.M/22.4).toFixed(2)} g/L</b>`)+
+      (a.M===b.M?"<br>同じ重さ":`<br>${heavy.n}は${light.n}の <b>${(heavy.M/light.M).toFixed(2)} 倍</b>重い（＝分子量の比 ${heavy.M}:${light.M}）`);
+  }
+  L.addEventListener("change",draw);R.addEventListener("change",draw);draw();
+}
+
+/* ---- 4 溶解度と再結晶 ---- */
+function lsSol(el){
+  const D=[[0,13.3],[10,22.0],[20,31.6],[30,45.6],[40,63.9],[50,85.2],[60,109.2],[70,138],[80,168.8]];
+  const S=t=>{const i=Math.min(7,Math.floor(t/10)),u=(t-D[i][0])/10;return D[i][1]+(D[i+1][1]-D[i][1])*u;};
+  const Tof=m=>{if(m<=D[0][1])return 0;for(let i=0;i<8;i++)if(m<=D[i+1][1])return D[i][0]+10*(m-D[i][1])/(D[i+1][1]-D[i][1]);return 80;};
+  const X=t=>40+t/80*262,Y=g=>200-g/180*186;
+  let path="M"+D.map(d=>X(d[0]).toFixed(1)+","+Y(d[1]).toFixed(1)).join(" L");
+  let grid="";for(let g=0;g<=180;g+=30)grid+=`<line x1="40" y1="${Y(g)}" x2="302" y2="${Y(g)}" class="gr"/><text x="34" y="${Y(g)+4}" text-anchor="end" class="tm">${g}</text>`;
+  for(let t=0;t<=80;t+=20)grid+=`<text x="${X(t)}" y="216" text-anchor="middle" class="tm">${t}</text>`;
+  el.innerHTML=`<p><b>溶解度</b>：水 <b>100 g</b> に溶ける溶質の最大の質量 [g]。硝酸カリウム [[KNO3]] は温度が高いほどよく溶ける。熱い水にたくさん溶かして<b>冷やすと、溶けきれない分が結晶</b>として出てくる（<b>再結晶</b>）。</p>
+  <div class="ctrl"><label class="grow">水 100 g に入れる [[KNO3]]：<span id="sMv"></span><input type="range" id="sM" min="10" max="160" step="1" value="100"></label>
+  <label class="grow">温度：<span id="sTv"></span><input type="range" id="sT" min="0" max="80" step="1" value="80"></label>
+  <button class="btn primary" type="button" id="sCool">20 ℃まで冷やす</button></div>
+  <div class="titgrid"><div>${""}<svg viewBox="0 0 120 150" class="svg" id="sBk"></svg></div>
+  <svg viewBox="0 0 310 226" class="svg">${grid}<path d="${path} L${X(80)},${Y(180)} L${X(0)},${Y(180)} Z" style="fill:var(--warn-soft)"/><path d="${path}" class="ax" style="stroke:var(--accent);stroke-width:3"/>
+   <text x="70" y="40" class="tm">結晶が出る（溶けきれない）</text><text x="200" y="190" class="tm">全部溶ける</text>
+   <line x1="40" y1="200" x2="302" y2="200" class="ax"/><line x1="40" y1="14" x2="40" y2="200" class="ax"/><text x="302" y="226" text-anchor="end" class="tm">温度[℃]</text><text x="6" y="10" class="tm">g/水100g</text>
+   <line id="sDrop" class="gr" style="stroke:var(--acid);stroke-dasharray:4 3;stroke-width:2"/><circle id="sPt" r="6" style="fill:var(--acid);stroke:var(--card)" stroke-width="2"/></svg></div>
+  <div class="readout"><div><span>この温度の溶解度</span><b id="sS"></b></div><div><span>溶けている量</span><b id="sIn"></b></div><div><span>出てきた結晶</span><b id="sCr"></b></div><div><span>結晶が出はじめる温度</span><b id="sT0"></b></div></div>
+  <div class="trap"><b>計算のコツ</b>　出てくる結晶 ＝ 溶かした量 − 冷やした温度での溶解度（水 100 g のとき）。水が 200 g なら溶解度も 2 倍で考える。</div>`;
+  const M=qs(el,"#sM"),T=qs(el,"#sT");let timer=null;
+  function draw(){
+    const m=+M.value,t=+T.value,s=S(t),inn=Math.min(m,s),cr=Math.max(0,m-s);
+    qs(el,"#sMv").textContent=m+" g";qs(el,"#sTv").textContent=t+" ℃";
+    qs(el,"#sS").textContent=s.toFixed(1)+" g";qs(el,"#sIn").textContent=inn.toFixed(1)+" g";qs(el,"#sCr").textContent=cr.toFixed(1)+" g";qs(el,"#sT0").textContent="約 "+Tof(m).toFixed(0)+" ℃";
+    const pt=qs(el,"#sPt");pt.setAttribute("cx",X(t));pt.setAttribute("cy",Y(Math.min(m,180)));
+    const dl=qs(el,"#sDrop");dl.setAttribute("x1",X(t));dl.setAttribute("x2",X(t));dl.setAttribute("y1",Y(m));dl.setAttribute("y2",Y(s));dl.style.display=cr>0?"":"none";
+    let dots="";const nd=Math.round(inn/6);for(let i=0;i<nd;i++){const x=30+((i*37)%62),y=60+((i*23)%48);dots+=`<circle cx="${x}" cy="${y}" r="2.2" style="fill:var(--accent)"/>`;}
+    let crs="";const nc=Math.round(cr/4);for(let i=0;i<nc;i++){const x=30+(i%12)*5.5,y=124-Math.floor(i/12)*5;crs+=`<rect x="${x}" y="${y}" width="5" height="5" transform="rotate(45 ${x+2.5} ${y+2.5})" style="fill:var(--card);stroke:var(--ink)" stroke-width=".8"/>`;}
+    qs(el,"#sBk").innerHTML=`<path d="M22,30 L22,124 Q22,134 32,134 L88,134 Q98,134 98,124 L98,30" class="glassfill"/><rect x="24" y="50" width="72" height="82" rx="6" class="liq"/>${dots}${crs}<path d="M22,30 L22,124 Q22,134 32,134 L88,134 Q98,134 98,124 L98,30" class="glass"/><text x="60" y="146" text-anchor="middle" class="tm">水100 g ・ ${t}℃</text>`;
+  }
+  M.addEventListener("input",draw);T.addEventListener("input",draw);
+  qs(el,"#sCool").addEventListener("click",()=>{clearInterval(timer);if(+T.value<=20)T.value=80;timer=setInterval(()=>{T.value=+T.value-1;draw();if(+T.value<=20)clearInterval(timer);},50);});
+  draw();return ()=>clearInterval(timer);
+}
+
+/* ---- 5 モル濃度の溶液をつくる ---- */
+function lsMolar(el){
+  const flask=(x,lvl,mark,dots)=>{const id="fc"+Math.random().toString(36).slice(2,7);
+    const top=lvl==="full"?60:lvl==="half"?118:200;
+    let d="";for(let i=0;i<(dots||0);i++)d+=`<circle cx="${x-22+((i*29)%44)}" cy="${132+((i*17)%30)}" r="2" style="fill:var(--accent)"/>`;
+    return `<defs><clipPath id="${id}"><path d="M${x-7},40 L${x-7},104 A34,34 0 1 0 ${x+7},104 L${x+7},40 Z"/></clipPath></defs>
+      <rect x="${x-40}" y="${top}" width="80" height="${180-top}" class="liq" clip-path="url(#${id})"/>${d}
+      <path d="M${x-7},40 L${x-7},104 A34,34 0 1 0 ${x+7},104 L${x+7},40" class="glass"/>
+      ${mark?`<line x1="${x-11}" y1="60" x2="${x+11}" y2="60" style="stroke:var(--acid)" stroke-width="2"/><text x="${x+14}" y="63" class="tm">標線</text>`:""}`;};
+  const beaker=(x,y,lvl,dots)=>{let d="";for(let i=0;i<dots;i++)d+=`<circle cx="${x-18+((i*13)%36)}" cy="${y+18+((i*7)%14)}" r="2" style="fill:var(--accent)"/>`;
+    return `<rect x="${x-24}" y="${y+40-lvl}" width="48" height="${lvl}" class="liq"/>${d}<path d="M${x-26},${y} L${x-26},${y+40} L${x+26},${y+40} L${x+26},${y}" class="glass"/>`;};
+  const ST=[
+    {t:"① はかる",d:"NaCl 0.10 mol を電子てんびんではかる。<br>58.5 g/mol × 0.10 mol ＝ <b>5.85 g</b>",
+     s:`<rect x="90" y="120" width="120" height="44" rx="6" class="glassfill"/><rect x="110" y="132" width="80" height="20" rx="3" style="fill:var(--soft)"/><text x="150" y="147" text-anchor="middle" class="tb" style="font-size:13px">5.85 g</text><line x1="100" y1="114" x2="200" y2="114" class="glass"/><polygon points="130,113 150,92 170,113" style="fill:var(--card);stroke:var(--ink)"/><text x="150" y="84" text-anchor="middle" class="tm">NaCl</text>`},
+    {t:"② 溶かす",d:"ビーカーで<b>少量の純水</b>に溶かす（いきなりメスフラスコに入れない）。",
+     s:`<g transform="translate(0,40)">${beaker(150,40,26,14)}</g><line x1="160" y1="40" x2="140" y2="110" style="stroke:var(--muted)" stroke-width="3"/><text x="150" y="30" text-anchor="middle" class="tm">ガラス棒でかき混ぜる</text>`},
+    {t:"③ 移す",d:"溶液を<b>100 mL メスフラスコ</b>に移す。ビーカーやガラス棒を純水で洗い、<b>その洗い液も入れる</b>（溶質を残さないため）。",
+     s:`<g transform="rotate(35 80 70)">${beaker(80,40,20,8)}</g><path d="M110,50 Q140,40 196,40" class="ax" style="stroke-dasharray:4 3" marker-end="url(#arw)"/>${flask(210,"half",true,10)}`},
+    {t:"④ 標線まで",d:"純水を<b>標線</b>まで加え、栓をしてよく振る → <b>1.0 mol/L</b>（0.10 mol ÷ 0.100 L）。",
+     s:`${flask(150,"full",true,14)}<path d="M60,40 L60,90 Q60,100 70,100 L90,100 Q100,100 100,90 L100,40 Z" class="glassfill"/><path d="M80,40 L80,20 L118,30" class="glass"/><text x="80" y="120" text-anchor="middle" class="tm">洗浄びん</text>`}
+  ];
+  el.innerHTML=`<p><b>モル濃度</b> [mol/L] ＝ 溶質の物質量 [mol] ÷ <b>溶液</b>の体積 [L]。正確な濃度の溶液は<b>メスフラスコ</b>でつくる。1.0 mol/L の NaCl 水溶液 100 mL をつくってみよう。</p>
+  <div class="steps4" id="mSteps">${ST.map((s,i)=>`<button class="chip" type="button" data-i="${i}">${s.t}</button>`).join("")}</div>
+  <div class="fig"><svg viewBox="0 0 300 190" class="svg" id="mSvg"></svg></div><div class="key" id="mD"></div>
+  <h3 style="margin:16px 0 4px;font-size:1rem">濃度計算機</h3>
+  <div class="ctrl"><label class="grow">NaCl の質量：<span id="mGv"></span><input type="range" id="mG" min="1" max="30" step="0.5" value="5.85"></label>
+  <label>できあがりの体積<select id="mV"><option>100</option><option>200</option><option selected>250</option><option>500</option><option>1000</option></select></label></div>
+  <div class="readout"><div><span>物質量</span><b id="mN"></b></div><div><span>体積</span><b id="mL"></b></div><div><span>モル濃度</span><b id="mC"></b></div></div>
+  <div class="trap"><b>ひっかけ注意</b>　「水 1 L に溶かす」と「溶かして全体を 1 L にする」はちがう。モル濃度は<b>溶液全体</b>の体積で割る。mL は ÷1000 して L に。</div>`;
+  let cur=0;
+  function step(i){cur=i;qs(el,"#mSvg").innerHTML=`<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--muted)"/></marker></defs>`+ST[i].s;
+    qs(el,"#mD").innerHTML=ST[i].d;el.querySelectorAll("#mSteps .chip").forEach((b,j)=>b.setAttribute("aria-pressed",String(j===i)));}
+  qs(el,"#mSteps").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b)step(+b.dataset.i);});
+  function calc(){const g=+qs(el,"#mG").value,V=+qs(el,"#mV").value,n=g/58.5;
+    qs(el,"#mGv").textContent=g+" g";qs(el,"#mN").textContent=g+" ÷ 58.5 ＝ "+n.toFixed(3)+" mol";qs(el,"#mL").textContent=V+" mL ＝ "+(V/1000)+" L";qs(el,"#mC").textContent=(n/(V/1000)).toFixed(3)+" mol/L";}
+  qs(el,"#mG").addEventListener("input",calc);qs(el,"#mV").addEventListener("change",calc);
+  step(0);calc();
+}
+
+/* ---- 6 反応式を分子で見る ---- */
+const RXS=[
+  {eq:"CH4 + 2O2 → CO2 + 2H2O",r:[["CH4",1,"メタン",16],["O2",2,"酸素",32]],p:[["CO2",1,"二酸化炭素",44],["H2O",2,"水",18]],els:["C","H","O"]},
+  {eq:"2H2 + O2 → 2H2O",r:[["H2",2,"水素",2],["O2",1,"酸素",32]],p:[["H2O",2,"水",18]],els:["H","O"]},
+  {eq:"N2 + 3H2 → 2NH3",r:[["N2",1,"窒素",28],["H2",3,"水素",2]],p:[["NH3",2,"アンモニア",17]],els:["N","H"]},
+  {eq:"H2 + Cl2 → 2HCl",r:[["H2",1,"水素",2],["Cl2",1,"塩素",71]],p:[["HCl",2,"塩化水素",36.5]],els:["H","Cl"]}
+];
+function lsReact(el){
+  el.innerHTML=`<p>化学反応式の<b>係数</b>は、反応する分子の<b>数の比 ＝ 物質量 [mol] の比</b>。分子の数を変えて、どちらが<b>足りなくなる（使い切る）</b>か見てみよう。</p>
+  <div class="ctrl"><label>反応<select id="rS">${RXS.map((r,i)=>`<option value="${i}">${r.eq.replace(/(\D)(\d)/g,"$1$2")}</option>`).join("")}</select></label></div>
+  <div class="eqline" id="rEq"></div>
+  <div class="ctrl"><label class="grow" id="rL1"></label><label class="grow" id="rL2"></label></div>
+  <div class="fig"><svg viewBox="0 0 320 300" class="svg" id="rSvg"></svg></div><div id="rLeg"></div>
+  <div class="key" id="rK"></div>
+  <div class="trap"><b>ポイント</b>　「1粒 ＝ 1 mol」と読みかえれば、そのまま mol の計算。片方が余るときは<b>足りないほう（使い切るほう）</b>を基準に生成物を計算する。質量の合計は反応の前後で同じ（質量保存の法則）。</div>`;
+  const Sl=qs(el,"#rS");let n1=2,n2=4;
+  function draw(){
+    const R=RXS[+Sl.value],[A,B]=R.r;
+    qs(el,"#rEq").innerHTML=tx("[["+R.eq+"]]");
+    qs(el,"#rL1").innerHTML=`<span>${A[2]} [[${A[0]}]]：${n1} 個</span><input type="range" id="rN1" min="0" max="6" value="${n1}">`.replace(/\[\[(.+?)\]\]/,(m,f)=>chem(f));
+    qs(el,"#rL2").innerHTML=`<span>${B[2]} [[${B[0]}]]：${n2} 個</span><input type="range" id="rN2" min="0" max="8" value="${n2}">`.replace(/\[\[(.+?)\]\]/,(m,f)=>chem(f));
+    qs(el,"#rN1").addEventListener("input",e=>{n1=+e.target.value;draw();});qs(el,"#rN2").addEventListener("input",e=>{n2=+e.target.value;draw();});
+    const xi=Math.floor(Math.min(n1/A[1],n2/B[1]));
+    const left1=n1-xi*A[1],left2=n2-xi*B[1];
+    const before=[].concat(Array(n1).fill(A[0]),Array(n2).fill(B[0]));
+    let after=[].concat(Array(left1).fill(A[0]),Array(left2).fill(B[0]));R.p.forEach(p=>{after=after.concat(Array(xi*p[1]).fill(p[0]));});
+    const place=(list,y0)=>list.map((f,i)=>molSVG(f,30+(i%7)*43,y0+24+Math.floor(i/7)*30,7.5)).join("");
+    qs(el,"#rSvg").innerHTML=`<rect x="4" y="4" width="312" height="120" rx="10" class="glassfill"/><text x="12" y="20" class="tb">反応前</text>${place(before,8)}
+      <text x="160" y="146" text-anchor="middle" class="ta" style="font-size:20px">↓</text>
+      <rect x="4" y="160" width="312" height="134" rx="10" class="glassfill"/><text x="12" y="176" class="tb">反応後</text>${place(after,164)}`;
+    qs(el,"#rLeg").innerHTML=atomLegend(R.els);
+    const massB=n1*A[3]+n2*B[3];
+    let lim=xi===0?"反応が起こらない（どちらかが 0 か足りない）":
+      left1===0&&left2===0?"ちょうど過不足なく反応！":left1===0?`${A[2]}を使い切り、${B[2]}が ${left2} 個余る`:`${B[2]}を使い切り、${A[2]}が ${left1} 個余る`;
+    qs(el,"#rK").innerHTML=`${lim}<br><span class="small">反応した：${A[2]} ${xi*A[1]} 個・${B[2]} ${xi*B[1]} 個 → 生じた：${R.p.map(p=>p[2]+" "+xi*p[1]+" 個").join("・")}<br>1粒＝1 mol とすると 質量：反応前 ${fmtv(massB)} g → 反応後 ${fmtv(massB)} g（変わらない）</span>`;
+  }
+  Sl.addEventListener("change",()=>{const R=RXS[+Sl.value];n1=R.r[0][1];n2=R.r[1][1]*2;draw();});
+  draw();
+}
+
+/* ---- 7 係数合わせパズル ---- */
+function lsBalance(el){
+  const EQS=[{L:["H2","O2"],R:["H2O"]},{L:["CH4","O2"],R:["CO2","H2O"]},{L:["N2","H2"],R:["NH3"]},{L:["Na","H2O"],R:["NaOH","H2"]},{L:["C3H8","O2"],R:["CO2","H2O"]},{L:["Al","O2"],R:["Al2O3"]},{L:["Fe2O3","CO"],R:["Fe","CO2"]},{L:["Al","HCl"],R:["AlCl3","H2"]},{L:["C2H6","O2"],R:["CO2","H2O"]},{L:["Cu","O2"],R:["CuO"]},{L:["Mg","HCl"],R:["MgCl2","H2"]}];
+  el.innerHTML=`<p>両辺で<b>原子の数がそろう</b>ように係数をつける。＋／−で係数を変えて、下の表が全部 ✓ になればクリア。</p>
+  <div class="eqline" id="bEq"></div>
+  <div class="tbl"><table class="atomtbl" id="bT"></table></div><div id="bMsg"></div>
+  <div class="row" style="margin-top:10px"><button class="btn" type="button" id="bHint">ヒント（未定係数法）</button><button class="btn primary" type="button" id="bNext">次の式 →</button></div><div id="bH"></div>`;
+  let k=0,co=[];
+  function load(i){k=i%EQS.length;const e=EQS[k];co=Array(e.L.length+e.R.length).fill(1);qs(el,"#bH").innerHTML="";draw();}
+  function draw(){
+    const e=EQS[k],terms=e.L.concat(e.R);
+    qs(el,"#bEq").innerHTML=terms.map((f,i)=>`${i===e.L.length?"<b>→</b>":i>0?"<b>＋</b>":""}<span class="stepper"><button type="button" data-i="${i}" data-d="-1" aria-label="減らす">−</button><b>${co[i]}</b><button type="button" data-i="${i}" data-d="1" aria-label="増やす">＋</button></span><span class="f">${chem(f)}</span>`).join(" ");
+    const cnt=(side,off)=>{const c={};side.forEach((f,i)=>{const p=parseF(f);for(const a in p)c[a]=(c[a]||0)+p[a]*co[off+i];});return c;};
+    const cl=cnt(e.L,0),cr=cnt(e.R,e.L.length),els=[...new Set(Object.keys(cl).concat(Object.keys(cr)))];
+    let all=true;qs(el,"#bT").innerHTML=`<tr><th>原子</th><th>左辺</th><th>右辺</th><th></th></tr>`+els.map(a=>{const ok=cl[a]===cr[a];if(!ok)all=false;return `<tr><td>${a}</td><td>${cl[a]||0}</td><td>${cr[a]||0}</td><td class="${ok?"okc":"ngc"}">${ok?"✓":"✕"}</td></tr>`;}).join("");
+    const g=co.reduce((a,b)=>{while(b){[a,b]=[b,a%b];}return a;});
+    qs(el,"#bMsg").innerHTML=all?(g>1?`<div class="fb bad"><span class="verdict">そろったけど、全部 ${g} で割れるよ。いちばん簡単な整数にしよう。</span></div>`:`<div class="fb good"><span class="verdict">クリア！</span> ${tx("[["+terms.map((f,i)=>(i===e.L.length?" → ":i>0?" + ":"")+(co[i]>1?co[i]:"")+f).join("")+"]]")}</div>`):"";
+  }
+  qs(el,"#bEq").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const i=+b.dataset.i;co[i]=Math.max(1,Math.min(12,co[i]+ +b.dataset.d));draw();});
+  qs(el,"#bNext").addEventListener("click",()=>load(k+1));
+  qs(el,"#bHint").addEventListener("click",()=>{qs(el,"#bH").innerHTML=`<div class="trap"><b>手順</b>　① いちばん複雑な物質の係数を 1 とおく ② その物質にしか出てこない原子から順に係数を決める ③ O や H のように何か所にも出る原子は最後 ④ 分数になったら全体を何倍かして整数に。</div>`;});
+  load(0);
+}
+
+/* ---- 8 化学の基礎法則 ---- */
+function lsLaws(el){
+  const V=[
+    ()=>`<div class="bars"><div class="bar"><span>反応前</span><div class="track"><i style="width:20%;background:var(--aC);color:#fff">CH₄ 16g</i><i style="width:80%;background:var(--aO)">O₂ 64g</i></div></div><div class="bar"><span>反応後</span><div class="track"><i style="width:55%;background:#c9ccd3">CO₂ 44g</i><i style="width:45%;background:#9fd3e6">H₂O 36g</i></div></div></div><p class="small">どちらも合計 <b>80 g</b>。</p>`,
+    ()=>`<div class="ctrl"><label class="grow">水の質量：<span id="lwv">18</span> g<input type="range" id="lw" min="9" max="90" step="9" value="18"></label></div><div class="bars"><div class="bar"><span>水 H₂O</span><div class="track"><i style="width:11.1%;background:var(--aH)">H</i><i style="width:88.9%;background:var(--aO)" id="lwo">O</i></div></div></div><p class="small" id="lwt"></p>`,
+    ()=>`<svg viewBox="0 0 300 80" class="svg" style="max-width:360px">${molSVG("NO",60,30,10)}${molSVG("NO2",210,32,10)}<text x="60" y="66" text-anchor="middle" class="tb">NO：N 1.4 g に O 1.6 g</text><text x="210" y="66" text-anchor="middle" class="tb">NO₂：N 1.4 g に O 3.2 g</text></svg>${atomLegend(["N","O"])}<p class="small">同じ量の N と結合する O の質量比 ＝ 1.6 : 3.2 ＝ <b>1 : 2</b></p>`,
+    ()=>{const b=(f,n,x,w)=>{let m="";for(let i=0;i<n;i++)m+=molSVG(f,x+16+(i%2)*26,26+Math.floor(i/2)*26,7);return `<rect x="${x}" y="8" width="${w}" height="60" rx="6" class="glassfill"/>${m}`;};
+      return `<svg viewBox="0 0 320 96" class="svg" style="max-width:420px">${b("N2",4,4,60)}<text x="80" y="44" class="tb" style="font-size:16px">＋</text>${b("O2",4,96,60)}<text x="172" y="44" class="tb" style="font-size:16px">→</text>${b("NO",8,196,116)}<text x="34" y="88" text-anchor="middle" class="tm">1体積</text><text x="126" y="88" text-anchor="middle" class="tm">1体積</text><text x="254" y="88" text-anchor="middle" class="tm">2体積</text></svg>${atomLegend(["N","O"])}<p class="small">N₂ ＋ O₂ → 2NO　体積比 <b>1 : 1 : 2</b>（簡単な整数比）</p>`;},
+    ()=>{const b=(f,x)=>{let m="";for(let i=0;i<6;i++)m+=molSVG(f,x+20+(i%3)*28,30+Math.floor(i/3)*28,7);return `<rect x="${x}" y="8" width="96" height="66" rx="6" class="glassfill"/>${m}`;};
+      return `<svg viewBox="0 0 260 96" class="svg" style="max-width:340px">${b("H2",20)}${b("CO2",144)}<text x="68" y="90" text-anchor="middle" class="tm">水素</text><text x="192" y="90" text-anchor="middle" class="tm">二酸化炭素</text></svg><p class="small">同温・同圧・同体積 → 分子の数は<b>同じ</b>（ここでは6個ずつ）。</p>`;}
+  ];
+  el.innerHTML=`<p>化学の基礎になった5つの法則。年代順にタップして、図で確かめよう。</p>
+  <div class="tl-wrap"><div class="tl-line"></div>${LAWS.map((l,i)=>`<button class="tl-btn" type="button" data-i="${i}" style="left:${10+i*20}%"><i></i><span>${l.y}<br>${l.who}</span></button>`).join("")}</div>
+  <div class="lsn" style="margin-top:0;background:var(--paper)" id="lwBox"></div>
+  <div class="trap"><b>覚え方</b>　年代順に「<b>ラ・プ・ド・ゲ・ア</b>」（質量保存 → 定比例 → 倍数比例 → 気体反応 → アボガドロ）。気体反応の法則を説明するために、アボガドロが「分子」を考えた。</div>`;
+  function show(i){const l=LAWS[i];el.querySelectorAll(".tl-btn").forEach((b,j)=>b.setAttribute("aria-pressed",String(i===j)));
+    qs(el,"#lwBox").innerHTML=`<h3 style="margin:0 0 4px">${l.law}</h3><p class="small muted">${l.who}（${l.c}）${l.y}年</p><p>${l.d}</p>${V[i]()}`;
+    const w=qs(el,"#lw");if(w){const f=()=>{const m=+w.value;qs(el,"#lwv").textContent=m;qs(el,"#lwt").innerHTML=`水 ${m} g ＝ 水素 ${(m/9).toFixed(1)} g ＋ 酸素 ${(m*8/9).toFixed(1)} g　→ いつでも <b>1 : 8</b>`;};w.addEventListener("input",f);f();}}
+  el.querySelectorAll(".tl-btn").forEach(b=>b.addEventListener("click",()=>show(+b.dataset.i)));
+  show(0);
+}
+
+/* ---- 9 H⁺のキャッチボール ---- */
+function lsBronsted(el){
+  const BR=[
+    {eq:"HCl + NH3 → NH4^{+} + Cl^{-}",d:["HCl","Cl^{-}"],a:["NH3","NH4^{+}"]},
+    {eq:"HCl + H2O → H3O^{+} + Cl^{-}",d:["HCl","Cl^{-}"],a:["H2O","H3O^{+}"]},
+    {eq:"CH3COOH + H2O ⇄ CH3COO^{-} + H3O^{+}",d:["CH3COOH","CH3COO^{-}"],a:["H2O","H3O^{+}"]},
+    {eq:"NH3 + H2O ⇄ NH4^{+} + OH^{-}",d:["H2O","OH^{-}"],a:["NH3","NH4^{+}"]},
+    {eq:"CO3^{2-} + H2O ⇄ HCO3^{-} + OH^{-}",d:["H2O","OH^{-}"],a:["CO3^{2-}","HCO3^{-}"]}
+  ];
+  el.innerHTML=`<p><b>ブレンステッド・ローリーの定義</b>：H⁺ を<b>わたす</b>ほうが<b class="acid">酸</b>、H⁺ を<b>受け取る</b>ほうが<b class="base">塩基</b>。まず予想してから、H⁺ の動きを見よう。</p>
+  <div class="eqline" id="brEq"></div>
+  <div class="bstage"><div class="hplus" id="brH">H⁺</div><div class="bmol l"><span class="fm" id="brD"></span><span class="role" id="brDr"></span></div><div class="bmol r"><span class="fm" id="brA"></span><span class="role" id="brAr"></span></div></div>
+  <p style="font-weight:700">H⁺ をわたす（＝酸）のはどっち？</p>
+  <div class="row" id="brQ"></div><div id="brFb"></div>
+  <div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="brN">次の反応 →</button></div>
+  <div class="trap"><b>ひっかけ注意</b>　水 H₂O は相手しだいで<b>酸にも塩基にもなる</b>。式の左に書いてある順番は関係ない。H⁺（Hひとつ分）が<b>どこからどこへ</b>移ったかを見る。</div>`;
+  let k=0,order=[];
+  function load(){const b=BR[k];const H=qs(el,"#brH");H.classList.remove("moved");H.style.opacity="1";
+    qs(el,"#brEq").innerHTML=tx("[["+b.eq+"]]");qs(el,"#brD").innerHTML=chem(b.d[0]);qs(el,"#brA").innerHTML=chem(b.a[0]);
+    qs(el,"#brDr").textContent="";qs(el,"#brAr").textContent="";qs(el,"#brFb").innerHTML="";
+    order=shuffle([b.d[0],b.a[0]]);qs(el,"#brQ").innerHTML=order.map(f=>`<button class="btn" type="button" data-f="${f}">${chem(f)}</button>`).join("");}
+  qs(el,"#brQ").addEventListener("click",e=>{const btn=e.target.closest("button");if(!btn)return;const b=BR[k],ok=btn.dataset.f===b.d[0];
+    el.querySelectorAll("#brQ button").forEach(x=>x.disabled=true);
+    qs(el,"#brH").classList.add("moved");
+    setTimeout(()=>{qs(el,"#brD").innerHTML=chem(b.d[1]);qs(el,"#brA").innerHTML=chem(b.a[1]);
+      qs(el,"#brDr").innerHTML=`<span class="acid">酸（H⁺をわたした）</span>`;qs(el,"#brAr").innerHTML=`<span class="base">塩基（H⁺を受け取った）</span>`;
+      qs(el,"#brH").style.opacity="0";},900);
+    qs(el,"#brFb").innerHTML=`<div class="fb ${ok?"good":"bad"}"><span class="verdict">${ok?"正解！":"ざんねん"}</span> ${chem(b.d[0])} が H⁺ をわたして ${chem(b.d[1])} に、${chem(b.a[0])} が受け取って ${chem(b.a[1])} になる。</div>`;});
+  qs(el,"#brN").addEventListener("click",()=>{k=(k+1)%BR.length;load();});
+  load();
+}
+
+/* ---- 10 強酸と弱酸 ---- */
+function lsAlpha(el){
+  const AC={HCl:{n:"塩酸 HCl",v:1,a:1,fix:true},H2SO4:{n:"硫酸 H₂SO₄",v:2,a:1,fix:true},CH3COOH:{n:"酢酸 CH₃COOH",v:1,a:0.01,fix:false}};
+  const perm=shuffle(Array.from({length:100},(_,i)=>i));
+  el.innerHTML=`<p><b>電離度 α</b> ＝ 電離した酸の物質量 ÷ 溶かした酸の物質量。強酸は<b>ほぼ全部</b>（α≒1）、弱酸は<b>ほんの少し</b>しか電離しない。下の図は酸の分子 100 個のようす。</p>
+  <div class="ctrl"><label>酸<select id="aS"><option value="HCl">塩酸 HCl（強酸・1価）</option><option value="H2SO4">硫酸 H₂SO₄（強酸・2価）</option><option value="CH3COOH" selected>酢酸 CH₃COOH（弱酸・1価）</option></select></label>
+  <label>濃度<select id="aC"><option value="0.10">0.10 mol/L</option><option value="0.010">0.010 mol/L</option></select></label>
+  <label class="grow">電離度 α：<span id="aAv"></span><input type="range" id="aA" min="1" max="100" step="1"></label></div>
+  <div class="fig"><svg viewBox="0 0 300 230" class="svg" style="max-width:420px" id="aSvg"></svg></div>
+  <div class="legend"><span><i style="background:var(--soft)"></i>電離していない分子</span><span><i style="background:var(--acid)"></i>H⁺</span><span><i style="background:var(--base)"></i>陰イオン</span></div>
+  <div class="readout"><div><span>100個中 電離</span><b id="aN"></b></div><div><span>[H⁺] ＝ 価数×c×α</span><b id="aH"></b></div><div><span>pH</span><b id="aP"></b></div></div>
+  <div class="trap"><b>ひっかけ注意</b>　強い・弱いは<b>電離度</b>で決まり、<b>価数とは関係ない</b>。また、中和に必要な塩基の量は強弱に関係なく、<b>価数と物質量</b>で決まる。</div>`;
+  const S_=qs(el,"#aS"),A=qs(el,"#aA"),C=qs(el,"#aC");
+  function draw(){
+    const d=AC[S_.value];A.disabled=d.fix;if(d.fix)A.value=100;
+    const al=+A.value/100,ni=Math.round(al*100),c=+C.value;
+    qs(el,"#aAv").textContent=al.toFixed(2)+(d.fix?"（強酸なので約1）":"");
+    const ion=new Set(perm.slice(0,ni));let g="";
+    for(let i=0;i<100;i++){const x=38+(i%10)*24,y=58+Math.floor(i/10)*16;
+      if(ion.has(i)){g+=`<circle cx="${x+3}" cy="${y}" r="5" style="fill:var(--base)"/><circle cx="${x-6}" cy="${y-5}" r="3" style="fill:var(--acid)"/>`+(d.v===2?`<circle cx="${x+11}" cy="${y-5}" r="3" style="fill:var(--acid)"/>`:"");}
+      else g+=`<circle cx="${x+2}" cy="${y}" r="5" style="fill:var(--soft);stroke:var(--ink)" stroke-width=".8"/><circle cx="${x-4}" cy="${y-1}" r="3" style="fill:var(--aH);stroke:var(--ink)" stroke-width=".8"/>`;}
+    qs(el,"#aSvg").innerHTML=`<path d="M22,30 L22,210 Q22,222 34,222 L266,222 Q278,222 278,210 L278,30" class="glassfill"/><rect x="24" y="44" width="252" height="176" class="liq"/>${g}<path d="M22,30 L22,210 Q22,222 34,222 L266,222 Q278,222 278,210 L278,30" class="glass"/>`;
+    const h=d.v*c*al;
+    qs(el,"#aN").textContent=ni+" 個"+(d.v===2?`（H⁺は ${ni*2} 個）`:"");
+    qs(el,"#aH").innerHTML=`${d.v} × ${C.value} × ${al.toFixed(2)} ＝ ${sciH(h)}`;
+    qs(el,"#aP").textContent=(-Math.log10(h)).toFixed(1);
+  }
+  S_.addEventListener("change",()=>{const d=AC[S_.value];A.value=Math.round(d.a*100);draw();});
+  A.addEventListener("input",draw);C.addEventListener("change",draw);A.value=1;draw();
+}
+
+/* ---- 11 pH ものさし ---- */
+function lsPH(el){
+  const EX=[[1.5,"胃液"],[2.5,"レモン汁"],[3,"食酢"],[5.6,"雨水"],[7,"純水"],[8.2,"海水"],[10,"石けん水"],[12.4,"石灰水"]];
+  el.innerHTML=`<p><b>pH</b> は [H⁺] の大きさを表す目もり。[H⁺] ＝ 1.0×10^{-n} mol/L なら pH ＝ n。<b>pH が 1 小さいと [H⁺] は 10 倍</b>。スライダーを動かして、指示薬の色も確かめよう。</p>
+  <div class="ctrl"><label class="grow">pH：<b id="pV"></b><input type="range" id="pS" min="0" max="14" step="0.1" value="3"></label>
+  <label>指示薬<select id="pI">${Object.keys(INDS).map(k=>`<option value="${k}">${INDS[k].n}</option>`).join("")}</select></label></div>
+  <div class="phruler"><div class="phbar"></div><div class="phmark" id="pM"></div>${EX.map(e=>`<div class="phex" style="left:${e[0]/14*100}%">${e[1]}<br>約${e[0]}</div>`).join("")}</div>
+  <div class="titgrid"><div>${beakerSVG("pB",150)}<p class="small muted" style="text-align:center;margin:0" id="pCn"></p></div>
+  <div><div class="readout"><div><span>[H⁺] mol/L</span><b id="pH1"></b></div><div><span>[OH⁻] mol/L</span><b id="pH2"></b></div><div><span>[H⁺][OH⁻]</span><b>1.0×10<sup>−14</sup></b></div><div><span>液性</span><b id="pQ"></b></div></div>
+  <p class="small" id="pR"></p></div></div>
+  <div class="trap"><b>ポイント</b>　酸性でも OH⁻ は 0 ではない。水のイオン積 K<sub>w</sub> ＝ [H⁺][OH⁻] ＝ 1.0×10^{-14} (mol/L)² が<b>いつも一定</b>（25 ℃）なので、片方がわかればもう片方も求まる。</div>`;
+  const P=qs(el,"#pS"),I=qs(el,"#pI");
+  function draw(){const p=+P.value,ind=INDS[I.value];
+    qs(el,"#pV").textContent=p.toFixed(1);qs(el,"#pM").style.left=(p/14*100)+"%";
+    qs(el,"#pB").style.fill=indColor(I.value,p);
+    const pw=x=>Number.isInteger(+x.toFixed(1))?`1.0×10<sup>−${(+x.toFixed(1))}</sup>`:sciH(Math.pow(10,-x));
+    qs(el,"#pH1").innerHTML=pw(p);qs(el,"#pH2").innerHTML=pw(14-p);
+    qs(el,"#pQ").innerHTML=p<6.95?'<span class="acid">酸性</span>':p>7.05?'<span class="base">塩基性</span>':'<span class="neu">中性</span>';
+    const r=Math.pow(10,7-p);qs(el,"#pR").innerHTML=p<7?`[H⁺] は純水の <b>${r>=100?fmtv(r).replace("^","<sup>")+(r>=1e5?"</sup>":""):r.toFixed(r<10?1:0)} 倍</b>`:p>7?`[OH⁻] は純水の <b>${fmtv(1/r).replace("^","<sup>")+(1/r>=1e5?"</sup>":"")} 倍</b>`:"純水と同じ";
+    qs(el,"#pCn").textContent=`${ind.n.replace(/（.+）/,"")}：変色域 ${ind.a}〜${ind.b}`;}
+  P.addEventListener("input",draw);I.addEventListener("change",draw);draw();
+}
+
+/* ---- 12 塩の液性マシン ---- */
+function lsSalt(el){
+  const AC=[["HCl","塩酸",1],["HNO3","硝酸",1],["H2SO4","硫酸",1],["CH3COOH","酢酸",0],["H2CO3","炭酸",0]];
+  const BA=[["NaOH","水酸化ナトリウム",1],["KOH","水酸化カリウム",1],["Ca(OH)2","水酸化カルシウム",1],["NH3","アンモニア",0]];
+  const SF={HCl:["NaCl","KCl","CaCl2","NH4Cl"],HNO3:["NaNO3","KNO3","Ca(NO3)2","NH4NO3"],H2SO4:["Na2SO4","K2SO4","CaSO4","(NH4)2SO4"],CH3COOH:["CH3COONa","CH3COOK","(CH3COO)2Ca","CH3COONH4"],H2CO3:["Na2CO3","K2CO3","CaCO3","(NH4)2CO3"]};
+  el.innerHTML=`<p>中和でできる塩の水溶液の性質は、もとの酸と塩基の<b>「強いほう」</b>の性質になる。酸と塩基を選んでみよう（BTB溶液の色で表示）。</p>
+  <div class="ctrl"><label>酸<select id="slA">${AC.map((a,i)=>`<option value="${i}">${a[1]} ${a[0]}（${a[2]?"強酸":"弱酸"}）</option>`).join("")}</select></label>
+  <label>塩基<select id="slB">${BA.map((b,i)=>`<option value="${i}">${b[1]} ${b[0]}（${b[2]?"強塩基":"弱塩基"}）</option>`).join("")}</select></label></div>
+  <div class="titgrid"><div>${beakerSVG("slBk",150)}</div><div><div class="eqline" id="slF"></div><div id="slT"></div>
+  <div class="matrix"><div class="hd"></div><div class="hd">強塩基</div><div class="hd">弱塩基</div><div class="hd">強酸</div><div id="m11">中性</div><div id="m12">酸性</div><div class="hd">弱酸</div><div id="m21">塩基性</div><div id="m22">—</div></div></div></div>
+  <div class="trap"><b>ひっかけ注意</b>　[[NaHCO3]] は「酸性塩」だが水溶液は<b>塩基性</b>。[[NaHSO4]] は強酸＋強塩基でも<b>酸性</b>（HSO₄⁻ が H⁺ を出す）。塩の分類（正塩・酸性塩・塩基性塩）と液性は<b>無関係</b>。</div>`;
+  qs(el,".trap").innerHTML=tx(qs(el,".trap").innerHTML);
+  const A=qs(el,"#slA"),B=qs(el,"#slB");
+  function draw(){const a=AC[+A.value],b=BA[+B.value],f=SF[a[0]][+B.value];
+    const key=(a[2]?"1":"2")+(b[2]?"1":"2");
+    const res={"11":["中性",7,"neu"],"12":["酸性",5,"acid"],"21":["塩基性",9,"base"],"22":["弱酸＋弱塩基（化学基礎ではあまり扱わない）",7,"neu"]}[key];
+    qs(el,"#slF").innerHTML=`<span class="f">${chem(a[0])}</span> ＋ <span class="f">${chem(b[0])}</span> → <b class="f">${chem(f)}</b>`;
+    const note=f==="CaSO4"||f==="CaCO3"?"（水に溶けにくい塩）":f==="CH3COONH4"?"（ほぼ中性）":"";
+    qs(el,"#slT").innerHTML=`<p>${a[2]?"強酸":"弱酸"} ＋ ${b[2]?"強塩基":"弱塩基"} → 水溶液は <b class="${res[2]}">${res[0]}</b>${note}</p>`;
+    qs(el,"#slBk").style.fill=indColor("BTB",res[1]);
+    ["11","12","21","22"].forEach(k=>qs(el,"#m"+k).classList.toggle("on",k===key));}
+  A.addEventListener("change",draw);B.addEventListener("change",draw);draw();
+}
+
+/* ---- 13 中和滴定の器具 ---- */
+function lsTools(el){
+  const T=[
+    {n:"メスフラスコ",use:"正確な濃度の溶液をつくる（標線まで水を入れる）",wet:"ok",why:"あとで標線まで水を足すので、最初にぬれていても溶質の量は変わらない。"},
+    {n:"ホールピペット",use:"決まった体積の溶液を正確にはかり取る",wet:"co",why:"中の水で溶液がうすまり、はかり取る溶質の量が減ってしまう。"},
+    {n:"ビュレット",use:"滴下した溶液の体積をはかる（目もりは上が0）",wet:"co",why:"中の水で滴下する溶液がうすまり、滴下量が多く出てしまう。"},
+    {n:"コニカルビーカー",use:"酸と塩基を反応させる（中和させる）",wet:"ok",why:"はかり取った溶質の物質量は変わらないので、ぬれていてもよい。"}
+  ];
+  const svg=`<svg viewBox="0 0 400 250" class="svg toolsvg" style="max-width:520px">
+   <g class="tool" data-i="0" tabindex="0" role="button" aria-label="メスフラスコ"><rect x="10" y="10" width="80" height="240" style="fill:transparent"/><path d="M44,40 L44,150 A32,32 0 1 0 56,150 L56,40" class="glass"/><rect x="42" y="28" width="16" height="12" rx="2" style="fill:var(--muted)"/><line x1="40" y1="90" x2="60" y2="90" style="stroke:var(--acid)" stroke-width="2"/><text x="50" y="246" text-anchor="middle" class="tb">メスフラスコ</text></g>
+   <g class="tool" data-i="1" tabindex="0" role="button" aria-label="ホールピペット"><rect x="100" y="10" width="80" height="240" style="fill:transparent"/><path d="M137,14 L137,100 Q126,110 126,130 Q126,150 137,160 L139,222 L141,222 L143,160 Q154,150 154,130 Q154,110 143,100 L143,14" class="glass"/><line x1="133" y1="46" x2="147" y2="46" style="stroke:var(--acid)" stroke-width="2"/><text x="140" y="246" text-anchor="middle" class="tb">ホールピペット</text></g>
+   <g class="tool" data-i="2" tabindex="0" role="button" aria-label="ビュレット"><rect x="200" y="10" width="80" height="240" style="fill:transparent"/><rect x="232" y="12" width="16" height="170" class="glass"/>${Array.from({length:9},(_, i)=>`<line x1="232" y1="${24+i*18}" x2="${i%2?238:242}" y2="${24+i*18}" style="stroke:var(--muted)"/>`).join("")}<rect x="226" y="184" width="28" height="8" rx="2" style="fill:var(--muted)"/><path d="M238,192 L240,222 L242,192" class="glass"/><text x="240" y="246" text-anchor="middle" class="tb">ビュレット</text></g>
+   <g class="tool" data-i="3" tabindex="0" role="button" aria-label="コニカルビーカー"><rect x="290" y="10" width="110" height="240" style="fill:transparent"/><path d="M332,120 L332,148 L300,222 L380,222 L348,148 L348,120" class="glass"/><text x="340" y="246" text-anchor="middle" class="tb">コニカルビーカー</text></g></svg>`;
+  el.innerHTML=`<p>中和滴定で使う4つの器具。<b>図をタップ</b>すると説明が出る。</p><div class="fig">${svg}</div><div class="key" id="tlI">器具をタップしてください</div>
+  <h3 style="margin:16px 0 4px;font-size:1rem">クイズ：純水でぬれていたら、どうする？</h3><div class="wetgame">${T.map((t,i)=>`<div class="wetrow" data-i="${i}"><b>${t.n}</b><span class="row"><button class="btn" type="button" data-a="ok">そのまま使う</button><button class="btn" type="button" data-a="co">共洗いする</button></span><span class="small" style="flex-basis:100%" id="wt${i}"></span></div>`).join("")}</div>
+  <div class="trap"><b>共洗い</b>　これから入れる溶液で内側を2〜3回すすぐこと。<b>中身を「はかり取る・はかって出す」器具（ピペット・ビュレット）は共洗い</b>、<b>中身の量があとで決まる・反応させるだけの器具は、ぬれたままでOK</b>。加熱して乾かすのは体積がくるうので×。</div>`;
+  function sel(i){el.querySelectorAll("g.tool").forEach(g=>g.classList.toggle("sel",+g.dataset.i===i));const t=T[i];
+    qs(el,"#tlI").innerHTML=`<b>${t.n}</b>：${t.use}<br>ぬれていたら → <b class="${t.wet==="ok"?"neu":"acid"}">${t.wet==="ok"?"そのまま使ってよい":"共洗いする"}</b>（${t.why}）`;}
+  el.querySelectorAll("g.tool").forEach(g=>{g.addEventListener("click",()=>sel(+g.dataset.i));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();sel(+g.dataset.i);}});});
+  el.querySelectorAll(".wetrow").forEach(r=>r.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const t=T[+r.dataset.i],ok=b.dataset.a===t.wet;
+    r.querySelectorAll("button").forEach(x=>{x.classList.remove("ok","ng");if(x===b)x.classList.add(ok?"ok":"ng");});
+    qs(el,"#wt"+r.dataset.i).innerHTML=(ok?"<b class='neu'>正解</b> ":"<b class='acid'>ちがう</b> ")+t.why;}));
+}
+
+/* ---- 14 中和滴定シミュレーター ---- */
+const KA_AC=2.7e-5,KB_NH3=1.8e-5,KW=1e-14,KC1=4.5e-7,KC2=4.7e-11;
+const COMBOS=[
+  {n:"塩酸 ＋ 水酸化ナトリウム",k:"強酸＋強塩基",an:"HCl",ti:"NaOH",anT:"0.10 mol/L 塩酸 10 mL",tiT:"0.10 mol/L NaOH水溶液",eq:[10],ind:"PP"},
+  {n:"酢酸 ＋ 水酸化ナトリウム",k:"弱酸＋強塩基",an:"AcOH",ti:"NaOH",anT:"0.10 mol/L 酢酸 10 mL",tiT:"0.10 mol/L NaOH水溶液",eq:[10],ind:"PP"},
+  {n:"塩酸 ＋ アンモニア水",k:"強酸＋弱塩基",an:"HCl",ti:"NH3",anT:"0.10 mol/L 塩酸 10 mL",tiT:"0.10 mol/L アンモニア水",eq:[10],ind:"MO"},
+  {n:"酢酸 ＋ アンモニア水",k:"弱酸＋弱塩基",an:"AcOH",ti:"NH3",anT:"0.10 mol/L 酢酸 10 mL",tiT:"0.10 mol/L アンモニア水",eq:[10],ind:"BTB"},
+  {n:"硫酸 ＋ 水酸化ナトリウム",k:"2価の強酸＋強塩基",an:"H2SO4",ti:"NaOH",anT:"0.10 mol/L 硫酸 10 mL",tiT:"0.10 mol/L NaOH水溶液",eq:[20],ind:"PP"},
+  {n:"炭酸ナトリウム ＋ 塩酸",k:"二段階の中和",an:"Na2CO3",ti:"HCl",anT:"0.10 mol/L 炭酸ナトリウム水溶液 10 mL",tiT:"0.10 mol/L 塩酸",eq:[10,20],ind:"PP"}
+];
+function titPH(c,V){
+  const Va=10,Vt=Va+V,ca=0.10*Va/Vt,cb=0.10*V/Vt;
+  const f=h=>{let pos=h,neg=KW/h;
+    if(c.an==="HCl")neg+=ca;else if(c.an==="AcOH")neg+=ca*KA_AC/(KA_AC+h);else if(c.an==="H2SO4")neg+=2*ca;
+    else if(c.an==="Na2CO3"){pos+=2*ca;const D=h*h+KC1*h+KC1*KC2;neg+=ca*(KC1*h+2*KC1*KC2)/D;}
+    if(c.ti==="NaOH")pos+=cb;else if(c.ti==="NH3")pos+=cb*h/(h+KW/KB_NH3);else if(c.ti==="HCl")neg+=cb;
+    return pos-neg;};
+  let lo=-15,hi=1;for(let i=0;i<55;i++){const m=(lo+hi)/2;if(f(Math.pow(10,m))>0)hi=m;else lo=m;}
+  return -(lo+hi)/2;
+}
+function lsTitr(el){
+  el.innerHTML=`<p>コニカルビーカーの溶液に、ビュレットから溶液を少しずつ加える。<b>中和点の前後で pH が急に変わる（ジャンプ）</b>。そのジャンプの中に<b>変色域がある指示薬</b>を選ぶのがコツ。</p>
+  <div class="ctrl"><label>組み合わせ<select id="tC">${COMBOS.map((c,i)=>`<option value="${i}">${c.n}（${c.k}）</option>`).join("")}</select></label>
+  <label>指示薬<select id="tI">${["PP","MO","MR","BTB"].map(k=>`<option value="${k}">${INDS[k].n}</option>`).join("")}</select></label></div>
+  <p class="small muted" id="tSet"></p>
+  <div class="titgrid"><svg viewBox="0 0 140 280" class="svg" id="tApp"></svg><svg viewBox="0 0 330 240" class="svg" id="tCv"></svg></div>
+  <div class="ctrl"><label class="grow">滴下量：<b id="tVv"></b><input type="range" id="tV" min="0" max="30" step="0.1" value="0"></label></div>
+  <div class="row"><button class="btn" type="button" id="t01">＋1滴（0.1 mL）</button><button class="btn" type="button" id="t1">＋1 mL</button><button class="btn primary" type="button" id="tPlay">▶ 自動で滴下</button><button class="btn" type="button" id="tR">はじめから</button></div>
+  <div class="readout"><div><span>pH</span><b id="tP"></b></div><div><span>中和点（a c V ＝ b c′ V′）</span><b id="tE"></b></div><div><span>いまの状態</span><b id="tS"></b></div></div>
+  <div class="tbl"><table class="oktbl" id="tOK"></table></div>
+  <div class="trap"><b>まとめ</b>　強酸＋強塩基：どちらの指示薬も可／弱酸＋強塩基：<b>フェノールフタレイン</b>（中和点が塩基性）／強酸＋弱塩基：<b>メチルオレンジ</b>（中和点が酸性）／弱酸＋弱塩基：ジャンプが小さく判定しにくい。<br><span class="small">※ 酢酸の電離定数 2.7×10<sup>−5</sup>、アンモニア 1.8×10<sup>−5</sup> で計算した曲線です。</span></div>`;
+  const C=qs(el,"#tC"),I=qs(el,"#tI"),V=qs(el,"#tV");let timer=null,pts=[];
+  const X=v=>40+v/30*280,Y=p=>210-p/14*196;
+  function build(){
+    const c=COMBOS[+C.value];pts=[];for(let v=0;v<=30.0001;v+=0.05)pts.push([v,titPH(c,v)]);
+    qs(el,"#tSet").innerHTML=`ビーカー：${c.anT}　／　ビュレット：${c.tiT}`;
+    const eqTxt=c.an==="Na2CO3"?"第1 10 mL・第2 20 mL":c.an==="H2SO4"?"2×0.10×10 ＝ 1×0.10×V′ → 20 mL":"1×0.10×10 ＝ 1×0.10×V′ → 10 mL";
+    qs(el,"#tE").textContent=eqTxt;
+    // indicator suitability around each equivalence point
+    const rows=c.eq.map(e=>{const p1=titPH(c,e-0.3),p2=titPH(c,e+0.3),lo=Math.min(p1,p2),hi=Math.max(p1,p2);return {e,lo,hi,pe:titPH(c,e)};});
+    qs(el,"#tOK").innerHTML=`<tr><th>指示薬</th>${rows.map(r=>`<th>${c.eq.length>1?(r.e===10?"第1":"第2")+"中和点":"中和点"}<br><span class="small muted">中和点 pH ${r.pe.toFixed(1)}</span></th>`).join("")}</tr>`+
+      ["PP","MO","MR","BTB"].map(k=>{const d=INDS[k],m=(d.a+d.b)/2;return `<tr><td>${d.n.replace(/（.+）/,"")}<br><span class="small muted">${d.a}〜${d.b}</span></td>${rows.map(r=>{const ok=(m>=r.lo&&m<=r.hi)||(d.a<=r.pe&&r.pe<=d.b);const weak=ok&&c.k==="弱酸＋弱塩基";return `<td class="${ok?(weak?"":"neu"):"acid"}">${ok?(weak?"△ 判定しにくい":"◯ 使える"):"✕"}</td>`;}).join("")}</tr>`;}).join("");
+  }
+  function draw(){
+    const c=COMBOS[+C.value],v=+V.value,p=titPH(c,v),ind=INDS[I.value];
+    qs(el,"#tVv").textContent=v.toFixed(1)+" mL";qs(el,"#tP").textContent=p.toFixed(2);
+    const last=c.eq[c.eq.length-1],first=c.eq[0];
+    qs(el,"#tS").textContent=Math.abs(v-first)<0.15||Math.abs(v-last)<0.15?"ちょうど中和点！":v<first?"中和点の前":c.eq.length>1&&v<last?"第1と第2の間":"中和点を過ぎた";
+    let g="";for(let q=0;q<=14;q+=2)g+=`<line x1="40" y1="${Y(q)}" x2="320" y2="${Y(q)}" class="gr"/><text x="34" y="${Y(q)+4}" text-anchor="end" class="tm">${q}</text>`;
+    for(let x=0;x<=30;x+=5)g+=`<text x="${X(x)}" y="226" text-anchor="middle" class="tm">${x}</text>`;
+    const band=`<rect x="40" y="${Y(ind.b)}" width="280" height="${Y(ind.a)-Y(ind.b)}" style="fill:${lerpC(ind.st,1).replace(/[\d.]+\)$/,"0.25)")}"/><text x="318" y="${Y(ind.b)-3}" text-anchor="end" class="tm">${ind.n.replace(/（.+）/,"")}の変色域</text>`;
+    const eqs=c.eq.map(e=>`<line x1="${X(e)}" y1="14" x2="${X(e)}" y2="210" style="stroke:var(--muted);stroke-dasharray:3 3"/>`).join("");
+    const full="M"+pts.map(q=>X(q[0]).toFixed(1)+","+Y(q[1]).toFixed(1)).join(" L");
+    const done=pts.filter(q=>q[0]<=v+1e-9);const part=done.length>1?"M"+done.map(q=>X(q[0]).toFixed(1)+","+Y(q[1]).toFixed(1)).join(" L"):"";
+    qs(el,"#tCv").innerHTML=g+band+eqs+`<path d="${full}" class="gr" style="stroke-dasharray:2 3"/><path d="${part}" style="fill:none;stroke:var(--accent);stroke-width:3"/>
+      <circle cx="${X(v)}" cy="${Y(p)}" r="6" style="fill:var(--acid);stroke:var(--card)" stroke-width="2"/>
+      <line x1="40" y1="210" x2="320" y2="210" class="ax"/><line x1="40" y1="14" x2="40" y2="210" class="ax"/><text x="320" y="238" text-anchor="end" class="tm">滴下量 [mL]</text><text x="8" y="10" class="tm">pH</text><line x1="40" y1="${Y(7)}" x2="320" y2="${Y(7)}" style="stroke:var(--neu);stroke-width:1;stroke-dasharray:1 3"/>`;
+    const lvl=20+v/30*150, liqTop=258-(30+v*0.9);
+    const col=indColor(I.value,p);
+    qs(el,"#tApp").innerHTML=`<rect x="62" y="10" width="16" height="170" class="glassfill"/><rect x="63" y="${lvl}" width="14" height="${180-lvl}" class="liq"/>${Array.from({length:7},(_, i)=>`<line x1="62" y1="${20+i*25}" x2="68" y2="${20+i*25}" style="stroke:var(--muted)"/><text x="58" y="${23+i*25}" text-anchor="end" class="tm" style="font-size:8px">${i*5}</text>`).join("")}<rect x="62" y="10" width="16" height="170" class="glass"/>
+      <rect x="56" y="182" width="28" height="8" rx="2" style="fill:var(--muted)"/><path d="M68,190 L70,204 L72,190" class="glass"/>${timer?`<circle cx="70" cy="210" r="2.5" class="drop liq" style="fill:var(--accent)"/>`:""}
+      <defs><clipPath id="tFl"><path d="M58,214 L58,226 L26,262 L114,262 L82,226 L82,214 Z"/></clipPath></defs>
+      <rect x="20" y="${liqTop}" width="100" height="${262-liqTop}" class="liq" clip-path="url(#tFl)"/><rect x="20" y="${liqTop}" width="100" height="${262-liqTop}" clip-path="url(#tFl)" style="fill:${col}"/>
+      <path d="M58,214 L58,226 L26,262 L114,262 L82,226 L82,214" class="glass"/><text x="70" y="276" text-anchor="middle" class="tm" style="font-size:9px">pH ${p.toFixed(1)}</text>`;
+  }
+  function stop(){clearInterval(timer);timer=null;qs(el,"#tPlay").textContent="▶ 自動で滴下";}
+  qs(el,"#tPlay").addEventListener("click",()=>{if(timer){stop();draw();return;}if(+V.value>=30)V.value=0;qs(el,"#tPlay").textContent="⏸ 止める";
+    timer=setInterval(()=>{const c=COMBOS[+C.value],v=+V.value,near=c.eq.some(e=>Math.abs(v-e)<1.2);V.value=Math.min(30,v+(near?0.05:0.2)).toFixed(2);if(+V.value>=30)stop();draw();},70);});
+  qs(el,"#t01").addEventListener("click",()=>{V.value=Math.min(30,+V.value+0.1).toFixed(1);draw();});
+  qs(el,"#t1").addEventListener("click",()=>{V.value=Math.min(30,+V.value+1).toFixed(1);draw();});
+  qs(el,"#tR").addEventListener("click",()=>{stop();V.value=0;draw();});
+  V.addEventListener("input",draw);I.addEventListener("change",draw);
+  C.addEventListener("change",()=>{stop();V.value=0;I.value=COMBOS[+C.value].ind;build();draw();});
+  build();draw();
+  return stop;
+}
+
+const LESSONS=[
+  {ch:4,t:"原子量は平均値",fn:lsIsotope},{ch:4,t:"molの交差点",fn:lsHub},{ch:4,t:"22.4 Lの箱とてんびん",fn:lsGas},
+  {ch:4,t:"溶解度と再結晶",fn:lsSol},{ch:4,t:"モル濃度の溶液をつくる",fn:lsMolar},{ch:4,t:"反応式を分子で見る",fn:lsReact},
+  {ch:4,t:"係数合わせパズル",fn:lsBalance},{ch:4,t:"化学の基礎法則",fn:lsLaws},
+  {ch:5,t:"H⁺のキャッチボール",fn:lsBronsted},{ch:5,t:"強酸と弱酸（電離度）",fn:lsAlpha},{ch:5,t:"pHものさし",fn:lsPH},
+  {ch:5,t:"塩の液性マシン",fn:lsSalt},{ch:5,t:"中和滴定の器具",fn:lsTools},{ch:5,t:"中和滴定シミュレーター",fn:lsTitr}
+];
+let labIdx=Math.min(LESSONS.length-1,Math.max(0,S.lab|0)),labStop=null;
+function renderLabNav(){$("#labnav").innerHTML=[4,5].map(ch=>`<div class="labgroup"><span class="labch">第${ch}章</span>`+LESSONS.map((l,i)=>l.ch===ch?`<button class="chip" type="button" data-i="${i}" aria-pressed="${i===labIdx}">${i+1}. ${l.t}</button>`:"").join("")+"</div>").join("");}
+function showLesson(i,scroll){
+  if(labStop){try{labStop();}catch(e){}labStop=null;}
+  labIdx=i;S.lab=i;save();renderLabNav();const l=LESSONS[i];
+  $("#labbody").innerHTML=`<div class="lsn-head"><span class="no">第${l.ch}章　${i+1} / ${LESSONS.length}</span><h2>${l.t}</h2></div><div id="lsnIn"></div>`;
+  labStop=l.fn($("#lsnIn"))||null;
+  $("#lsnIn").querySelectorAll("p,.key,.trap").forEach(n=>{if(/\[\[|\^\{/.test(n.innerHTML))n.innerHTML=tx(n.innerHTML);});
+  $("#labprev").disabled=i===0;$("#labnext").disabled=i===LESSONS.length-1;
+  if(scroll)$("#labbody").scrollIntoView({block:"start",behavior:"smooth"});
+}
+function initLab(){
+  $("#labnav").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b)showLesson(+b.dataset.i,true);});
+  $("#labprev").addEventListener("click",()=>showLesson(Math.max(0,labIdx-1),true));
+  $("#labnext").addEventListener("click",()=>showLesson(Math.min(LESSONS.length-1,labIdx+1),true));
+  showLesson(labIdx,false);
+}
+
 /* =================== shell =================== */
 function renderStats(){
   const ok=CARDS.filter(c=>S.cards[c.id]==="ok").length;
@@ -820,7 +1432,7 @@ function renderStats(){
 }
 function showTab(t){
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===t)));
-  ["sum","card","calc","quiz"].forEach(k=>{$("#p-"+k).hidden=k!==t;});
+  ["lab","sum","card","calc","quiz"].forEach(k=>{$("#p-"+k).hidden=k!==t;});
   S.tab=t;save();
 }
 document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b){showTab(b.dataset.tab);window.scrollTo({top:0});}});
@@ -829,8 +1441,8 @@ document.addEventListener("keydown",e=>{
   if(e.key===" "){if(e.target.closest("button"))return;e.preventDefault();cardOpen=!cardOpen;renderCard();}
   else if(e.key==="ArrowRight")cardMark("ok");else if(e.key==="ArrowLeft")cardMark("ng");
 });
-buildSummary();initCards();initCalc();initQuiz();renderStats();
+buildSummary();initLab();initCards();initCalc();initQuiz();renderStats();
 const h=(location.hash||"").slice(1);
-showTab(["sum","card","calc","quiz"].includes(h)?h:(S.tab||"sum"));
+showTab(["lab","sum","card","calc","quiz"].includes(h)?h:(S.tab||"lab"));
 })();
 </script>
