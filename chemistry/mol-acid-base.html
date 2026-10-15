@@ -169,7 +169,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .harr{display:grid;gap:2px;font-size:.78rem;text-align:center}
 .harr .dn{color:var(--accent);font-weight:700}
 .harr .up{color:var(--muted)}
-.flash{animation:fl 1s ease}
+.pulse{animation:fl 1s ease}
 @keyframes fl{from{box-shadow:0 0 0 6px var(--accent-soft)}to{box-shadow:0 0 0 0 transparent}}
 .steps4{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .stepper{display:inline-grid;grid-template-columns:auto auto auto;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
@@ -215,6 +215,41 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 @keyframes drip{0%{transform:translateY(0);opacity:1}100%{transform:translateY(26px);opacity:0}}
 .drop{animation:drip .35s linear infinite;transform-box:view-box}
 
+/* ---- 用語ポップアップ ---- */
+.term{color:var(--accent);text-decoration:underline dotted 2px;text-underline-offset:3px;cursor:help;border-radius:3px}
+.term:hover{background:var(--accent-soft)}
+.term:focus-visible{outline:2px solid var(--accent)}
+.gidx{cursor:pointer;color:var(--accent);font-weight:700;background:var(--card)}
+#gloss{position:fixed;inset:0;z-index:50}
+.gshade{position:absolute;inset:0;background:rgba(10,14,22,.45)}
+.gsheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:560px;max-height:78vh;display:flex;flex-direction:column;background:var(--card);color:var(--ink);border-radius:18px 18px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+@media (min-width:700px){.gsheet{bottom:auto;top:12vh;border-radius:18px}}
+.ghead{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.ghead .btn{padding:6px 12px;font-size:.88rem}
+.gbody{overflow-y:auto;padding:4px 2px 6px}
+.gbody h3{font-family:var(--f-display);font-weight:400;font-size:1.5rem;margin:4px 0 6px}
+.gbody h4{margin:14px 0 6px;font-size:.9rem;color:var(--muted)}
+.gtag{display:inline-block;font-size:.75rem;font-weight:700;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:1px 8px}
+.gex{background:var(--soft);border-radius:8px;padding:8px 10px}
+.gq{border:2px dashed var(--accent);border-radius:10px;padding:10px 12px;margin:10px 0;display:grid;gap:8px}
+.gq .btn{padding:6px 14px}
+.grel{margin-top:10px}.grel .chips{margin:4px 0 0}
+/* ---- 間隔反復 ---- */
+.cardnav3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.cardnav3 .btn{padding:14px 6px}
+.cardnav3 .btn:disabled{opacity:.45;cursor:default}
+#cardhard{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.curvebox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:12px}
+.curvebox summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.srsbar{display:grid;gap:6px;margin-bottom:14px}
+.srsseg{display:flex;height:14px;border-radius:7px;overflow:hidden;border:1px solid var(--line);background:var(--soft)}
+.srsseg i{display:block;height:100%}
+.srsleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.8rem;color:var(--muted)}
+.srsleg i{display:inline-block;width:10px;height:10px;border-radius:3px;border:1px solid var(--line);margin-right:3px;vertical-align:-1px}
+.lvdots{display:inline-flex;gap:3px;vertical-align:middle}
+.lvdot{width:8px;height:8px;border-radius:50%;border:1px solid var(--muted)}
+.lvdot.on{background:var(--neu);border-color:var(--neu)}
+
 @media (max-width:520px){
   .hubrow{grid-template-columns:1fr 1.2fr 1fr}
   .hubbox{font-size:.82rem;padding:6px 4px}
@@ -226,7 +261,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 <header class="top"><div class="wrap">
   <div class="brand"><h1>モルと酸塩基ドリル</h1><span class="sub">第4章 物質量と化学反応式 ／ 第5章 酸と塩基の反応</span></div>
-  <div class="stats" id="stats"></div>
+  <div class="stats"><span id="stats" class="stats" style="margin:0"></span><button type="button" class="stat gidx" id="glossIdx">用語さくいん</button></div>
 </div></header>
 
 <nav class="tabs"><div class="wrap" role="tablist">
@@ -399,20 +434,23 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 <!-- =================== 暗記カード =================== -->
 <div id="p-card" hidden>
+  <details class="curvebox"><summary>なぜくり返すの？（忘却曲線と復習のタイミング）</summary><div id="curveFig"></div></details>
+  <div class="srsbar" id="srsbar"></div>
   <div class="chips" id="cardfilter"></div>
   <div class="meta"><span id="cardpos"></span><span id="cardmem"></span></div>
   <div class="prog"><i id="cardprog"></i></div>
   <button class="flash" id="flash" type="button" aria-live="polite"></button>
-  <div class="cardnav">
-    <button class="btn ng" id="cardng" type="button">✕ もう一回</button>
+  <div class="cardnav3">
+    <button class="btn ng" id="cardng" type="button">✕ 忘れた</button>
+    <button class="btn" id="cardhard" type="button">△ あやしい</button>
     <button class="btn ok" id="cardok" type="button">○ 覚えた</button>
   </div>
+  <p class="small muted" id="cardnext" style="text-align:center;margin:8px 0 0"></p>
   <div class="row" style="margin-top:12px;justify-content:space-between">
-    <button class="btn" id="cardprev" type="button">← 前へ</button>
     <button class="btn" id="cardshuffle" type="button">シャッフル</button>
     <button class="btn" id="cardreset" type="button">記録をリセット</button>
   </div>
-  <p class="small muted" style="margin-top:10px">カードをタップすると答えが出ます。「もう一回」にしたカードは「苦手だけ」で集中練習できます。</p>
+  <p class="small muted" style="margin-top:10px">「○ 覚えた」のカードも、忘れかけるころ（10分後・1日後・3日後・1週間後・2週間後）にまた出てきます。毎日「今日の復習」を開くのがおすすめ。キーボード：スペースで答え、→ ○ ／ ↓ △ ／ ← ✕。</p>
 </div>
 
 <!-- =================== 計算ドリル =================== -->
@@ -429,6 +467,14 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </div>
 
 </main>
+
+<div id="gloss" hidden role="dialog" aria-modal="true" aria-label="用語の説明">
+  <div class="gshade" id="glossShade"></div>
+  <div class="gsheet">
+    <div class="ghead"><button type="button" class="btn" id="glossBack" hidden>← もどる</button><span></span><button type="button" class="btn" id="glossClose" aria-label="閉じる">✕ 閉じる</button></div>
+    <div class="gbody" id="glossBody"></div>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -460,7 +506,7 @@ function exact(x){return String(+x.toFixed(4));}
 
 /* ---------- storage (per-device convenience) ---------- */
 const KEY="mol-acid-base-v1";
-let S={cards:{},calc:{c:0,t:0,streak:0,best:0},quiz:{best:{}},tab:"lab",lab:0};
+let S={cards:{},srs:{},calc:{c:0,t:0,streak:0,best:0},quiz:{best:{}},tab:"lab",lab:0};
 try{const v=JSON.parse(localStorage.getItem(KEY));if(v)S=Object.assign(S,v);}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}renderStats();}
 
@@ -590,54 +636,95 @@ const CARDS=[
  ["5","滴定","[[Na2CO3]] を塩酸で滴定すると？","2段階で中和。第1中和点（フェノールフタレイン）で [[NaHCO3]]、第2中和点（メチルオレンジ）で [[CO2]] が出る。"]
 ].map((c,i)=>({id:"c"+i,ch:c[0],tag:c[1],f:c[2],b:c[3]}));
 
-let cardFilter="all",cardList=[],cardIdx=0,cardOpen=false;
+/* ---- 間隔反復（忘却曲線にもとづく復習スケジュール） ---- */
+const MIN=60e3,HOUR=3600e3,DAY=24*HOUR;
+// レベル: 0=未学習/忘れた 1=10分後 2=1日後 3=3日後 4=1週間後 5=2週間後（定着）
+const IV=[0,10*MIN,20*HOUR,3*DAY-4*HOUR,7*DAY-4*HOUR,14*DAY-4*HOUR];
+const LVN=["未学習","10分後に復習","1日後に復習","3日後に復習","1週間後に復習","定着（2週間後）"];
+const NEW_PER_SESSION=15;
+S.srs=S.srs||{};
+if(S.cards&&Object.keys(S.cards).length){const now=Date.now();for(const id in S.cards){if(!S.srs[id])S.srs[id]={lv:S.cards[id]==="ok"?1:0,due:now,n:1,lapse:S.cards[id]==="ng"?1:0};}S.cards={};}
+function srsDue(id,now){const r=S.srs[id];return r&&r.due<=now;}
+function whenTxt(ms){if(ms<=0)return"いま";if(ms<HOUR)return Math.ceil(ms/MIN)+"分後";if(ms<DAY)return Math.round(ms/HOUR)+"時間後";return Math.round(ms/DAY)+"日後";}
+let cardFilter="today",cardQ=[],cardOpen=false,sessionDone=0;
 function cardFilterSet(){
-  const opts=[["all","全部"],["4","第4章 物質量"],["5","第5章 酸と塩基"],["ng","苦手だけ"],["new","まだ覚えてない"]];
+  const now=Date.now(),due=CARDS.filter(c=>srsDue(c.id,now)).length,nw=Math.min(NEW_PER_SESSION,CARDS.filter(c=>!S.srs[c.id]).length);
+  const opts=[["today",`今日の復習（${due+nw}）`],["all","全部"],["4","第4章"],["5","第5章"],["weak","苦手（忘れたことがある）"]];
   $("#cardfilter").innerHTML=opts.map(o=>`<button class="chip" type="button" data-f="${o[0]}" aria-pressed="${o[0]===cardFilter}">${o[1]}</button>`).join("");
 }
-function buildCardList(keepShuffle){
-  let l=CARDS.filter(c=>cardFilter==="all"||c.ch===cardFilter||(cardFilter==="ng"&&S.cards[c.id]==="ng")||(cardFilter==="new"&&S.cards[c.id]!=="ok"));
-  cardList=keepShuffle?shuffle(l):l;cardIdx=0;cardOpen=false;
+function buildCardList(shuf){
+  const now=Date.now();let l;
+  if(cardFilter==="today"){const due=CARDS.filter(c=>srsDue(c.id,now)).sort((a,b)=>S.srs[a.id].due-S.srs[b.id].due);l=due.concat(CARDS.filter(c=>!S.srs[c.id]).slice(0,NEW_PER_SESSION));}
+  else if(cardFilter==="weak")l=CARDS.filter(c=>S.srs[c.id]&&(S.srs[c.id].lapse>0||S.srs[c.id].lv===0));
+  else{l=CARDS.filter(c=>cardFilter==="all"||c.ch===cardFilter);const k=c=>{const r=S.srs[c.id];return !r?1:r.due<=now?0:2;};l=l.slice().sort((a,b)=>k(a)-k(b));}
+  cardQ=shuf?shuffle(l):l;cardOpen=false;sessionDone=0;
+}
+function renderSrsBar(){
+  const now=Date.now(),cnt=[0,0,0,0,0,0];CARDS.forEach(c=>{const r=S.srs[c.id];cnt[r?r.lv:0]++;});
+  const col=["var(--soft)","var(--acid-soft)","var(--warn-soft)","var(--accent-soft)","var(--base-soft)","var(--neu)"];
+  const endToday=new Date();endToday.setHours(23,59,59,999);
+  const f=(a,b)=>CARDS.filter(c=>{const r=S.srs[c.id];return r&&r.due>a&&r.due<=b;}).length;
+  $("#srsbar").innerHTML=`<div class="srsseg">${cnt.map((n,i)=>n?`<i style="width:${n/CARDS.length*100}%;background:${col[i]}" title="${LVN[i]} ${n}枚"></i>`:"").join("")}</div>
+   <div class="srsleg">${cnt.map((n,i)=>`<span><i style="background:${col[i]}"></i>${["未学習・忘れた","1回目","2回目","3回目","4回目","定着"][i]} <b>${n}</b></span>`).join("")}</div>
+   <div class="small muted">これからの復習予定：今日あと <b>${f(now,+endToday)}</b> 枚 ／ 明日 <b>${f(+endToday,+endToday+DAY)}</b> 枚 ／ 3日以内 <b>${f(+endToday+DAY,now+3*DAY)}</b> 枚 ／ 1週間以内 <b>${f(now+3*DAY,now+7*DAY)}</b> 枚</div>`;
 }
 function renderCard(){
-  const total=cardList.length;
-  const pool=CARDS.filter(c=>cardFilter==="all"||c.ch===cardFilter);
-  const memo=(cardFilter==="ng"||cardFilter==="new"?CARDS:pool).filter(c=>S.cards[c.id]==="ok").length;
-  const base=(cardFilter==="ng"||cardFilter==="new"?CARDS:pool).length;
-  $("#cardmem").textContent=`覚えた ${memo} / ${base}`;
-  $("#cardprog").style.width=(base?memo/base*100:0)+"%";
-  const fl=$("#flash");
-  if(!total){
-    $("#cardpos").textContent="0 枚";
-    fl.innerHTML=`<div class="front">${cardFilter==="ng"?"苦手カードはありません":"全部覚えました！"}</div><div class="hint">ほかのグループを選んでください</div>`;
-    $("#cardok").disabled=$("#cardng").disabled=true;return;
+  renderSrsBar();
+  const fl=$("#flash"),btns=["#cardng","#cardhard","#cardok"].map(s=>$(s));
+  $("#cardprog").style.width=(cardQ.length+sessionDone?sessionDone/(cardQ.length+sessionDone)*100:0)+"%";
+  $("#cardpos").textContent=cardQ.length?`のこり ${cardQ.length} 枚`:"";
+  const lv5=CARDS.filter(c=>S.srs[c.id]&&S.srs[c.id].lv>=4).length;
+  $("#cardmem").textContent=`しっかり定着 ${lv5} / ${CARDS.length}`;
+  if(!cardQ.length){
+    const now=Date.now(),next=CARDS.map(c=>S.srs[c.id]).filter(r=>r&&r.due>now).sort((a,b)=>a.due-b.due)[0];
+    fl.innerHTML=`<div class="front">${cardFilter==="today"?"今日の復習はおわり！":"このグループはおわり！"}</div><div class="hint">${next?`次の復習は <b>${whenTxt(next.due-now)}</b>。そのころにまた開くと、忘れかけたカードだけが出てきます。`:"ほかのグループを選んでください。"}</div>`;
+    btns.forEach(b=>b.disabled=true);$("#cardnext").textContent="";return;
   }
-  $("#cardok").disabled=$("#cardng").disabled=false;
-  const c=cardList[cardIdx];
-  $("#cardpos").textContent=`${cardIdx+1} / ${total} 枚目`;
-  const st=S.cards[c.id]==="ok"?"○ 覚えた":S.cards[c.id]==="ng"?"✕ 苦手":"";
-  fl.innerHTML=`<div class="tag">第${c.ch}章・${c.tag}${st?"　"+st:""}</div><div class="front">${tx(c.f)}</div>`+(cardOpen?`<div class="back">${tx(c.b)}</div>`:`<div class="hint">タップして答えを見る</div>`);
+  const c=cardQ[0],r=S.srs[c.id],lv=r?r.lv:0;
+  const dots=Array.from({length:5},(_,i)=>`<span class="lvdot${i<lv?" on":""}"></span>`).join("");
+  fl.innerHTML=`<div class="tag">第${c.ch}章・${c.tag}　<span class="lvdots" title="${LVN[lv]}">${dots}</span>${r&&r.lapse?`　<span class="acid">✕${r.lapse}</span>`:""}${!r?"　<span class=\"neu\">NEW</span>":""}</div><div class="front">${tx(c.f)}</div>`+(cardOpen?`<div class="back">${tx(c.b)}</div>`:`<div class="hint">思い出してから、タップして答えを見る</div>`);
+  btns.forEach(b=>b.disabled=!cardOpen);
+  const nl=Math.min(5,lv+1);
+  $("#cardnext").innerHTML=cardOpen?`○なら次は <b>${LVN[nl].replace("に復習","")}</b>／△なら10分後／✕ならこのあとすぐもう一度`:"答えを見てから、自分で ○△✕ をつけよう";
 }
-function cardMark(v){
-  if(!cardList.length)return;
-  const c=cardList[cardIdx];S.cards[c.id]=v;save();
-  if((cardFilter==="ng"&&v==="ok")||(cardFilter==="new"&&v==="ok")){cardList.splice(cardIdx,1);if(cardIdx>=cardList.length)cardIdx=0;}
-  else cardIdx=(cardIdx+1)%cardList.length;
-  cardOpen=false;renderCard();
+function cardMark(g){
+  if(!cardQ.length||!cardOpen)return;
+  const c=cardQ.shift(),now=Date.now(),r=S.srs[c.id]||{lv:0,n:0,lapse:0,due:now};
+  if(g==="ng"){r.lv=0;r.lapse++;r.due=now+MIN;cardQ.splice(Math.min(3,cardQ.length),0,c);}
+  else if(g==="hard"){r.lv=Math.max(1,r.lv);r.due=now+IV[1];cardQ.splice(Math.min(6,cardQ.length),0,c);}
+  else{r.lv=Math.min(5,r.lv+1);r.due=now+IV[r.lv];sessionDone++;}
+  r.n++;r.last=now;S.srs[c.id]=r;save();
+  cardOpen=false;cardFilterSet();renderCard();
+}
+function drawCurve(){
+  const X=d=>36+d/10*270,Y=p=>150-p/100*130;
+  const S0=0.9,R=(t,s)=>100*Math.exp(-t/s);
+  let no="M";for(let t=0;t<=10;t+=0.05)no+=X(t).toFixed(1)+","+Y(R(t,S0)).toFixed(1)+" L";no=no.slice(0,-2);
+  const rv=[0.007,1,3,7],st=[S0,2.2,5,11,24];let yes="",t0=0;
+  for(let k=0;k<=rv.length;k++){const end=k<rv.length?rv[k]:10;let seg="M"+X(t0).toFixed(1)+","+Y(100).toFixed(1);for(let t=t0;t<=end+1e-9;t+=0.03)seg+=" L"+X(t).toFixed(1)+","+Y(R(t-t0,st[k])).toFixed(1);seg+=` L${X(end).toFixed(1)},${Y(100).toFixed(1)}`;yes+=seg;t0=end;}
+  let g="";for(let p=0;p<=100;p+=25)g+=`<line x1="36" y1="${Y(p)}" x2="306" y2="${Y(p)}" class="gr"/><text x="30" y="${Y(p)+4}" text-anchor="end" class="tm">${p}%</text>`;
+  for(let d=0;d<=10;d+=2)g+=`<text x="${X(d)}" y="166" text-anchor="middle" class="tm">${d}日</text>`;
+  $("#curveFig").innerHTML=`<svg viewBox="0 0 316 176" class="svg">${g}<path d="${no}" style="fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 3"/><path d="${yes}" style="fill:none;stroke:var(--accent);stroke-width:2.5"/>
+    ${rv.map(d=>`<circle cx="${X(d)}" cy="${Y(100)}" r="4" style="fill:var(--accent)"/>`).join("")}
+    <line x1="${X(8)}" y1="14" x2="${X(8)}" y2="150" style="stroke:var(--acid);stroke-dasharray:3 3"/><text x="${X(8)+3}" y="60" class="tb" style="fill:var(--acid)">テスト</text>
+    <text x="${X(2.2)}" y="${Y(8)}" class="tm">復習しないと…</text><text x="${X(3.4)}" y="${Y(30)}" class="ta">くり返すと忘れにくくなる</text></svg><div class="legend"><span><i style="background:var(--accent)"></i>復習したタイミング（10分後・1日後・3日後・1週間後）</span></div>
+    <p class="small">人は覚えたことを<b>1日でかなり忘れる</b>（エビングハウスの忘却曲線）。でも<b>忘れかけたころに思い出す</b>たびに、忘れるスピードがゆっくりになる。このカードは「○ 覚えた」を押しても、<b>10分後 → 1日後 → 3日後 → 1週間後 → 2週間後</b>ともう一度出てくる。✕ならすぐやり直し、最初の段階にもどる。</p>
+    <p class="small"><b>テストまで1週間なら</b>：毎日1回「今日の復習」を開けば、テスト前に4〜5回くり返せる。</p>`;
 }
 function initCards(){
-  cardFilterSet();buildCardList(false);renderCard();
+  cardFilterSet();buildCardList(false);renderCard();drawCurve();
   $("#cardfilter").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;cardFilter=b.dataset.f;cardFilterSet();buildCardList(false);renderCard();});
-  $("#flash").addEventListener("click",()=>{cardOpen=!cardOpen;renderCard();});
+  $("#flash").addEventListener("click",()=>{if(!cardQ.length)return;cardOpen=!cardOpen;renderCard();});
   $("#cardok").addEventListener("click",()=>cardMark("ok"));
+  $("#cardhard").addEventListener("click",()=>cardMark("hard"));
   $("#cardng").addEventListener("click",()=>cardMark("ng"));
-  $("#cardprev").addEventListener("click",()=>{if(!cardList.length)return;cardIdx=(cardIdx-1+cardList.length)%cardList.length;cardOpen=false;renderCard();});
   $("#cardshuffle").addEventListener("click",()=>{buildCardList(true);renderCard();});
   let armed=false;
   $("#cardreset").addEventListener("click",e=>{
     if(!armed){armed=true;e.target.textContent="本当にリセット？";setTimeout(()=>{armed=false;e.target.textContent="記録をリセット";},3000);return;}
-    S.cards={};save();armed=false;e.target.textContent="記録をリセット";buildCardList(false);renderCard();
+    S.srs={};save();armed=false;e.target.textContent="記録をリセット";cardFilterSet();buildCardList(false);renderCard();
   });
+  setInterval(()=>{if(!$("#p-card").hidden&&!cardQ.length&&cardFilter==="today"){cardFilterSet();buildCardList(false);if(cardQ.length)renderCard();}},60e3);
 }
 
 /* =================== 計算ドリル =================== */
@@ -928,7 +1015,7 @@ function molSVG(f,x,y,r){
 function atomLegend(els){return `<div class="legend">${els.map(e=>`<span><i style="background:var(${ACOL[e]})"></i>${e}</span>`).join("")}</div>`;}
 const qs=(el,s)=>el.querySelector(s);
 function fmtv(x){if(!isFinite(x))return"";if(x===0)return"0";if(Math.abs(x)>=1e5||Math.abs(x)<1e-3){const p=sciParts(x);return p[0]+"×10^"+p[1];}return String(+x.toPrecision(3));}
-function flashEl(e){if(!e)return;e.classList.remove("flash");void e.offsetWidth;e.classList.add("flash");}
+function flashEl(e){if(!e)return;e.classList.remove("pulse");void e.offsetWidth;e.classList.add("pulse");}
 function lerpC(stops,t){t=Math.max(0,Math.min(1,t));const n=stops.length-1,i=Math.min(n-1,Math.floor(t*n)),u=t*n-i,a=stops[i],b=stops[i+1];
   const c=[0,1,2].map(k=>Math.round(a[k]+(b[k]-a[k])*u));const al=(a[3]===undefined?1:a[3])+((b[3]===undefined?1:b[3])-(a[3]===undefined?1:a[3]))*u;return `rgba(${c[0]},${c[1]},${c[2]},${al.toFixed(2)})`;}
 const INDS={
@@ -1424,11 +1511,169 @@ function initLab(){
   showLesson(labIdx,false);
 }
 
+/* =================== 用語ポップアップ =================== */
+// g: "prev"=前に習った内容 / "4"=第4章 / "5"=第5章
+const GLOSS={
+ "原子":{g:"prev",d:"物質をつくっている、いちばん小さな粒。中心に<b>原子核</b>（陽子と中性子）があり、そのまわりを<b>電子</b>が回っている。",ex:"水素原子 H、酸素原子 O、炭素原子 C",q:["原子の中心にあるものは？","原子核（陽子と中性子でできている）"],rel:["原子核","電子","分子"]},
+ "原子核":{g:"prev",d:"原子の中心にある部分。＋の電気をもつ<b>陽子</b>と、電気をもたない<b>中性子</b>でできている。原子の質量のほとんどがここにある。",q:["原子核をつくる2種類の粒は？","陽子と中性子"],rel:["陽子","中性子"]},
+ "陽子":{g:"prev",d:"原子核の中にある、<b>＋の電気</b>をもつ粒。陽子の数 ＝ <b>原子番号</b>で、元素の種類を決める。",ex:"炭素は陽子6個（原子番号6）",q:["陽子が8個の原子は何の元素？","酸素 O（原子番号8）"],rel:["原子番号","中性子","質量数"]},
+ "中性子":{g:"prev",d:"原子核の中にある、<b>電気をもたない</b>粒。質量は陽子とほぼ同じ。同じ元素でも中性子の数がちがうことがある（→ 同位体）。",q:["中性子の数 は どう求める？","質量数 − 原子番号（陽子の数）"],rel:["同位体","質量数"]},
+ "電子":{g:"prev",d:"原子核のまわりにある、<b>−の電気</b>をもつ粒。質量は陽子の約1840分の1で、とても軽い。電子を失うと陽イオン、受け取ると陰イオンになる。",rel:["イオン","陽イオン","陰イオン"]},
+ "原子番号":{g:"prev",d:"原子核の中の<b>陽子の数</b>。元素ごとに決まっていて、周期表はこの順に並んでいる。",ex:"H は1、C は6、O は8、Na は11、Cl は17",rel:["陽子","質量数"]},
+ "質量数":{g:"prev",d:"<b>陽子の数 ＋ 中性子の数</b>。元素記号の左上に書く。",ex:"[[^{12}C]]：陽子6＋中性子6＝12",q:["[[^{35}Cl]]（原子番号17）の中性子の数は？","35 − 17 ＝ 18 個"],rel:["同位体","陽子","中性子"]},
+ "同位体":{g:"prev",d:"<b>原子番号（陽子の数）が同じ</b>で、<b>中性子の数（質量数）がちがう</b>原子どうし。同じ元素なので化学的な性質はほとんど同じ。「アイソトープ」ともいう。",ex:"[[^{12}C]] と [[^{13}C]]、[[^{35}Cl]] と [[^{37}Cl]]、[[^{1}H]] と [[^{2}H]]",q:["[[^{35}Cl]] と [[^{37}Cl]] で、ちがうのは陽子？中性子？","中性子の数（18個と20個）。陽子はどちらも17個。"],rel:["質量数","原子量","相対質量"]},
+ "元素":{g:"prev",d:"原子の<b>種類</b>のこと。約120種類あり、元素記号（H, O, Na など）で表す。",rel:["原子","単体","化合物"]},
+ "分子":{g:"prev",d:"いくつかの原子が結びついてできた粒で、その物質の性質をもつ最小の単位。",ex:"[[H2O]]（水）、[[O2]]（酸素）、[[CO2]]（二酸化炭素）",q:["[[CO2]] 1分子には原子が何個？","3個（C が1個、O が2個）"],rel:["原子","分子量"]},
+ "イオン":{g:"prev",d:"原子（や原子の集まり）が<b>電子を失ったり受け取ったりして</b>、電気を帯びた粒。",ex:"[[Na^{+}]]、[[Cl^{-}]]、[[OH^{-}]]、[[SO4^{2-}]]",rel:["陽イオン","陰イオン","電離"]},
+ "陽イオン":{g:"prev",d:"電子を<b>失って</b>＋の電気を帯びたイオン。",ex:"[[Na^{+}]]、[[H^{+}]]、[[Ca^{2+}]]、[[NH4^{+}]]",rel:["イオン","陰イオン"]},
+ "陰イオン":{g:"prev",d:"電子を<b>受け取って</b>−の電気を帯びたイオン。",ex:"[[Cl^{-}]]、[[OH^{-}]]、[[SO4^{2-}]]、[[CO3^{2-}]]",rel:["イオン","陽イオン"]},
+ "単体":{g:"prev",d:"<b>1種類の元素だけ</b>でできた物質。",ex:"[[O2]]、[[H2]]、鉄 Fe、ダイヤモンド C",q:["水 [[H2O]] は単体？化合物？","化合物（H と O の2種類の元素）"],rel:["化合物","元素"]},
+ "化合物":{g:"prev",d:"<b>2種類以上の元素</b>が結びついてできた物質。",ex:"[[H2O]]、[[NaCl]]、[[CO2]]",rel:["単体"]},
+ "組成式":{g:"prev",d:"イオンからできている物質などを、成分の原子の<b>数の比</b>で表した式。",ex:"[[NaCl]]（Na:Cl＝1:1）、[[CaCl2]]（Ca:Cl＝1:2）",rel:["式量","イオン"]},
+ "化学式":{g:"prev",d:"元素記号と数字で物質を表した式。分子式・組成式・イオンの式などがある。",ex:"[[H2O]]、[[NaCl]]、[[OH^{-}]]",rel:["組成式","化学反応式"]},
+ "密度":{g:"prev",d:"<b>体積1あたりの質量</b>。気体では g/L（1 L あたり何 g）をよく使う。",ex:"窒素の密度（標準状態）＝ 28 g ÷ 22.4 L ＝ 1.25 g/L",rel:["モル体積","モル質量"]},
+ "水溶液":{g:"prev",d:"物質が<b>水</b>に溶けた液。溶媒が水の溶液。",rel:["溶液","溶媒","溶質"]},
+ "結晶":{g:"prev",d:"粒子が<b>規則正しく並んだ</b>固体。きれいな形をしている。",ex:"食塩の立方体の結晶、ミョウバンの八面体の結晶",rel:["再結晶"]},
+ "電離":{g:"prev",d:"物質が水に溶けて、<b>陽イオンと陰イオンに分かれる</b>こと。",ex:"[[HCl → H^{+} + Cl^{-}]]、[[NaOH → Na^{+} + OH^{-}]]",rel:["電離度","イオン"]},
+ // 第4章
+ "相対質量":{g:"4",d:"原子1個の質量はとても小さい（約10<sup>−23</sup> g）ので、[[^{12}C]] 1個の質量を<b>12</b>と決めて、ほかの原子の質量を<b>比</b>で表した値。単位はない。",q:["相対質量の基準は？","[[^{12}C]] 原子1個 ＝ 12"],rel:["原子量","同位体"]},
+ "原子量":{g:"4",d:"元素の同位体の相対質量を、<b>存在比</b>（自然界での割合）で平均した値。",ex:"Cl：35.0×0.75＋37.0×0.25＝35.5",q:["原子量が整数にならないことが多いのはなぜ？","同位体の相対質量を存在比で平均しているから"],rel:["相対質量","同位体","分子量"]},
+ "分子量":{g:"4",d:"分子式に含まれる原子の<b>原子量を全部足した</b>値。",ex:"[[H2O]]＝1.0×2＋16＝18、[[CO2]]＝12＋16×2＝44",q:["[[NH3]] の分子量は？（N=14, H=1.0）","14＋1.0×3＝17"],rel:["原子量","式量","モル質量"]},
+ "式量":{g:"4",d:"組成式やイオンの式に含まれる原子の原子量を足した値。分子がない物質（イオンの結晶など）に使う。",ex:"[[NaCl]]＝23＋35.5＝58.5",rel:["分子量","組成式"]},
+ "物質量":{g:"4",d:"粒子の<b>個数をもとにした量</b>。6.0×10<sup>23</sup>個の集まりを <b>1 mol（モル）</b>とする。鉛筆12本を「1ダース」とまとめるのと同じ考え方。",q:["[[H2O]] 3.0×10^{23} 個は何 mol？","3.0×10^{23} ÷ 6.0×10^{23} ＝ 0.50 mol"],rel:["アボガドロ定数","モル質量","モル体積"]},
+ "アボガドロ定数":{g:"4",d:"1 mol あたりの粒子の数。<b>6.0×10<sup>23</sup> /mol</b>。",rel:["物質量","アボガドロの法則"]},
+ "モル質量":{g:"4",d:"物質<b>1 mol あたりの質量</b> [g/mol]。原子量・分子量・式量に g/mol をつけた値になる。",ex:"[[H2O]] のモル質量は 18 g/mol",q:["[[CO2]] 88 g は何 mol？","88 ÷ 44 ＝ 2.0 mol"],rel:["物質量","分子量"]},
+ "モル体積":{g:"4",d:"物質<b>1 mol あたりの体積</b>。気体なら種類に関係なく、標準状態で <b>22.4 L/mol</b>。",q:["標準状態で 11.2 L の酸素は何 mol？","11.2 ÷ 22.4 ＝ 0.500 mol"],rel:["標準状態","アボガドロの法則"]},
+ "標準状態":{g:"4",d:"<b>0 ℃、1.013×10<sup>5</sup> Pa</b>（1気圧）の状態。この条件で気体 1 mol は 22.4 L。",rel:["モル体積"]},
+ "溶媒":{g:"4",d:"物質を<b>溶かす</b>液体。水が多い。",ex:"食塩水の溶媒は水",rel:["溶質","溶液"]},
+ "溶質":{g:"4",d:"溶媒に<b>溶けている</b>物質。",ex:"食塩水の溶質は食塩（NaCl）",rel:["溶媒","溶液"]},
+ "溶液":{g:"4",d:"溶質が溶媒に溶けてできた、<b>均一な</b>（どこも同じ濃さの）液体。溶液の質量 ＝ 溶質 ＋ 溶媒。",rel:["溶媒","溶質","水溶液"]},
+ "飽和溶液":{g:"4",d:"溶質が<b>もうこれ以上溶けない</b>ところまで溶けた溶液。",rel:["溶解度"]},
+ "溶解度":{g:"4",d:"溶媒（水）<b>100 g</b> に溶ける溶質の<b>最大の質量</b> [g]。温度で変わる。",ex:"硝酸カリウム：20 ℃で 31.6 g、60 ℃で 109 g",q:["60 ℃の水100 g に硝酸カリウム 100 g を溶かし、20 ℃に冷やすと結晶は何 g？","100 − 31.6 ＝ 68.4 g"],rel:["飽和溶液","再結晶"]},
+ "再結晶":{g:"4",d:"温度による溶解度のちがいを利用して、不純物の少ない<b>純粋な結晶</b>を取り出す方法。",rel:["溶解度","結晶"]},
+ "質量パーセント濃度":{g:"4",d:"溶液の質量に対する溶質の質量の割合 [%]。<br>溶質の質量 ÷ <b>溶液</b>の質量 × 100",q:["水 90 g に食塩 10 g を溶かした。質量パーセント濃度は？","10 ÷ (90＋10) × 100 ＝ 10 %"],rel:["モル濃度"]},
+ "モル濃度":{g:"4",d:"溶液 <b>1 L</b> に溶けている溶質の<b>物質量</b> [mol/L]。<br>溶質の物質量 [mol] ÷ 溶液の体積 [L]",q:["0.20 mol を溶かして 500 mL にした。モル濃度は？","0.20 ÷ 0.500 ＝ 0.40 mol/L"],rel:["メスフラスコ","質量パーセント濃度"]},
+ "化学反応式":{g:"4",d:"化学変化を化学式で表した式。左に<b>反応物</b>、右に<b>生成物</b>を書き、両辺の原子の数をそろえる。",ex:"[[CH4 + 2O2 → CO2 + 2H2O]]",rel:["係数","反応物","生成物"]},
+ "係数":{g:"4",d:"化学反応式で化学式の<b>前につける数</b>。係数の比 ＝ 分子の数の比 ＝ 物質量の比。1 は書かない。",ex:"[[2H2 + O2 → 2H2O]] の係数は 2, 1, 2",rel:["化学反応式","目算法","未定係数法"]},
+ "反応物":{g:"4",d:"反応する物質。化学反応式の<b>左辺</b>に書く。",rel:["生成物","化学反応式"]},
+ "生成物":{g:"4",d:"反応でできる物質。化学反応式の<b>右辺</b>に書く。",rel:["反応物","化学反応式"]},
+ "目算法":{g:"4",d:"複雑な物質の係数を 1 とおき、原子の数を見比べながら順に係数を決めていく方法。",rel:["未定係数法","係数"]},
+ "未定係数法":{g:"4",d:"係数を a, b, c… とおき、原子ごとに「左辺の数 ＝ 右辺の数」の式を立てて解く方法。",ex:"a[[CH4]]＋b[[O2]]→c[[CO2]]＋d[[H2O]] → C: a=c、H: 4a=2d、O: 2b=2c+d",rel:["目算法","係数"]},
+ "質量保存の法則":{g:"4",d:"化学変化の前後で、物質の<b>質量の合計は変わらない</b>。ラボアジエ（1774年）。",rel:["定比例の法則"]},
+ "定比例の法則":{g:"4",d:"ひとつの化合物をつくる元素の<b>質量の比はいつも同じ</b>。プルースト（1799年）。",ex:"水はどこで採っても 水素:酸素 ＝ 1:8",rel:["倍数比例の法則"]},
+ "倍数比例の法則":{g:"4",d:"同じ2元素から2種類以上の化合物ができるとき、一方の一定量と結びつく他方の質量は<b>簡単な整数比</b>になる。ドルトン（1803年）。",ex:"NO と [[NO2]]：N 1.4 g に結びつく O は 1.6 g と 3.2 g → 1:2",rel:["定比例の法則"]},
+ "気体反応の法則":{g:"4",d:"気体どうしの反応では、反応・生成する気体の<b>体積が簡単な整数比</b>になる（同温・同圧）。ゲーリュサック（1808年）。",ex:"[[N2 + O2 → 2NO]]：1:1:2",rel:["アボガドロの法則"]},
+ "アボガドロの法則":{g:"4",d:"同温・同圧で<b>同じ体積</b>の気体には、気体の種類によらず<b>同じ数の分子</b>が含まれる。アボガドロ（1811年）。",rel:["モル体積","気体反応の法則"]},
+ // 第5章
+ "アレニウスの定義":{g:"5",d:"酸：水に溶けて <b>[[H^{+}]]</b> を出す物質。塩基：水に溶けて <b>[[OH^{-}]]</b> を出す物質。",rel:["ブレンステッド・ローリーの定義"]},
+ "ブレンステッド・ローリーの定義":{g:"5",d:"酸：[[H^{+}]] を<b>わたす</b>物質。塩基：[[H^{+}]] を<b>受け取る</b>物質。水がなくても使える、より広い定義。",q:["[[NH3 + H2O ⇄ NH4^{+} + OH^{-}]] で水は酸？塩基？","酸（H⁺ を NH₃ にわたしている）"],rel:["アレニウスの定義"]},
+ "塩基":{g:"5",d:"酸と反応して酸の性質を打ち消す物質。[[OH^{-}]] を出す（または [[H^{+}]] を受け取る）。水に溶けやすい塩基を<b>アルカリ</b>ともいう。",ex:"[[NaOH]]、[[Ca(OH)2]]、[[NH3]]",rel:["強塩基","弱塩基","中和"]},
+ "電離度":{g:"5",d:"溶かした酸（塩基）のうち、<b>電離したものの割合</b>。α（アルファ）で表し、0 ＜ α ≦ 1。",ex:"0.10 mol/L 酢酸の電離度は約 0.016（100個中1〜2個）",q:["電離度が1に近い酸を何という？","強酸"],rel:["電離","強酸","弱酸"]},
+ "価数":{g:"5",d:"酸1つから出せる [[H^{+}]] の数（酸の価数）、塩基1つから出せる [[OH^{-}]] の数（塩基の価数）。",ex:"[[HCl]] 1価、[[H2SO4]] 2価、[[Ca(OH)2]] 2価",q:["酢酸 [[CH3COOH]] は何価？","1価（H⁺ になるのは COOH の H の1個だけ）"],rel:["中和"]},
+ "強酸":{g:"5",d:"水中でほぼ<b>全部電離する</b>酸（電離度≒1）。",ex:"[[HCl]]、[[HNO3]]、[[H2SO4]]",rel:["弱酸","電離度"]},
+ "弱酸":{g:"5",d:"水中で<b>一部しか電離しない</b>酸（電離度が小さい）。",ex:"[[CH3COOH]]、[[H2CO3]]、[[H2S]]、[[(COOH)2]]",rel:["強酸","電離度"]},
+ "強塩基":{g:"5",d:"水中でほぼ全部電離する塩基。",ex:"[[NaOH]]、[[KOH]]、[[Ca(OH)2]]、[[Ba(OH)2]]",rel:["弱塩基"]},
+ "弱塩基":{g:"5",d:"水中で一部しか電離しない塩基。",ex:"[[NH3]]、[[Cu(OH)2]]、[[Mg(OH)2]]",rel:["強塩基"]},
+ "オキソニウムイオン":{g:"5",d:"[[H^{+}]] が水分子にくっついたイオン [[H3O^{+}]]。水溶液中の H⁺ は実際にはこの形でいる。",rel:["水素イオン"]},
+ "水素イオン":{g:"5",d:"[[H^{+}]]。酸の性質のもと。水溶液中では [[H3O^{+}]]（オキソニウムイオン）として存在。",rel:["オキソニウムイオン","pH"]},
+ "水酸化物イオン":{g:"5",d:"[[OH^{-}]]。塩基（アルカリ）の性質のもと。",rel:["塩基"]},
+ "酸性酸化物":{g:"5",d:"<b>非金属元素</b>の酸化物。水に溶けると酸になり、塩基と反応する。",ex:"[[CO2]]、[[SO2]]、[[SO3]]",rel:["塩基性酸化物","両性酸化物"]},
+ "塩基性酸化物":{g:"5",d:"<b>金属元素</b>の酸化物。水に溶けると塩基になり、酸と反応する。",ex:"[[Na2O]]、[[CaO]]",rel:["酸性酸化物","両性酸化物"]},
+ "両性酸化物":{g:"5",d:"<b>酸とも強塩基とも反応する</b>酸化物。Al, Zn などの酸化物。",ex:"[[Al2O3]]、[[ZnO]]",rel:["酸性酸化物","塩基性酸化物"]},
+ "酸性":{g:"5",d:"[H⁺] ＞ [OH⁻] の状態。pH ＜ 7。青色リトマス紙が赤くなる。",rel:["中性","塩基性","pH"]},
+ "中性":{g:"5",d:"[H⁺] ＝ [OH⁻] の状態。25 ℃で pH ＝ 7。",rel:["酸性","塩基性"]},
+ "塩基性":{g:"5",d:"[H⁺] ＜ [OH⁻] の状態。pH ＞ 7。赤色リトマス紙が青くなる。「アルカリ性」ともいう。",rel:["酸性","中性","pH"]},
+ "pH":{g:"5",d:"水溶液の酸性・塩基性の強さを 0〜14 の数で表したもの。[H⁺] ＝ 1.0×10<sup>−n</sup> mol/L のとき pH ＝ n。<b>小さいほど酸性が強い</b>。pH が1小さい ＝ [H⁺] が10倍。",q:["[H⁺] ＝ 1.0×10^{-3} mol/L の pH は？","3"],rel:["水のイオン積","水素イオン"]},
+ "水のイオン積":{g:"5",d:"[H⁺] と [OH⁻] のかけ算。25 ℃で <b>1.0×10<sup>−14</sup> (mol/L)²</b> と一定。片方がわかればもう片方も計算できる。",q:["[OH⁻] ＝ 1.0×10^{-2} mol/L のとき [H⁺] は？","1.0×10^{-14} ÷ 1.0×10^{-2} ＝ 1.0×10^{-12} mol/L（pH 12）"],rel:["pH"]},
+ "中和":{g:"5",d:"酸の [[H^{+}]] と塩基の [[OH^{-}]] が反応して、<b>塩と水</b>ができる反応。酸と塩基の性質がたがいに打ち消される。",ex:"[[HCl + NaOH → NaCl + H2O]]",rel:["中和点","中和滴定"]},
+ "中和点":{g:"5",d:"酸と塩基が<b>過不足なく</b>（ちょうど）中和した点。H⁺ の物質量 ＝ OH⁻ の物質量。",rel:["中和滴定","指示薬"]},
+ "正塩":{g:"5",d:"酸の H も塩基の OH も<b>残っていない</b>塩。",ex:"[[NaCl]]、[[Na2CO3]]、[[NH4Cl]]",rel:["酸性塩","塩基性塩"]},
+ "酸性塩":{g:"5",d:"酸の <b>H が残っている</b>塩。名前に「酸性」とあっても、水溶液が酸性とは限らない！",ex:"[[NaHCO3]]（水溶液は塩基性）、[[NaHSO4]]（水溶液は酸性）",rel:["正塩","塩基性塩"]},
+ "塩基性塩":{g:"5",d:"塩基の <b>OH が残っている</b>塩。",ex:"[[MgCl(OH)]]、[[CaCl(OH)]]",rel:["正塩","酸性塩"]},
+ "弱酸の遊離":{g:"5",d:"弱酸の塩に強酸を加えると、<b>弱酸が追い出される</b>反応。",ex:"[[CH3COONa + HCl → NaCl + CH3COOH]]",rel:["弱酸","強酸"]},
+ "中和滴定":{g:"5",d:"濃度がわかっている酸（塩基）を使って、濃度がわからない塩基（酸）の<b>濃度を求める</b>実験。a c V ＝ b c′ V′ を使う。",rel:["中和点","指示薬","ビュレット"]},
+ "指示薬":{g:"5",d:"pH によって<b>色が変わる</b>薬品。中和点を知るために使う。",ex:"フェノールフタレイン、メチルオレンジ、BTB",rel:["変色域","中和点"]},
+ "変色域":{g:"5",d:"指示薬の色が<b>変わる pH の範囲</b>。",ex:"フェノールフタレイン 8.0〜9.8、メチルオレンジ 3.1〜4.4",rel:["指示薬"]},
+ "滴定曲線":{g:"5",d:"中和滴定で、加えた液の<b>体積（横軸）</b>と<b>pH（縦軸）</b>の関係を表したグラフ。中和点の近くで pH が急に変わる。",rel:["中和滴定","指示薬"]},
+ "フェノールフタレイン":{g:"5",d:"変色域 pH 8.0〜9.8、<b>無色 → 赤</b>。中和点が塩基性側になる滴定（弱酸＋強塩基）で使う。",rel:["指示薬","メチルオレンジ"]},
+ "メチルオレンジ":{g:"5",d:"変色域 pH 3.1〜4.4、<b>赤 → 黄</b>。中和点が酸性側になる滴定（強酸＋弱塩基）で使う。",rel:["指示薬","フェノールフタレイン"]},
+ "メスフラスコ":{g:"5",d:"<b>正確な濃度の溶液をつくる</b>ガラス器具。首の<b>標線</b>まで液を入れると決まった体積になる。ぬれたまま使ってよい。",rel:["標線","モル濃度"]},
+ "ホールピペット":{g:"5",d:"<b>決まった体積</b>の溶液を正確にはかり取る器具。純水でぬれていたら<b>共洗い</b>する。",rel:["共洗い","ビュレット"]},
+ "ビュレット":{g:"5",d:"滴下した溶液の<b>体積をはかる</b>器具。目もりは上が 0。ぬれていたら<b>共洗い</b>する。",rel:["共洗い","中和滴定"]},
+ "コニカルビーカー":{g:"5",d:"酸と塩基を<b>反応させる</b>容器。ぬれたまま使ってよい。",rel:["中和滴定"]},
+ "共洗い":{g:"5",d:"器具の内側を、<b>これから入れる溶液</b>で2〜3回すすぐこと。水でぬれたままだと溶液がうすまるのを防ぐ。",rel:["ホールピペット","ビュレット"]},
+ "電子てんびん":{g:"prev",d:"質量を正確にはかる電子式のはかり。"},
+ "標線":{g:"4",d:"メスフラスコやホールピペットについている線。液面（の底）をここに合わせると決まった体積になる。",rel:["メスフラスコ"]}
+};
+const GLOSS_GROUPS=[["prev","前に習った内容（ふり返り）"],["4","第4章 物質量と化学反応式"],["5","第5章 酸と塩基の反応"]];
+const TERM_KEYS=Object.keys(GLOSS).sort((a,b)=>b.length-a.length);
+const TERM_RE=new RegExp(TERM_KEYS.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|"),"g");
+const TERM_SKIP="button:not(.flash),select,option,textarea,input,svg,script,style,h1,h2,.term,.choice,.tab,.chip,.no-term,label,.stepper,.stat,.legend,.tl-btn,th,#gloss,.flash .front,.flash .tag,#quizarea .qtext";
+function linkTerms(root){
+  if(!root||root.nodeType!==1||root.closest("svg"))return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentElement;if(!p||!n.nodeValue.trim())return NodeFilter.FILTER_REJECT;if(p.closest(TERM_SKIP))return NodeFilter.FILTER_REJECT;TERM_RE.lastIndex=0;return TERM_RE.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;}});
+  const nodes=[];while(w.nextNode())nodes.push(w.currentNode);
+  nodes.forEach(n=>{
+    const block=n.parentElement.closest("p,li,td,div,h3,section,.flash")||root;
+    const txt=n.nodeValue;TERM_RE.lastIndex=0;let m,last=0,frag=null;const done=new Set();
+    while((m=TERM_RE.exec(txt))){
+      const t=m[0];if(done.has(t)||block.querySelector(`.term[data-t="${t}"]`))continue;done.add(t);
+      if(!frag)frag=document.createDocumentFragment();
+      frag.appendChild(document.createTextNode(txt.slice(last,m.index)));
+      const s=document.createElement("span");s.className="term";s.dataset.t=t;s.setAttribute("role","button");s.tabIndex=0;s.textContent=t;frag.appendChild(s);
+      last=m.index+t.length;
+    }
+    if(frag){frag.appendChild(document.createTextNode(txt.slice(last)));n.parentNode.replaceChild(frag,n);}
+  });
+}
+let glossHist=[];
+function openGloss(t,push){
+  const box=$("#gloss"),body=$("#glossBody");
+  if(t==="__index"){
+    body.innerHTML=`<h3>用語さくいん</h3><p class="small muted">わからない言葉をタップすると説明が出ます。前の学期に習った言葉も入っています。</p>`+
+      GLOSS_GROUPS.map(g=>`<h4>${g[1]}</h4><div class="chips">${Object.keys(GLOSS).filter(k=>GLOSS[k].g===g[0]).map(k=>`<button type="button" class="chip" data-term="${k}">${k}</button>`).join("")}</div>`).join("");
+  }else{
+    const e=GLOSS[t];if(!e)return;
+    const tag=e.g==="prev"?"前に習った内容":e.g==="4"?"第4章":"第5章";
+    body.innerHTML=`<div class="gtag">${tag}</div><h3>${t}</h3><p>${tx(e.d)}</p>`+
+      (e.ex?`<p class="gex"><b>例</b>　${tx(e.ex)}</p>`:"")+
+      (e.q?`<div class="gq"><div><b>チェック</b>　${tx(e.q[0])}</div><div><button type="button" class="btn" id="gqBtn">答えを見る</button></div><div id="gqA" hidden>${tx(e.q[1])}</div></div>`:"")+
+      (e.rel?`<div class="grel"><span class="small muted">関連する言葉</span><div class="chips">${e.rel.filter(r=>GLOSS[r]).map(r=>`<button type="button" class="chip" data-term="${r}">${r}</button>`).join("")}</div></div>`:"");
+    const qb=$("#gqBtn");if(qb)qb.addEventListener("click",()=>{$("#gqA").hidden=false;qb.hidden=true;});
+    S.gloss=S.gloss||{};S.gloss[t]=(S.gloss[t]||0)+1;save();
+  }
+  if(push!==false){if(!box.hidden)glossHist.push(box.dataset.cur);else glossHist=[];}
+  box.dataset.cur=t;$("#glossBack").hidden=!glossHist.length;
+  box.hidden=false;$("#glossBody").scrollTop=0;$("#glossClose").focus({preventScroll:true});
+}
+function closeGloss(){$("#gloss").hidden=true;glossHist=[];}
+function initGloss(){
+  document.addEventListener("click",e=>{
+    const t=e.target.closest(".term");
+    if(t){e.preventDefault();e.stopPropagation();openGloss(t.dataset.t);return;}
+    const c=e.target.closest("[data-term]");if(c){openGloss(c.dataset.term);}
+  },true);
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&!$("#gloss").hidden){closeGloss();return;}
+    const t=e.target.closest&&e.target.closest(".term");if(t&&(e.key==="Enter"||e.key===" ")){e.preventDefault();e.stopPropagation();openGloss(t.dataset.t);}
+  },true);
+  $("#glossClose").addEventListener("click",closeGloss);
+  $("#glossShade").addEventListener("click",closeGloss);
+  $("#glossBack").addEventListener("click",()=>{const p=glossHist.pop();if(p)openGloss(p,false);});
+  $("#glossIdx").addEventListener("click",()=>openGloss("__index"));
+  const main=document.querySelector("main");
+  let pending=new Set(),raf=0;
+  new MutationObserver(recs=>{recs.forEach(r=>{if(r.target.closest&&!r.target.closest("svg"))pending.add(r.target);});
+    if(!raf)raf=requestAnimationFrame(()=>{raf=0;const list=[...pending];pending.clear();list.forEach(n=>{if(n.isConnected)linkTerms(n);});});
+  }).observe(main,{childList:true,subtree:true});
+  linkTerms(main);
+}
+
 /* =================== shell =================== */
 function renderStats(){
-  const ok=CARDS.filter(c=>S.cards[c.id]==="ok").length;
+  const now=Date.now(),ok=CARDS.filter(c=>S.srs[c.id]&&S.srs[c.id].lv>=4).length,due=CARDS.filter(c=>S.srs[c.id]&&S.srs[c.id].due<=now).length;
   const acc=S.calc.t?Math.round(S.calc.c/S.calc.t*100):0;
-  $("#stats").innerHTML=`<span class="stat">暗記カード <b>${ok}</b>/${CARDS.length} 覚えた</span><span class="stat">計算 <b>${S.calc.c}</b>/${S.calc.t} 正解${S.calc.t?`（${acc}%）`:""}</span><span class="stat">最高連続正解 <b>${S.calc.best||0}</b></span>`;
+  $("#stats").innerHTML=`<span class="stat">カード定着 <b>${ok}</b>/${CARDS.length}${due?`・復習待ち <b>${due}</b>`:""}</span><span class="stat">計算 <b>${S.calc.c}</b>/${S.calc.t} 正解${S.calc.t?`（${acc}%）`:""}</span><span class="stat">最高連続正解 <b>${S.calc.best||0}</b></span>`;
 }
 function showTab(t){
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===t)));
@@ -1437,12 +1682,13 @@ function showTab(t){
 }
 document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b){showTab(b.dataset.tab);window.scrollTo({top:0});}});
 document.addEventListener("keydown",e=>{
-  if($("#p-card").hidden||e.target.tagName==="INPUT")return;
+  if($("#p-card").hidden||e.target.tagName==="INPUT"||!$("#gloss").hidden)return;
   if(e.key===" "){if(e.target.closest("button"))return;e.preventDefault();cardOpen=!cardOpen;renderCard();}
-  else if(e.key==="ArrowRight")cardMark("ok");else if(e.key==="ArrowLeft")cardMark("ng");
+  else if(e.key==="ArrowRight")cardMark("ok");else if(e.key==="ArrowLeft")cardMark("ng");else if(e.key==="ArrowDown"){e.preventDefault();cardMark("hard");}
 });
 buildSummary();initLab();initCards();initCalc();initQuiz();renderStats();
 const h=(location.hash||"").slice(1);
 showTab(["lab","sum","card","calc","quiz"].includes(h)?h:(S.tab||"lab"));
+initGloss();
 })();
 </script>
