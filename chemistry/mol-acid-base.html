@@ -1,0 +1,836 @@
+<title>モルと酸塩基ドリル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: lab-notebook app. Sticky tab bar, one column of "notebook pages"; litmus red/blue mark acid/base. */
+:root{
+  --paper:#f3f5f8; --card:#ffffff; --ink:#18202e; --muted:#5a6477; --line:#d8dde7; --soft:#e9edf3;
+  --accent:#17708c; --accent-ink:#ffffff; --accent-soft:#dcf0f6;
+  --acid:#cc3a52; --acid-soft:#fbe4e8; --base:#2c66cf; --base-soft:#e1eafb; --neu:#2f8d55; --neu-soft:#dff3e6;
+  --warn:#a86400; --warn-soft:#fdf0d9;
+  --f-display:"Dela Gothic One","Zen Kaku Gothic New","Hiragino Sans",sans-serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11151d; --card:#1a202b; --ink:#e8ebf2; --muted:#9ba4b6; --line:#2c3443; --soft:#232a37;
+  --accent:#4fb3d3; --accent-ink:#0b1a20; --accent-soft:#16323c;
+  --acid:#ff7d92; --acid-soft:#3b1c24; --base:#7fa9ff; --base-soft:#1c2843; --neu:#6fd197; --neu-soft:#17321f;
+  --warn:#f0b257; --warn-soft:#3a2b14; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#11151d; --card:#1a202b; --ink:#e8ebf2; --muted:#9ba4b6; --line:#2c3443; --soft:#232a37;
+  --accent:#4fb3d3; --accent-ink:#0b1a20; --accent-soft:#16323c;
+  --acid:#ff7d92; --acid-soft:#3b1c24; --base:#7fa9ff; --base-soft:#1c2843; --neu:#6fd197; --neu-soft:#17321f;
+  --warn:#f0b257; --warn-soft:#3a2b14; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;margin:0}
+sub,sup{font-size:.7em;line-height:0}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{padding-block:22px 10px}
+.brand{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.brand h1{font-family:var(--f-display);font-weight:400;font-size:clamp(1.5rem,5vw,2.1rem);margin:0;letter-spacing:.02em;text-wrap:balance}
+.brand .sub{color:var(--muted);font-size:.9rem}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.stat b{color:var(--ink)}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tab{border:0;background:none;padding:12px 14px 10px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+main{padding-block:20px 60px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 14px;font-size:.9rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ng{background:var(--acid-soft);border-color:var(--acid);color:var(--acid)}
+.btn.ok{background:var(--neu-soft);border-color:var(--neu);color:var(--neu)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* ---- summary ---- */
+.toc{display:flex;flex-wrap:wrap;gap:6px 8px;margin-bottom:18px}
+.toc a{font-size:.85rem;color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--card)}
+.chapter{font-family:var(--f-display);font-weight:400;font-size:1.25rem;margin:30px 0 12px;display:flex;gap:10px;align-items:center}
+.chapter .no{font-size:.8rem;font-family:var(--f-body);font-weight:700;background:var(--ink);color:var(--paper);border-radius:6px;padding:2px 8px}
+section.note{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 14px;margin-bottom:14px;min-width:0}
+section.note h3{margin:0 0 8px;font-size:1.08rem}
+section.note p{margin:.4em 0}
+.key{background:var(--accent-soft);border-radius:8px;padding:8px 12px;margin:8px 0;font-weight:700}
+.trap{background:var(--warn-soft);border-left:4px solid var(--warn);border-radius:6px;padding:8px 12px;margin:10px 0;font-size:.95rem}
+.trap b{color:var(--warn)}
+.tbl{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:700;white-space:nowrap}
+.acid{color:var(--acid);font-weight:700}.base{color:var(--base);font-weight:700}.neu{color:var(--neu);font-weight:700}
+
+.hub{display:grid;gap:8px;margin:10px 0}
+.hubrow{display:grid;grid-template-columns:1fr minmax(120px,1.3fr) 1fr;gap:8px;align-items:center}
+.hubbox{border:2px solid var(--ink);border-radius:10px;padding:8px;text-align:center;font-weight:700;background:var(--card);font-size:.95rem}
+.hubbox.mol{background:var(--ink);color:var(--paper)}
+.arrows{display:grid;gap:2px;font-size:.82rem;text-align:center}
+.arrows span{display:block;border-bottom:2px solid var(--accent);padding:0 4px;color:var(--accent);font-weight:700}
+.arrows span.back{border-bottom:0;border-top:2px solid var(--muted);color:var(--muted)}
+
+.phbar{height:18px;border-radius:9px;background:linear-gradient(90deg,#d3283c,#f07a2a 25%,#f3cd36 42%,#3fae5a 50%,#2a87c9 65%,#3b4fc4 82%,#6b33b0);margin:4px 0}
+.phscale{display:grid;grid-template-columns:repeat(15,1fr);font-size:.72rem;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.ind{display:grid;grid-template-columns:9.5em 1fr;gap:8px;align-items:center;font-size:.85rem;margin:8px 0;line-height:1.35}
+.indtrack{position:relative;height:16px;background:var(--soft);border-radius:4px}
+.indtrack i{position:absolute;top:0;bottom:0;border-radius:4px;border:1px solid var(--line)}
+
+/* ---- flashcards ---- */
+.prog{height:8px;background:var(--soft);border-radius:4px;overflow:hidden;margin:4px 0 14px}
+.prog i{display:block;height:100%;background:var(--neu);transition:width .3s}
+.flash{width:100%;min-height:240px;border:1px solid var(--line);border-radius:16px;background:var(--card);padding:26px 22px;cursor:pointer;display:grid;align-content:center;gap:10px;text-align:center;box-shadow:0 2px 0 var(--line)}
+.flash .tag{font-size:.78rem;color:var(--muted);letter-spacing:.06em}
+.flash .front{font-size:1.3rem;font-weight:700;text-wrap:balance}
+.flash .back{font-size:1.08rem;text-align:left;border-top:1px dashed var(--line);padding-top:12px}
+.flash .hint{font-size:.8rem;color:var(--muted)}
+.cardnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.cardnav .btn{padding:14px}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.88rem;font-variant-numeric:tabular-nums;flex-wrap:wrap;gap:6px}
+
+/* ---- drill & quiz ---- */
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.qlabel{font-size:.8rem;color:var(--accent);font-weight:700;letter-spacing:.05em}
+.qtext{font-size:1.15rem;font-weight:500;margin:6px 0 16px}
+.ansrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:1.1rem}
+.ansrow input{font:inherit;font-size:1.15rem;width:8.5em;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.ansrow input.exp{width:4.2em}
+.fb{margin-top:16px;border-radius:12px;padding:12px 14px}
+.fb.good{background:var(--neu-soft);border:1px solid var(--neu)}
+.fb.bad{background:var(--acid-soft);border:1px solid var(--acid)}
+.fb .verdict{font-weight:900;font-size:1.05rem}
+.fb.good .verdict{color:var(--neu)} .fb.bad .verdict{color:var(--acid)}
+.steps{margin:8px 0 0;padding-left:1.2em}
+.steps li{margin:2px 0}
+.choices{display:grid;gap:8px}
+.choice{text-align:left;border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:12px 14px;cursor:pointer;font-size:1.02rem}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice.right{border-color:var(--neu);background:var(--neu-soft)}
+.choice.wrong{border-color:var(--acid);background:var(--acid-soft)}
+.choice:disabled{cursor:default}
+.scorebig{font-family:var(--f-display);font-size:3rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.reviewlist{display:grid;gap:10px;margin-top:14px}
+.reviewlist .qcard{padding:14px}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+@media (max-width:520px){
+  .hubrow{grid-template-columns:1fr 1.2fr 1fr}
+  .hubbox{font-size:.82rem;padding:6px 4px}
+  .arrows{font-size:.72rem}
+  section.note{padding:14px 13px 10px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><h1>モルと酸塩基ドリル</h1><span class="sub">第4章 物質量と化学反応式 ／ 第5章 酸と塩基の反応</span></div>
+  <div class="stats" id="stats"></div>
+</div></header>
+
+<nav class="tabs"><div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="sum" aria-selected="true">まとめ</button>
+  <button class="tab" role="tab" data-tab="card" aria-selected="false">暗記カード</button>
+  <button class="tab" role="tab" data-tab="calc" aria-selected="false">計算ドリル</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">確認クイズ</button>
+</div></nav>
+
+<main class="wrap">
+
+<!-- =================== まとめ =================== -->
+<div id="p-sum">
+  <div class="toc" id="toc"></div>
+
+  <div class="chapter"><span class="no">第4章</span>物質量と化学反応式</div>
+
+  <section class="note" id="s1"><h3>原子量・分子量・式量</h3>
+    <p><b>相対質量</b>：<span class="f">[[^{12}C]]</span> 原子1個の質量を <b>12</b> として、他の原子の質量を比で表した値（単位なし）。</p>
+    <p><b>原子量</b>：同位体の相対質量 × 存在比 を足した<b>平均値</b>。</p>
+    <div class="key">例）塩素：[[^{35}Cl]] (35.0) が 75%、[[^{37}Cl]] (37.0) が 25% → 35.0 × 3/4 ＋ 37.0 × 1/4 ＝ <b>35.5</b></div>
+    <p><b>分子量</b>：分子式の原子量の和。[[H2O]] ＝ 1.0×2 ＋ 16 ＝ <b>18</b></p>
+    <p><b>式量</b>：イオンからなる物質・イオンの組成式の原子量の和。[[NaCl]] ＝ 23 ＋ 35.5 ＝ 58.5、[[SO4^{2-}]] ＝ 32 ＋ 16×4 ＝ 96（電子の質量は無視できる）</p>
+    <p class="small muted">原子量：H=1.0 He=4.0 C=12 N=14 O=16 Na=23 Mg=24 Al=27 Si=28 P=31 S=32 Cl=35.5 K=39 Ca=40 Fe=56 Cu=64 Zn=65 Br=80 Ag=108</p>
+  </section>
+
+  <section class="note" id="s2"><h3>物質量 [mol] は「3つの換算」の中心</h3>
+    <p><b>1 mol</b> ＝ 粒子 <b>6.0×10^{23}</b> 個の集団（<b>アボガドロ定数</b> 6.0×10^{23} /mol）</p>
+    <div class="hub" id="hub"></div>
+    <p><b>モル質量</b> [g/mol]：1 molあたりの質量。原子量・分子量・式量に g/mol をつけた値。（O₂ → 32 g/mol）</p>
+    <p><b>モル体積</b>：<b>標準状態</b>（0 ℃, 1.013×10^{5} Pa）で、気体1 molの体積は種類によらず <b>22.4 L</b>。</p>
+    <div class="trap"><b>ひっかけ注意</b>　22.4 L/mol が使えるのは<b>気体だけ</b>。水 [[H2O]] は標準状態で液体なので使えない。</div>
+    <div class="trap"><b>ひっかけ注意</b>　「[[H2O]] 1 mol に含まれる <b>H原子</b>」は 2 mol → 2 × 6.0×10^{23} 個。何の粒子を数えているかを必ず確認。</div>
+  </section>
+
+  <section class="note" id="s3"><h3>気体の密度と分子量</h3>
+    <div class="key">気体の密度 [g/L] ＝ モル質量 [g/mol] ÷ 22.4 L/mol</div>
+    <p>例）窒素 [[N2]] (28)：28 ÷ 22.4 ＝ 1.25 g/L</p>
+    <p>逆に、密度から分子量：モル質量 ＝ 密度 × 22.4</p>
+    <p>「密度が水素 [[H2]]（分子量2.0）の 8.00 倍」→ 分子量 ＝ 2.0 × 8.00 ＝ 16.0（同温・同圧なら密度の比 ＝ 分子量の比）</p>
+  </section>
+
+  <section class="note" id="s4"><h3>溶液と濃度</h3>
+    <p><b>溶媒</b>：溶かす液体（水など）　<b>溶質</b>：溶ける物質　<b>溶液</b>：できた均一な液体</p>
+    <p><b>飽和溶液</b>：溶質が限度まで溶けた溶液　<b>溶解度</b>：溶媒 <b>100 g</b> に溶ける溶質の最大質量 [g]（固体は温度が高いほど大きいことが多い）</p>
+    <p><b>再結晶</b>：温度による溶解度の差を利用して、純粋な結晶を取り出す方法</p>
+    <div class="key">質量パーセント濃度 [%] ＝ 溶質の質量 [g] ÷ 溶液の質量 [g] × 100</div>
+    <div class="key">モル濃度 [mol/L] ＝ 溶質の物質量 [mol] ÷ 溶液の体積 [L]</div>
+    <p>1.0 mol/L の NaCl 水溶液 100 mL の作り方：NaCl 0.10 mol (5.85 g) を少量の水に溶かす → <b>メスフラスコ</b>に移し、ビーカーを洗った水も入れる → 標線まで水を加えて 100 mL にし、よく振る。</p>
+    <div class="trap"><b>ひっかけ注意</b>　モル濃度は「<b>溶液</b>1 L」あたり。「水1 L に溶かす」ではない。mL は ÷1000 して L に直す。</div>
+  </section>
+
+  <section class="note" id="s5"><h3>化学反応式と量的関係</h3>
+    <p>左辺に反応物、右辺に生成物。両辺の各原子の数が等しくなるように<b>係数</b>をつける（係数1は省略）。</p>
+    <p>係数のつけ方：<b>目算法</b>／<b>未定係数法</b>（a, b, c, d とおいて原子ごとに式を立てる）</p>
+    <div class="key">係数の比 ＝ 物質量 [mol] の比 ＝（同温・同圧の）気体の体積の比</div>
+    <div class="tbl"><table>
+      <tr><th></th><th>[[CH4]]</th><th>＋ 2[[O2]]</th><th>→ [[CO2]]</th><th>＋ 2[[H2O]]</th></tr>
+      <tr><th>物質量</th><td>1 mol</td><td>2 mol</td><td>1 mol</td><td>2 mol</td></tr>
+      <tr><th>質量</th><td>16 g</td><td>64 g</td><td>44 g</td><td>36 g</td></tr>
+      <tr><th>気体の体積<br><span class="small muted">（標準状態）</span></th><td>22.4 L</td><td>44.8 L</td><td>22.4 L</td><td class="muted">液体</td></tr>
+    </table></div>
+    <p>16 g ＋ 64 g ＝ 44 g ＋ 36 g ＝ 80 g（質量保存の法則）。体積の和は保存されない。</p>
+    <div class="trap"><b>ひっかけ注意</b>　片方が足りないときは、<b>足りない方（使い切る方）</b>を基準に生成物の量を計算する。例：[[CH4]] 4.0 g (0.25 mol) と [[O2]] 24 g (0.75 mol) → [[O2]] は 0.50 mol で足りるので、[[CH4]] 0.25 mol を基準に [[CO2]] 0.25 mol。</div>
+  </section>
+
+  <section class="note" id="s6"><h3>化学の基礎法則</h3>
+    <div class="tbl"><table id="lawtable"></table></div>
+  </section>
+
+  <div class="chapter"><span class="no">第5章</span>酸と塩基の反応</div>
+
+  <section class="note" id="s7"><h3>酸・塩基の定義</h3>
+    <div class="tbl"><table>
+      <tr><th></th><th class="acid">酸</th><th class="base">塩基</th></tr>
+      <tr><th>アレニウス</th><td>水に溶けて <b>[[H^{+}]]</b> を生じる物質<br>[[HCl → H^{+} + Cl^{-}]]</td><td>水に溶けて <b>[[OH^{-}]]</b> を生じる物質<br>[[NaOH → Na^{+} + OH^{-}]]</td></tr>
+      <tr><th>ブレンステッド・ローリー</th><td>[[H^{+}]] を<b>与える</b>物質</td><td>[[H^{+}]] を<b>受け取る</b>物質</td></tr>
+    </table></div>
+    <p>[[H^{+}]] は水中ではオキソニウムイオン [[H3O^{+}]] として存在する。</p>
+    <p>例）[[HCl + NH3 → NH4^{+} + Cl^{-}]]：HCl が酸、NH₃ が塩基。</p>
+    <p>例）[[NH3 + H2O ⇄ NH4^{+} + OH^{-}]]：H₂O は H⁺ を与えるので<b class="acid">酸</b>。<br>例）[[CH3COOH + H2O → CH3COO^{-} + H3O^{+}]]：H₂O は H⁺ を受け取るので<b class="base">塩基</b>。</p>
+    <div class="trap"><b>ひっかけ注意</b>　水 H₂O は相手によって酸にも塩基にもなる。矢印の前後で H⁺ を「渡した側」が酸。</div>
+  </section>
+
+  <section class="note" id="s8"><h3>価数・強弱・電離度</h3>
+    <p><b>酸の価数</b>：酸1分子から出せる H⁺ の数　<b>塩基の価数</b>：塩基1つから出せる OH⁻ の数（または受け取れる H⁺ の数）</p>
+    <div class="key">電離度 α ＝ 電離した酸（塩基）の物質量 ÷ 溶かした酸（塩基）の物質量　（0 ＜ α ≦ 1）</div>
+    <p>α が1に近い＝<b>強酸・強塩基</b>、小さい＝<b>弱酸・弱塩基</b>。価数と強弱は無関係。</p>
+    <div class="tbl"><table>
+      <tr><th>価数</th><th class="acid">強酸</th><th class="acid">弱酸</th><th class="base">強塩基</th><th class="base">弱塩基</th></tr>
+      <tr><th>1価</th><td>[[HCl]] 塩化水素<br>[[HNO3]] 硝酸</td><td>[[CH3COOH]] 酢酸</td><td>[[NaOH]]<br>[[KOH]]</td><td>[[NH3]] アンモニア</td></tr>
+      <tr><th>2価</th><td>[[H2SO4]] 硫酸</td><td>[[(COOH)2]] シュウ酸<br>[[H2CO3]] 炭酸<br>[[H2S]] 硫化水素</td><td>[[Ca(OH)2]]<br>[[Ba(OH)2]]</td><td>[[Cu(OH)2]]<br>[[Mg(OH)2]]<br>[[Fe(OH)2]]</td></tr>
+      <tr><th>3価</th><td></td><td>[[H3PO4]] リン酸</td><td></td><td>[[Al(OH)3]]</td></tr>
+    </table></div>
+    <div class="trap"><b>ひっかけ注意</b>　酢酸 [[CH3COOH]] は H を4個持つが H⁺ になるのは1個だけ → <b>1価</b>。アンモニア [[NH3]] は OH を持たないが H⁺ を1個受け取る → <b>1価の塩基</b>。</div>
+  </section>
+
+  <section class="note" id="s9"><h3>酸化物</h3>
+    <div class="tbl"><table>
+      <tr><th>分類</th><th>どんな元素</th><th>例と水との反応</th></tr>
+      <tr><td class="acid">酸性酸化物</td><td>非金属元素の酸化物</td><td>[[CO2 + H2O ⇄ H2CO3]]、[[SO2]]、[[SO3]]、[[NO2]]</td></tr>
+      <tr><td class="base">塩基性酸化物</td><td>金属元素の酸化物</td><td>[[Na2O + H2O → 2NaOH]]、[[CaO + H2O → Ca(OH)2]]</td></tr>
+      <tr><td class="neu">両性酸化物</td><td>Al, Zn など</td><td>[[Al2O3]]、[[ZnO]]（酸とも強塩基とも反応）</td></tr>
+    </table></div>
+  </section>
+
+  <section class="note" id="s10"><h3>水素イオン濃度と pH</h3>
+    <p>純水もわずかに電離：[[H2O ⇄ H^{+} + OH^{-}]]、[H⁺] ＝ [OH⁻] ＝ 1.0×10^{-7} mol/L（25 ℃）</p>
+    <div class="key">[H⁺] ＝ 価数 a × 濃度 c × 電離度 α　　[OH⁻] ＝ b × c′ × α′</div>
+    <div class="key">[H⁺] ＝ 1.0×10^{-n} mol/L のとき pH ＝ n</div>
+    <div class="key">水のイオン積 K<sub>w</sub> ＝ [H⁺][OH⁻] ＝ 1.0×10^{-14} (mol/L)²（25 ℃で一定）</div>
+    <p>酸性：pH ＜ 7　中性：pH ＝ 7　塩基性：pH ＞ 7。pH が1小さい ＝ [H⁺] が10倍。</p>
+    <div class="phbar" aria-hidden="true"></div>
+    <div class="phscale" id="phscale"></div>
+    <p class="small">例）0.10 mol/L 塩酸：[H⁺] ＝ 1 × 0.10 × 1 ＝ 1.0×10^{-1} → pH 1<br>例）0.010 mol/L NaOH：[OH⁻] ＝ 1.0×10^{-2} → [H⁺] ＝ K<sub>w</sub> ÷ [OH⁻] ＝ 1.0×10^{-12} → pH 12</p>
+    <div class="trap"><b>ひっかけ注意</b>　酸を水で薄めても pH は 7 を超えない（中性に近づくだけ）。</div>
+  </section>
+
+  <section class="note" id="s11"><h3>中和反応と塩</h3>
+    <p><b>中和</b>：酸の H⁺ と塩基の OH⁻ が反応して、<b>塩</b>と<b>水</b>ができる反応。[[H2SO4 + 2NaOH → Na2SO4 + 2H2O]]</p>
+    <div class="tbl"><table>
+      <tr><th>塩の分類</th><th>組成</th><th>例</th></tr>
+      <tr><td>正塩</td><td>酸のHも塩基のOHも残っていない</td><td>[[NaCl]], [[K2SO4]], [[MgCl2]], [[Na2CO3]], [[NH4Cl]]</td></tr>
+      <tr><td>酸性塩</td><td>酸のHが残っている</td><td>[[NaHCO3]], [[KHSO4]], [[NaHSO4]]</td></tr>
+      <tr><td>塩基性塩</td><td>塩基のOHが残っている</td><td>[[MgCl(OH)]], [[CaCl(OH)]]</td></tr>
+    </table></div>
+    <div class="trap"><b>ひっかけ注意</b>　塩の分類（正塩・酸性塩・塩基性塩）は<b>水溶液の性質とは無関係</b>。[[NaHCO3]] は「酸性塩」だが水溶液は<b class="base">塩基性</b>。</div>
+    <h3 style="margin-top:14px">塩の水溶液の性質（もとの酸・塩基の「強いほう」）</h3>
+    <div class="tbl"><table>
+      <tr><th>もとの酸＋塩基</th><th>水溶液</th><th>例</th></tr>
+      <tr><td>強酸＋強塩基</td><td class="neu">中性</td><td>[[NaCl]], [[KNO3]], [[K2SO4]]（[[NaHSO4]] は例外で酸性）</td></tr>
+      <tr><td>強酸＋弱塩基</td><td class="acid">酸性</td><td>[[NH4Cl]], [[CuSO4]]</td></tr>
+      <tr><td>弱酸＋強塩基</td><td class="base">塩基性</td><td>[[CH3COONa]], [[Na2CO3]], [[NaHCO3]]</td></tr>
+    </table></div>
+    <p><b>弱酸の遊離</b>：弱酸の塩 ＋ 強酸 → 強酸の塩 ＋ <b>弱酸</b>　例 [[CH3COONa + HCl → NaCl + CH3COOH]]<br><b>弱塩基の遊離</b>：弱塩基の塩 ＋ 強塩基 → 強塩基の塩 ＋ <b>弱塩基</b>　例 [[NH4Cl + NaOH → NaCl + H2O + NH3]]</p>
+  </section>
+
+  <section class="note" id="s12"><h3>中和滴定</h3>
+    <div class="key">酸から出る H⁺ の物質量 ＝ 塩基から出る OH⁻ の物質量<br>a × c × V ＝ b × c′ × V′　（価数 × 濃度 × 体積）</div>
+    <p>弱酸でも強酸でも、価数が同じなら中和に必要な塩基の量は同じ（強弱は関係ない）。</p>
+    <div class="tbl"><table>
+      <tr><th>器具</th><th>使い方</th><th>純水でぬれていたら</th></tr>
+      <tr><td>メスフラスコ</td><td>正確な濃度の溶液をつくる</td><td class="neu">そのまま使ってよい</td></tr>
+      <tr><td>ホールピペット</td><td>決まった体積の溶液を正確にはかり取る</td><td class="acid">使う溶液で2〜3回すすぐ（共洗い）</td></tr>
+      <tr><td>ビュレット</td><td>滴下した溶液の体積をはかる</td><td class="acid">共洗い</td></tr>
+      <tr><td>コニカルビーカー</td><td>酸と塩基を反応させる</td><td class="neu">そのまま使ってよい</td></tr>
+    </table></div>
+    <div class="trap"><b>理由</b>　ピペット・ビュレットがぬれていると中の溶液が薄まり濃度が変わる。メスフラスコ・コニカルビーカーは物質量が変わらないのでぬれていてもOK。</div>
+    <h3 style="margin-top:14px">pH指示薬の変色域</h3>
+    <div id="indchart"></div>
+    <h3 style="margin-top:14px">滴定曲線と指示薬の選び方</h3>
+    <div class="tbl"><table>
+      <tr><th>組み合わせ</th><th>中和点</th><th>使える指示薬</th></tr>
+      <tr><td>強酸＋強塩基</td><td>pH 7 付近（大きく跳ぶ）</td><td>メチルオレンジ・フェノールフタレイン どちらも可</td></tr>
+      <tr><td>弱酸＋強塩基<br><span class="small muted">例 酢酸＋NaOH</span></td><td>塩基性側</td><td><b>フェノールフタレイン</b></td></tr>
+      <tr><td>強酸＋弱塩基<br><span class="small muted">例 塩酸＋アンモニア</span></td><td>酸性側</td><td><b>メチルオレンジ</b></td></tr>
+      <tr><td>弱酸＋弱塩基</td><td>はっきりした跳びがない</td><td>指示薬では判定しにくい</td></tr>
+    </table></div>
+    <p><b>炭酸ナトリウム＋塩酸（二段階中和）</b><br>① [[Na2CO3 + HCl → NaCl + NaHCO3]]（第1中和点：フェノールフタレイン）<br>② [[NaHCO3 + HCl → NaCl + H2O + CO2]]（第2中和点：メチルオレンジ）。①と②で使う塩酸の量は同じ。</p>
+  </section>
+</div>
+
+<!-- =================== 暗記カード =================== -->
+<div id="p-card" hidden>
+  <div class="chips" id="cardfilter"></div>
+  <div class="meta"><span id="cardpos"></span><span id="cardmem"></span></div>
+  <div class="prog"><i id="cardprog"></i></div>
+  <button class="flash" id="flash" type="button" aria-live="polite"></button>
+  <div class="cardnav">
+    <button class="btn ng" id="cardng" type="button">✕ もう一回</button>
+    <button class="btn ok" id="cardok" type="button">○ 覚えた</button>
+  </div>
+  <div class="row" style="margin-top:12px;justify-content:space-between">
+    <button class="btn" id="cardprev" type="button">← 前へ</button>
+    <button class="btn" id="cardshuffle" type="button">シャッフル</button>
+    <button class="btn" id="cardreset" type="button">記録をリセット</button>
+  </div>
+  <p class="small muted" style="margin-top:10px">カードをタップすると答えが出ます。「もう一回」にしたカードは「苦手だけ」で集中練習できます。</p>
+</div>
+
+<!-- =================== 計算ドリル =================== -->
+<div id="p-calc" hidden>
+  <div class="chips" id="calcfilter"></div>
+  <div class="qcard" id="calccard"></div>
+  <p class="small muted" style="margin-top:10px">原子量は教科書の値（H=1.0, C=12, N=14, O=16, Na=23, Cl=35.5 …）、アボガドロ定数 6.0×10<sup>23</sup> /mol、モル体積 22.4 L/mol（標準状態）。大きい数は「□ × 10^□」の2つの欄に入れます。</p>
+</div>
+
+<!-- =================== 確認クイズ =================== -->
+<div id="p-quiz" hidden>
+  <div class="chips" id="quizfilter"></div>
+  <div id="quizarea"></div>
+</div>
+
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+function chem(s){
+  let out="",i=0;
+  while(i<s.length){
+    const c=s[i];
+    if(c==="^"&&s[i+1]==="{"){const j=s.indexOf("}",i);out+="<sup>"+s.slice(i+2,j)+"</sup>";i=j+1;continue;}
+    if(/\d/.test(c)){
+      let j=i;while(j<s.length&&/\d/.test(s[j]))j++;
+      const prev=s[i-1];
+      out+=(prev&&/[A-Za-z)]/.test(prev))?"<sub>"+s.slice(i,j)+"</sub>":s.slice(i,j);
+      i=j;continue;
+    }
+    out+=c==="<"?"&lt;":c==="&"?"&amp;":c;i++;
+  }
+  return out;
+}
+function tx(s){return String(s).replace(/\[\[(.+?)\]\]/g,(m,f)=>'<span class="f">'+chem(f)+"</span>").replace(/\^\{([^}]*)\}/g,"<sup>$1</sup>");}
+const $=s=>document.querySelector(s);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sciParts(x){let e=Math.floor(Math.log10(Math.abs(x))+1e-9);let m=x/Math.pow(10,e);m=Math.round(m*10)/10;if(m>=10){m/=10;e++;}return [m.toFixed(1),e];}
+function sciH(x){const p=sciParts(x);return p[0]+"×10<sup>"+p[1]+"</sup>";}
+function nf(x,sig){sig=sig||3;if(x===0)return"0";if(Math.abs(x)>=1e4||Math.abs(x)<1e-3)return sciH(x);return String(+x.toPrecision(sig));}
+function exact(x){return String(+x.toFixed(4));}
+
+/* ---------- storage (per-device convenience) ---------- */
+const KEY="mol-acid-base-v1";
+let S={cards:{},calc:{c:0,t:0,streak:0,best:0},quiz:{best:{}},tab:"sum"};
+try{const v=JSON.parse(localStorage.getItem(KEY));if(v)S=Object.assign(S,v);}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}renderStats();}
+
+/* ---------- atomic weights & formula parsing ---------- */
+const AW={H:1.0,He:4.0,C:12,N:14,O:16,Na:23,Mg:24,Al:27,Si:28,P:31,S:32,Cl:35.5,K:39,Ca:40,Fe:56,Cu:64,Zn:65,Br:80,Ag:108,Ba:137};
+function parseF(f){
+  let i=0;
+  function group(){
+    const c={};
+    while(i<f.length&&f[i]!==")"){
+      let sub;
+      if(f[i]==="("){i++;sub=group();i++;}
+      else{const m=f.slice(i).match(/^[A-Z][a-z]?/);i+=m[0].length;sub={[m[0]]:1};}
+      const m2=f.slice(i).match(/^\d+/);let k=1;if(m2){k=+m2[0];i+=m2[0].length;}
+      for(const e in sub)c[e]=(c[e]||0)+sub[e]*k;
+    }
+    return c;
+  }
+  return group();
+}
+function MW(f){const c=parseF(f);let s=0;for(const e in c)s+=AW[e]*c[e];return Math.round(s*10)/10;}
+
+/* =================== まとめ dynamic bits =================== */
+const LAWS=[
+  {law:"質量保存の法則",who:"ラボアジエ",c:"フランス",y:1774,d:"化学変化の前後で、物質の質量の総和は変わらない。"},
+  {law:"定比例の法則",who:"プルースト",c:"フランス",y:1799,d:"1つの化合物の成分元素の質量の比は、つねに一定である。（水 H₂O では 水素:酸素 ＝ 1:8）"},
+  {law:"倍数比例の法則",who:"ドルトン",c:"イギリス",y:1803,d:"2元素A, Bからなる化合物が2つ以上あるとき、一定質量のAと結合するBの質量は簡単な整数比になる。（NO と NO₂ で N 1.4 g に結合する O は 1.6 g と 3.2 g → 1:2）"},
+  {law:"気体反応の法則",who:"ゲーリュサック",c:"フランス",y:1808,d:"気体どうしの反応では、反応・生成する気体の体積は同温・同圧で簡単な整数比になる。（N₂ ＋ O₂ → 2NO で 1:1:2）"},
+  {law:"アボガドロの法則",who:"アボガドロ",c:"イタリア",y:1811,d:"同温・同圧のもとで同体積の気体には、気体の種類によらず同じ数の分子が含まれる。"}
+];
+function buildSummary(){
+  $("#lawtable").innerHTML="<tr><th>法則（発表年）</th><th>発見者</th><th>内容</th></tr>"+LAWS.map(l=>`<tr><td><b>${l.law}</b><br><span class="small muted">${l.y}年</span></td><td>${l.who}<br><span class="small muted">${l.c}</span></td><td>${l.d}</td></tr>`).join("");
+  const hub=[["粒子の数 [個]","× 6.0×10^{23} /mol","÷ 6.0×10^{23} /mol"],["質量 [g]","× モル質量 [g/mol]","÷ モル質量 [g/mol]"],["気体の体積 [L]<br><span class='small'>標準状態</span>","× 22.4 L/mol","÷ 22.4 L/mol"]];
+  $("#hub").innerHTML=hub.map(h=>`<div class="hubrow"><div class="hubbox mol">物質量 [mol]</div><div class="arrows"><span>${tx(h[1])} →</span><span class="back">← ${tx(h[2])}</span></div><div class="hubbox">${h[0]}</div></div>`).join("");
+  $("#phscale").innerHTML=Array.from({length:15},(_, i)=>`<span>${i}</span>`).join("");
+  const IND=[
+    {n:"メチルオレンジ",a:3.1,b:4.4,c1:"#e0383e",c2:"#f2c230",l:"赤→黄"},
+    {n:"メチルレッド",a:4.2,b:6.2,c1:"#e0383e",c2:"#f2c230",l:"赤→黄"},
+    {n:"ブロモチモールブルー",a:6.0,b:7.6,c1:"#f2c230",c2:"#2e6fd8",l:"黄→緑→青"},
+    {n:"フェノールフタレイン",a:8.0,b:9.8,c1:"rgba(225,64,150,0)",c2:"#e14096",l:"無色→赤"}
+  ];
+  $("#indchart").innerHTML='<div class="phscale" style="margin-left:calc(9.5em + 8px)">'+Array.from({length:15},(_, i)=>`<span>${i}</span>`).join("")+"</div>"+
+    IND.map(d=>{const L=(d.a/14*100).toFixed(1),W=((d.b-d.a)/14*100).toFixed(1);
+      return `<div class="ind"><span><b>${d.n}</b><br><span class="small muted">${d.a}〜${d.b}　${d.l}</span></span><div class="indtrack"><i style="left:${L}%;width:${W}%;background:linear-gradient(90deg,${d.c1},${d.c2})"></i></div></div>`;}).join("")+
+    '<p class="small muted">フェノールフタレインとメチルオレンジは特によく出る。ブロモチモールブルー (BTB) は中性付近で緑。</p>';
+  $("#toc").innerHTML=[...document.querySelectorAll("section.note")].map(s=>`<a href="#${s.id}">${s.querySelector("h3").textContent}</a>`).join("");
+  // render [[formula]] and ^{} inside the static summary
+  const walk=el=>{el.querySelectorAll("p,td,th,div.key,div.trap,h3,span.f").forEach(n=>{if(/\[\[|\^\{/.test(n.innerHTML))n.innerHTML=tx(n.innerHTML);});};
+  walk($("#p-sum"));
+}
+
+/* =================== 暗記カード =================== */
+const CARDS=[
+ // 第4章
+ ["4","原子量","原子量の基準は？","質量数12の炭素原子 [[^{12}C]] 1個の質量を <b>12</b> とする。"],
+ ["4","原子量","原子量とは？","各元素の<b>同位体の相対質量と存在比</b>から求めた平均値。"],
+ ["4","原子量","塩素の原子量の求め方（[[^{35}Cl]] 35.0 が75%、[[^{37}Cl]] 37.0 が25%）","35.0 × 75/100 ＋ 37.0 × 25/100 ＝ <b>35.5</b>"],
+ ["4","原子量","分子量とは？","分子式に含まれる元素の<b>原子量の総和</b>。例 [[H2O]] ＝ 1.0×2＋16 ＝ 18"],
+ ["4","原子量","式量とは？","イオンからなる物質の組成式やイオンの化学式に含まれる<b>原子量の総和</b>。例 [[NaCl]] ＝ 58.5、[[SO4^{2-}]] ＝ 96"],
+ ["4","原子量","イオンの式量を求めるとき、電子の質量は？","非常に小さいので<b>無視できる</b>。"],
+ ["4","物質量","アボガドロ定数","<b>6.0×10^{23} /mol</b>（1 mol あたりの粒子の数）"],
+ ["4","物質量","物質量の単位（記号）","<b>mol</b>（モル）"],
+ ["4","物質量","モル質量とは？","物質 1 mol あたりの質量。原子量・分子量・式量に <b>g/mol</b> をつけた値。"],
+ ["4","物質量","酸素原子 O と 酸素分子 [[O2]] のモル質量","O：<b>16 g/mol</b>　[[O2]]：<b>32 g/mol</b>"],
+ ["4","物質量","モル体積とは？","物質 1 mol あたりの体積。気体は種類によらず標準状態で <b>22.4 L/mol</b>。"],
+ ["4","物質量","標準状態とは？","<b>0 ℃、1.013×10^{5} Pa</b> の状態。"],
+ ["4","物質量","物質量 [mol] を 粒子の数 から求める式","物質量 ＝ 粒子の数 ÷ <b>6.0×10^{23} /mol</b>"],
+ ["4","物質量","物質量 [mol] を 質量 から求める式","物質量 ＝ 質量 [g] ÷ <b>モル質量 [g/mol]</b>"],
+ ["4","物質量","物質量 [mol] を 気体の体積 から求める式","物質量 ＝ 気体の体積 [L] ÷ <b>22.4 L/mol</b>（標準状態）"],
+ ["4","物質量","気体の密度 [g/L] の式","密度 ＝ <b>モル質量 [g/mol] ÷ 22.4 L/mol</b>"],
+ ["4","物質量","窒素 [[N2]]（分子量28）の標準状態での密度","28 ÷ 22.4 ＝ <b>1.25 g/L</b>"],
+ ["4","溶液","溶媒・溶質・溶液","<b>溶媒</b>：溶かす液体　<b>溶質</b>：溶ける物質　<b>溶液</b>：できた均一な混合物"],
+ ["4","溶液","飽和溶液とは？","溶質が限度まで溶けた溶液。"],
+ ["4","溶液","溶解度とは？","溶媒 <b>100 g</b> に溶ける溶質の最大質量 [g]。"],
+ ["4","溶液","再結晶とは？","温度による<b>溶解度の差</b>を利用して、純粋な結晶を取り出す方法。"],
+ ["4","溶液","質量パーセント濃度の式","溶質の質量 [g] ÷ <b>溶液</b>の質量 [g] × 100"],
+ ["4","溶液","モル濃度の式（単位も）","溶質の物質量 [mol] ÷ <b>溶液</b>の体積 [L]　単位 <b>mol/L</b>"],
+ ["4","溶液","正確なモル濃度の溶液をつくる器具","<b>メスフラスコ</b>（標線まで水を加える）"],
+ ["4","反応式","化学反応式の係数の比が表すもの","<b>物質量の比</b>（気体なら同温・同圧での<b>体積の比</b>も同じ）"],
+ ["4","反応式","係数のつけ方 2つ","<b>目算法</b>と<b>未定係数法</b>"],
+ ["4","反応式","メタンの燃焼の化学反応式","[[CH4 + 2O2 → CO2 + 2H2O]]"],
+ ["4","反応式","アンモニアの生成（窒素と水素）の化学反応式","[[N2 + 3H2 → 2NH3]]"],
+ ["4","反応式","プロパンの燃焼の化学反応式","[[C3H8 + 5O2 → 3CO2 + 4H2O]]"],
+ ["4","法則","質量保存の法則（発見者・年）","<b>ラボアジエ</b>（フランス, 1774年）：反応の前後で質量の総和は変わらない。"],
+ ["4","法則","定比例の法則（発見者・年）","<b>プルースト</b>（フランス, 1799年）：化合物の成分元素の質量比は一定。"],
+ ["4","法則","倍数比例の法則（発見者・年）","<b>ドルトン</b>（イギリス, 1803年）：一定量のAと結合するBの質量は簡単な整数比。"],
+ ["4","法則","気体反応の法則（発見者・年）","<b>ゲーリュサック</b>（フランス, 1808年）：反応する気体の体積は簡単な整数比。"],
+ ["4","法則","アボガドロの法則（発見者・年）","<b>アボガドロ</b>（イタリア, 1811年）：同温・同圧・同体積の気体は同数の分子を含む。"],
+ ["4","法則","「水は常に 水素:酸素 ＝ 1:8 の質量比」は何の法則？","<b>定比例の法則</b>"],
+ // 第5章
+ ["5","定義","アレニウスの定義：酸と塩基","酸：水に溶けて <b>[[H^{+}]]</b> を生じる物質<br>塩基：水に溶けて <b>[[OH^{-}]]</b> を生じる物質"],
+ ["5","定義","ブレンステッド・ローリーの定義：酸と塩基","酸：[[H^{+}]] を<b>与える</b>物質<br>塩基：[[H^{+}]] を<b>受け取る</b>物質"],
+ ["5","定義","水中の H⁺ は実際には何というイオン？","<b>オキソニウムイオン</b> [[H3O^{+}]]"],
+ ["5","定義","[[NH3 + H2O ⇄ NH4^{+} + OH^{-}]] で H₂O は酸？塩基？","H⁺ を与えているので<b>酸</b>。"],
+ ["5","定義","酸の価数とは？","酸1分子から生じる（与える）<b>H⁺ の数</b>。"],
+ ["5","強弱","電離度 α の式","電離した酸（塩基）の物質量 ÷ 溶かした酸（塩基）の物質量　（0 ＜ α ≦ 1）"],
+ ["5","強弱","強酸 3つ","<b>[[HCl]]</b> 塩化水素（塩酸）、<b>[[HNO3]]</b> 硝酸、<b>[[H2SO4]]</b> 硫酸"],
+ ["5","強弱","主な弱酸","[[CH3COOH]] 酢酸、[[H2S]] 硫化水素、[[H2CO3]] 炭酸、[[(COOH)2]] シュウ酸、[[H3PO4]] リン酸"],
+ ["5","強弱","強塩基 4つ","[[NaOH]], [[KOH]], [[Ca(OH)2]], [[Ba(OH)2]]"],
+ ["5","強弱","主な弱塩基","[[NH3]] アンモニア、[[Cu(OH)2]]、[[Mg(OH)2]]、[[Fe(OH)2]]、[[Al(OH)3]]"],
+ ["5","強弱","酢酸 [[CH3COOH]] の価数","<b>1価</b>（Hは4個あるが H⁺ になるのは COOH の1個だけ）"],
+ ["5","酸化物","酸性酸化物とは？例は？","<b>非金属元素</b>の酸化物。水と反応して酸になる・塩基と反応する。[[CO2]], [[SO2]], [[SO3]]"],
+ ["5","酸化物","塩基性酸化物とは？例は？","<b>金属元素</b>の酸化物。[[Na2O]], [[CaO]]"],
+ ["5","酸化物","両性酸化物の例","[[Al2O3]], [[ZnO]]（酸とも強塩基とも反応）"],
+ ["5","pH","純水の [H⁺] と [OH⁻]（25 ℃）","どちらも <b>1.0×10^{-7} mol/L</b>"],
+ ["5","pH","水のイオン積 K<sub>w</sub>","[H⁺][OH⁻] ＝ <b>1.0×10^{-14} (mol/L)²</b>（25 ℃）"],
+ ["5","pH","[H⁺] の求め方","[H⁺] ＝ <b>価数 × モル濃度 × 電離度</b>"],
+ ["5","pH","[H⁺] ＝ 1.0×10^{-n} mol/L のとき pH は？","<b>pH ＝ n</b>"],
+ ["5","pH","0.10 mol/L 塩酸の pH","[H⁺] ＝ 1 × 0.10 × 1 ＝ 1.0×10^{-1} → <b>pH 1</b>"],
+ ["5","pH","0.010 mol/L NaOH 水溶液の pH","[OH⁻] ＝ 1.0×10^{-2} → [H⁺] ＝ 1.0×10^{-12} → <b>pH 12</b>"],
+ ["5","中和","中和反応とは？","酸の H⁺ と塩基の OH⁻ が反応して<b>塩と水</b>が生じる反応。"],
+ ["5","中和","正塩・酸性塩・塩基性塩","<b>正塩</b>：H も OH も残らない（NaCl）<br><b>酸性塩</b>：酸のHが残る（[[NaHCO3]]）<br><b>塩基性塩</b>：塩基のOHが残る（[[MgCl(OH)]]）"],
+ ["5","中和","[[NaHCO3]] の分類と水溶液の性質","分類は<b>酸性塩</b>、でも水溶液は<b>塩基性</b>（弱酸＋強塩基の塩）。"],
+ ["5","中和","強酸＋弱塩基の塩の水溶液は？例は？","<b>酸性</b>。[[NH4Cl]], [[CuSO4]]"],
+ ["5","中和","弱酸＋強塩基の塩の水溶液は？例は？","<b>塩基性</b>。[[CH3COONa]], [[Na2CO3]]"],
+ ["5","中和","強酸＋強塩基の正塩の水溶液は？例は？","<b>中性</b>。[[NaCl]], [[KNO3]], [[K2SO4]]"],
+ ["5","中和","弱酸の遊離とは？","弱酸の塩に強酸を加えると、強酸の塩ができて<b>弱酸が遊離</b>する。[[CH3COONa + HCl → NaCl + CH3COOH]]"],
+ ["5","滴定","中和の量的関係の式","<b>a c V ＝ b c′ V′</b>（価数×濃度×体積が酸と塩基で等しい）"],
+ ["5","滴定","ホールピペットとビュレットが水でぬれていたら？","使う溶液で2〜3回すすぐ（<b>共洗い</b>）。"],
+ ["5","滴定","メスフラスコとコニカルビーカーが水でぬれていたら？","<b>そのまま使ってよい</b>。"],
+ ["5","滴定","メチルオレンジの変色域と色","pH <b>3.1〜4.4</b>　赤 → 黄"],
+ ["5","滴定","フェノールフタレインの変色域と色","pH <b>8.0〜9.8</b>　無色 → 赤"],
+ ["5","滴定","ブロモチモールブルー (BTB) の変色域と色","pH <b>6.0〜7.6</b>　黄 → (緑) → 青"],
+ ["5","滴定","メチルレッドの変色域と色","pH <b>4.2〜6.2</b>　赤 → 黄"],
+ ["5","滴定","酢酸を NaOH で滴定。指示薬は？","<b>フェノールフタレイン</b>（中和点が塩基性側）"],
+ ["5","滴定","アンモニア水を塩酸で滴定。指示薬は？","<b>メチルオレンジ</b>（中和点が酸性側）"],
+ ["5","滴定","[[Na2CO3]] を塩酸で滴定すると？","2段階で中和。第1中和点（フェノールフタレイン）で [[NaHCO3]]、第2中和点（メチルオレンジ）で [[CO2]] が出る。"]
+].map((c,i)=>({id:"c"+i,ch:c[0],tag:c[1],f:c[2],b:c[3]}));
+
+let cardFilter="all",cardList=[],cardIdx=0,cardOpen=false;
+function cardFilterSet(){
+  const opts=[["all","全部"],["4","第4章 物質量"],["5","第5章 酸と塩基"],["ng","苦手だけ"],["new","まだ覚えてない"]];
+  $("#cardfilter").innerHTML=opts.map(o=>`<button class="chip" type="button" data-f="${o[0]}" aria-pressed="${o[0]===cardFilter}">${o[1]}</button>`).join("");
+}
+function buildCardList(keepShuffle){
+  let l=CARDS.filter(c=>cardFilter==="all"||c.ch===cardFilter||(cardFilter==="ng"&&S.cards[c.id]==="ng")||(cardFilter==="new"&&S.cards[c.id]!=="ok"));
+  cardList=keepShuffle?shuffle(l):l;cardIdx=0;cardOpen=false;
+}
+function renderCard(){
+  const total=cardList.length;
+  const pool=CARDS.filter(c=>cardFilter==="all"||c.ch===cardFilter);
+  const memo=(cardFilter==="ng"||cardFilter==="new"?CARDS:pool).filter(c=>S.cards[c.id]==="ok").length;
+  const base=(cardFilter==="ng"||cardFilter==="new"?CARDS:pool).length;
+  $("#cardmem").textContent=`覚えた ${memo} / ${base}`;
+  $("#cardprog").style.width=(base?memo/base*100:0)+"%";
+  const fl=$("#flash");
+  if(!total){
+    $("#cardpos").textContent="0 枚";
+    fl.innerHTML=`<div class="front">${cardFilter==="ng"?"苦手カードはありません":"全部覚えました！"}</div><div class="hint">ほかのグループを選んでください</div>`;
+    $("#cardok").disabled=$("#cardng").disabled=true;return;
+  }
+  $("#cardok").disabled=$("#cardng").disabled=false;
+  const c=cardList[cardIdx];
+  $("#cardpos").textContent=`${cardIdx+1} / ${total} 枚目`;
+  const st=S.cards[c.id]==="ok"?"○ 覚えた":S.cards[c.id]==="ng"?"✕ 苦手":"";
+  fl.innerHTML=`<div class="tag">第${c.ch}章・${c.tag}${st?"　"+st:""}</div><div class="front">${tx(c.f)}</div>`+(cardOpen?`<div class="back">${tx(c.b)}</div>`:`<div class="hint">タップして答えを見る</div>`);
+}
+function cardMark(v){
+  if(!cardList.length)return;
+  const c=cardList[cardIdx];S.cards[c.id]=v;save();
+  if((cardFilter==="ng"&&v==="ok")||(cardFilter==="new"&&v==="ok")){cardList.splice(cardIdx,1);if(cardIdx>=cardList.length)cardIdx=0;}
+  else cardIdx=(cardIdx+1)%cardList.length;
+  cardOpen=false;renderCard();
+}
+function initCards(){
+  cardFilterSet();buildCardList(false);renderCard();
+  $("#cardfilter").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;cardFilter=b.dataset.f;cardFilterSet();buildCardList(false);renderCard();});
+  $("#flash").addEventListener("click",()=>{cardOpen=!cardOpen;renderCard();});
+  $("#cardok").addEventListener("click",()=>cardMark("ok"));
+  $("#cardng").addEventListener("click",()=>cardMark("ng"));
+  $("#cardprev").addEventListener("click",()=>{if(!cardList.length)return;cardIdx=(cardIdx-1+cardList.length)%cardList.length;cardOpen=false;renderCard();});
+  $("#cardshuffle").addEventListener("click",()=>{buildCardList(true);renderCard();});
+  let armed=false;
+  $("#cardreset").addEventListener("click",e=>{
+    if(!armed){armed=true;e.target.textContent="本当にリセット？";setTimeout(()=>{armed=false;e.target.textContent="記録をリセット";},3000);return;}
+    S.cards={};save();armed=false;e.target.textContent="記録をリセット";buildCardList(false);renderCard();
+  });
+}
+
+/* =================== 計算ドリル =================== */
+const AV=6.0e23;
+const MOLS=["0.10","0.20","0.25","0.40","0.50","1.5","2.0","2.5","3.0","4.0","5.0"];
+const GASES=[["酸素","O2"],["窒素","N2"],["水素","H2"],["二酸化炭素","CO2"],["アンモニア","NH3"],["メタン","CH4"],["塩化水素","HCl"],["ヘリウム","He"],["二酸化硫黄","SO2"],["塩素","Cl2"],["硫化水素","H2S"],["オゾン","O3"]].map(g=>({n:g[0],f:g[1],M:MW(g[1]),p:g[1]==="He"?"原子":"分子"}));
+const SOLIDS=[["水","H2O","分子"],["塩化ナトリウム","NaCl",""],["水酸化ナトリウム","NaOH",""],["炭酸カルシウム","CaCO3",""],["鉄","Fe","原子"],["マグネシウム","Mg","原子"],["銅","Cu","原子"],["硫酸","H2SO4","分子"],["酢酸","CH3COOH","分子"],["ダイヤモンド","C","原子"],["銀","Ag","原子"],["アルミニウム","Al","原子"]].map(g=>({n:g[0],f:g[1],M:MW(g[1]),p:g[2]}));
+const ALL=GASES.concat(SOLIDS);
+const PART=ALL.filter(s=>s.p);
+const ATOMQ=[["水","H2O","水素原子 H",2],["二酸化炭素","CO2","酸素原子 O",2],["アンモニア","NH3","水素原子 H",3],["メタン","CH4","水素原子 H",4],["塩化カルシウム","CaCl2","塩化物イオン [[Cl^{-}]]",2],["硫酸ナトリウム","Na2SO4","ナトリウムイオン [[Na^{+}]]",2]];
+const MWF=["H2O","NH3","HCl","CO2","SO2","CH3COOH","C3H8","H2SO4","HNO3","NaOH","KOH","CaCO3","Ca(OH)2","Ca3(PO4)2","MgCl2","Na2CO3","CuSO4","NH4Cl","SiO2","C6H12O6","Al2(SO4)3","NaHCO3","KBr","AgNO3","Mg(OH)2","(COOH)2"];
+const NAMEF={"H2O":"水","NH3":"アンモニア","HCl":"塩化水素","CO2":"二酸化炭素","SO2":"二酸化硫黄","CH3COOH":"酢酸","C3H8":"プロパン","H2SO4":"硫酸","HNO3":"硝酸","NaOH":"水酸化ナトリウム","KOH":"水酸化カリウム","CaCO3":"炭酸カルシウム","Ca(OH)2":"水酸化カルシウム","Ca3(PO4)2":"リン酸カルシウム","MgCl2":"塩化マグネシウム","Na2CO3":"炭酸ナトリウム","CuSO4":"硫酸銅(II)","NH4Cl":"塩化アンモニウム","SiO2":"二酸化ケイ素","C6H12O6":"グルコース","Al2(SO4)3":"硫酸アルミニウム","NaHCO3":"炭酸水素ナトリウム","KBr":"臭化カリウム","AgNO3":"硝酸銀","Mg(OH)2":"水酸化マグネシウム","(COOH)2":"シュウ酸"};
+const nm=s=>`${s.n} [[${s.f}]]`;
+
+const GEN={
+ particles:{label:"粒子の数 ⇄ mol",fn(){
+   const r=Math.random();
+   if(r<0.3){const a=pick(ATOMQ),nS=pick(MOLS),n=+nS,N=n*a[3]*AV;
+     return {q:`${a[0]} [[${a[1]}]] ${nS} mol に含まれる ${a[2]} は何個か。`,ans:N,kind:"sci",unit:"個",
+       steps:[`[[${a[1]}]] 1個に ${a[2]} は ${a[3]} 個 → ${a[2]} は ${nS} × ${a[3]} ＝ ${exact(n*a[3])} mol`,`${exact(n*a[3])} mol × 6.0×10^{23} /mol ＝ ${sciH(N)} 個`]};}
+   const s=pick(PART),nS=pick(MOLS),n=+nS,N=n*AV;
+   if(r<0.65)return {q:`${nm(s)} ${nS} mol に含まれる${s.p}は何個か。`,ans:N,kind:"sci",unit:"個",steps:["粒子の数 ＝ 6.0×10^{23} /mol × 物質量",`＝ 6.0×10^{23} × ${nS} ＝ ${sciH(N)} 個`]};
+   return {q:`${s.n}${s.p} ${sciH(N)} 個は何 mol か。`,ans:n,kind:"num",unit:"mol",steps:["物質量 ＝ 粒子の数 ÷ 6.0×10^{23} /mol",`＝ ${sciH(N)} ÷ 6.0×10^{23} ＝ ${nS} mol`]};
+ }},
+ mass:{label:"質量 ⇄ mol",fn(){
+   const s=pick(ALL),nS=pick(MOLS),n=+nS,m=n*s.M,r=Math.random();
+   const mm=`${s.f==="NaCl"||s.f==="NaOH"||s.f==="CaCO3"?"式量":s.p==="原子"?"原子量":"分子量"} ${s.M} → モル質量 ${s.M} g/mol`;
+   if(r<0.4)return {q:`${nm(s)} ${exact(m)} g は何 mol か。`,ans:n,kind:"num",unit:"mol",steps:[mm,`物質量 ＝ ${exact(m)} g ÷ ${s.M} g/mol ＝ ${nS} mol`]};
+   if(r<0.8||!s.p)return {q:`${nm(s)} ${nS} mol は何 g か。`,ans:m,kind:"num",unit:"g",steps:[mm,`質量 ＝ ${s.M} g/mol × ${nS} mol ＝ ${exact(m)} g`]};
+   return {q:`${nm(s)} ${exact(m)} g に含まれる${s.p}は何個か。`,ans:n*AV,kind:"sci",unit:"個",steps:[mm,`物質量 ＝ ${exact(m)} ÷ ${s.M} ＝ ${nS} mol`,`粒子の数 ＝ 6.0×10^{23} × ${nS} ＝ ${sciH(n*AV)} 個`]};
+ }},
+ gas:{label:"気体の体積 ⇄ mol",fn(){
+   const s=pick(GASES),nS=pick(MOLS),n=+nS,V=n*22.4,m=n*s.M,r=Math.random();
+   if(r<0.25)return {q:`標準状態で ${exact(V)} L の${nm(s)}は何 mol か。`,ans:n,kind:"num",unit:"mol",steps:["物質量 ＝ 気体の体積 ÷ 22.4 L/mol",`＝ ${exact(V)} ÷ 22.4 ＝ ${nS} mol`]};
+   if(r<0.5)return {q:`${nm(s)} ${nS} mol は標準状態で何 L か。`,ans:V,kind:"num",unit:"L",steps:["体積 ＝ 22.4 L/mol × 物質量",`＝ 22.4 × ${nS} ＝ ${exact(V)} L`]};
+   if(r<0.7)return {q:`${nm(s)} ${exact(m)} g は標準状態で何 L か。`,ans:V,kind:"num",unit:"L",steps:[`モル質量 ${s.M} g/mol → 物質量 ＝ ${exact(m)} ÷ ${s.M} ＝ ${nS} mol`,`体積 ＝ 22.4 × ${nS} ＝ ${exact(V)} L`]};
+   if(r<0.85)return {q:`標準状態で ${exact(V)} L の${nm(s)}は何 g か。`,ans:m,kind:"num",unit:"g",steps:[`物質量 ＝ ${exact(V)} ÷ 22.4 ＝ ${nS} mol`,`質量 ＝ ${s.M} × ${nS} ＝ ${exact(m)} g`]};
+   return {q:`標準状態で ${exact(V)} L の${nm(s)}に含まれる${s.p}は何個か。`,ans:n*AV,kind:"sci",unit:"個",steps:[`物質量 ＝ ${exact(V)} ÷ 22.4 ＝ ${nS} mol`,`粒子の数 ＝ 6.0×10^{23} × ${nS} ＝ ${sciH(n*AV)} 個`]};
+ }},
+ mw:{label:"分子量・式量",fn(){
+   const f=pick(MWF),c=parseF(f),M=MW(f);
+   const parts=Object.keys(c).map(e=>`${e} ${AW[e]}×${c[e]}`);
+   return {q:`${NAMEF[f]} [[${f}]] の${/^(NaOH|KOH|CaCO3|Ca\(OH\)2|Ca3|MgCl2|Na2CO3|CuSO4|NH4Cl|Al2|NaHCO3|KBr|AgNO3|Mg\(OH\)2|SiO2)/.test(f)?"式量":"分子量"}を求めよ。`,ans:M,kind:"num",unit:"",tol:0.004,
+     steps:[parts.join(" ＋ "),`＝ ${Object.keys(c).map(e=>exact(AW[e]*c[e])).join(" ＋ ")} ＝ ${exact(M)}`]};
+ }},
+ conc:{label:"モル濃度",fn(){
+   const sol=pick([["水酸化ナトリウム","NaOH"],["塩化ナトリウム","NaCl"],["グルコース","C6H12O6"],["硝酸カリウム","KNO3"]]);
+   const M=MW(sol[1]),nS=pick(["0.050","0.10","0.20","0.25","0.50"]),n=+nS,vS=pick(["100","200","250","500"]),V=+vS/1000,c=n/V,r=Math.random();
+   if(r<0.45)return {q:`${sol[0]} [[${sol[1]}]] ${exact(n*M)} g を水に溶かして ${vS} mL にした。モル濃度は何 mol/L か。`,ans:c,kind:"num",unit:"mol/L",
+     steps:[`物質量 ＝ ${exact(n*M)} ÷ ${M} ＝ ${nS} mol`,`体積 ${vS} mL ＝ ${exact(V)} L`,`モル濃度 ＝ ${nS} ÷ ${exact(V)} ＝ ${nf(c)} mol/L`]};
+   if(r<0.75)return {q:`${nf(c)} mol/L の${sol[0]}水溶液 ${vS} mL に含まれる${sol[0]}は何 mol か。`,ans:n,kind:"num",unit:"mol",
+     steps:["物質量 ＝ モル濃度 × 体積 [L]",`＝ ${nf(c)} × ${exact(V)} ＝ ${nS} mol`]};
+   return {q:`${nf(c)} mol/L の${sol[0]} [[${sol[1]}]] 水溶液を ${vS} mL つくるには、${sol[0]}が何 g 必要か。`,ans:n*M,kind:"num",unit:"g",
+     steps:[`物質量 ＝ ${nf(c)} × ${exact(V)} ＝ ${nS} mol`,`質量 ＝ ${M} × ${nS} ＝ ${exact(n*M)} g`]};
+ }},
+ react:{label:"反応式の量的関係",fn(){
+   const R=pick([
+     {eq:"CH4 + 2O2 → CO2 + 2H2O",sp:[["メタン","CH4",1,1],["酸素","O2",2,1],["二酸化炭素","CO2",1,1],["水","H2O",2,0]]},
+     {eq:"2H2 + O2 → 2H2O",sp:[["水素","H2",2,1],["酸素","O2",1,1],["水","H2O",2,0]]},
+     {eq:"N2 + 3H2 → 2NH3",sp:[["窒素","N2",1,1],["水素","H2",3,1],["アンモニア","NH3",2,1]]},
+     {eq:"C3H8 + 5O2 → 3CO2 + 4H2O",sp:[["プロパン","C3H8",1,1],["酸素","O2",5,1],["二酸化炭素","CO2",3,1],["水","H2O",4,0]]},
+     {eq:"2Mg + O2 → 2MgO",sp:[["マグネシウム","Mg",2,0],["酸素","O2",1,1],["酸化マグネシウム","MgO",2,0]]},
+     {eq:"CaCO3 + 2HCl → CaCl2 + H2O + CO2",sp:[["炭酸カルシウム","CaCO3",1,0],["二酸化炭素","CO2",1,1]]}
+   ]);
+   const sp=shuffle(R.sp),A=sp[0],B=sp[1];
+   const nA=+pick(["0.10","0.20","0.25","0.50","1.0","2.0"]),nB=nA*B[2]/A[2];
+   const MA=MW(A[1]),MB=MW(B[1]);
+   const giveV=A[3]&&Math.random()<0.5,askV=B[3]&&Math.random()<0.5;
+   const given=giveV?`標準状態で ${exact(nA*22.4)} L の${A[0]}`:`${A[0]} [[${A[1]}]] ${exact(nA*MA)} g`;
+   const ask=askV?`${B[0]}は標準状態で何 L か`:`${B[0]} [[${B[1]}]] は何 g か`;
+   const left=R.eq.split("→")[0].split("+").map(t=>t.trim().replace(/^\d+/,""));
+   const aL=left.includes(A[1]),bL=left.includes(B[1]);
+   const lead=aL&&bL?`${given}と過不足なく反応する`:aL?`${given}が完全に反応したとき、生じる`:bL?`${given}をつくるのに必要な`:`${given}が生じたとき、同時に生じる`;
+   return {q:`[[${R.eq}]]<br>${lead}${ask}。`,ans:askV?nB*22.4:nB*MB,kind:"num",unit:askV?"L":"g",
+     steps:[giveV?`${A[0]}：${exact(nA*22.4)} ÷ 22.4 ＝ ${exact(nA)} mol`:`${A[0]}：${exact(nA*MA)} ÷ ${MA} ＝ ${exact(nA)} mol`,
+       `係数の比 ${A[0]}:${B[0]} ＝ ${A[2]}:${B[2]} → ${B[0]}は ${exact(nA)} × ${B[2]}/${A[2]} ＝ ${exact(nB)} mol`,
+       askV?`体積 ＝ 22.4 × ${exact(nB)} ＝ ${exact(nB*22.4)} L`:`質量 ＝ ${MB} × ${exact(nB)} ＝ ${exact(nB*MB)} g`]};
+ }},
+ density:{label:"気体の密度と分子量",fn(){
+   const s=pick(GASES.filter(g=>g.f!=="He"&&g.f!=="H2")),d=s.M/22.4,r=Math.random();
+   if(r<0.4)return {q:`ある気体の標準状態での密度は ${d.toFixed(2)} g/L であった。この気体の分子量はいくらか。`,ans:s.M,kind:"num",unit:"",tol:0.02,
+     steps:["モル質量 ＝ 密度 × 22.4 L/mol",`＝ ${d.toFixed(2)} × 22.4 ≒ ${s.M} g/mol → 分子量 ${s.M}（${s.n} [[${s.f}]] と考えられる）`]};
+   if(r<0.7)return {q:`${nm(s)}（分子量 ${s.M}）の標準状態での密度は何 g/L か。`,ans:d,kind:"num",unit:"g/L",
+     steps:["密度 ＝ モル質量 ÷ 22.4",`＝ ${s.M} ÷ 22.4 ≒ ${d.toFixed(2)} g/L`]};
+   const k=s.M/2.0;
+   return {q:`同温・同圧で、密度が水素 [[H2]]（分子量 2.0）の ${k.toFixed(2)} 倍である気体の分子量はいくらか。`,ans:s.M,kind:"num",unit:"",
+     steps:["同温・同圧では 密度の比 ＝ 分子量の比",`2.0 × ${k.toFixed(2)} ＝ ${s.M}`]};
+ }},
+ ph:{label:"pH",fn(){
+   const r=Math.random();
+   const CS={1:"0.10",2:"0.010",3:"0.0010",4:"1.0×10^{-4}"};
+   if(r<0.22){const k=pick([1,2,3,4]);return {q:`${CS[k]} mol/L の塩酸（電離度 1.0）の pH はいくらか。`,ans:k,kind:"num",unit:"",tolAbs:0.05,
+     steps:[`[H⁺] ＝ 価数 1 × ${CS[k]} × 電離度 1.0 ＝ 1.0×10^{-${k}} mol/L`,`pH ＝ ${k}`]};}
+   if(r<0.36){const o=pick([["0.050",1],["0.0050",2],["5.0×10^{-4}",3]]);return {q:`${o[0]} mol/L の硫酸（電離度 1.0）の pH はいくらか。`,ans:o[1],kind:"num",unit:"",tolAbs:0.05,
+     steps:[`硫酸は<b>2価</b>：[H⁺] ＝ 2 × ${o[0]} × 1.0 ＝ 1.0×10^{-${o[1]}} mol/L`,`pH ＝ ${o[1]}`]};}
+   if(r<0.52){const o=pick([["0.10","0.010",3],["0.050","0.020",3],["0.20","0.0050",3],["0.010","0.010",4]]);return {q:`${o[0]} mol/L の酢酸水溶液（電離度 ${o[1]}）の pH はいくらか。`,ans:o[2],kind:"num",unit:"",tolAbs:0.05,
+     steps:[`[H⁺] ＝ 1 × ${o[0]} × ${o[1]} ＝ 1.0×10^{-${o[2]}} mol/L`,`pH ＝ ${o[2]}`]};}
+   if(r<0.72){const o=pick([["水酸化ナトリウム","0.10",1,1],["水酸化ナトリウム","0.010",1,2],["水酸化ナトリウム","0.0010",1,3],["水酸化バリウム","0.0050",2,2],["水酸化カルシウム","0.050",2,1]]);const p=14-o[3];
+     return {q:`${o[1]} mol/L の${o[0]}水溶液（電離度 1.0）の pH はいくらか。（K<sub>w</sub> ＝ 1.0×10^{-14}）`,ans:p,kind:"num",unit:"",tolAbs:0.05,
+     steps:[`[OH⁻] ＝ ${o[2]} × ${o[1]} × 1.0 ＝ 1.0×10^{-${o[3]}} mol/L`,`[H⁺] ＝ K<sub>w</sub> ÷ [OH⁻] ＝ 1.0×10^{-14} ÷ 1.0×10^{-${o[3]}} ＝ 1.0×10^{-${p}}`,`pH ＝ ${p}`]};}
+   if(r<0.82){return {q:"0.10 mol/L のアンモニア水（電離度 0.010）の pH はいくらか。（K<sub>w</sub> ＝ 1.0×10^{-14}）",ans:11,kind:"num",unit:"",tolAbs:0.05,
+     steps:["[OH⁻] ＝ 1 × 0.10 × 0.010 ＝ 1.0×10^{-3} mol/L","[H⁺] ＝ 1.0×10^{-14} ÷ 1.0×10^{-3} ＝ 1.0×10^{-11}","pH ＝ 11"]};}
+   const a=pick([1,2,3]),m=pick([1,2]),k=m===1?"10":"100";
+   return {q:`pH ${a} の塩酸を水で ${k} 倍にうすめると pH はいくらになるか。`,ans:a+m,kind:"num",unit:"",tolAbs:0.05,
+     steps:[`[H⁺] が 1/${k} になる → 1.0×10^{-${a}} → 1.0×10^{-${a+m}}`,`pH ＝ ${a+m}（pH は1目盛りで [H⁺] 10倍）`]};
+ }},
+ neut:{label:"中和の計算",fn(){
+   const A=pick([["塩酸","HCl",1],["硫酸","H2SO4",2],["酢酸","CH3COOH",1],["シュウ酸水溶液","(COOH)2",2]]);
+   const B=pick([["水酸化ナトリウム水溶液","NaOH",1],["水酸化カリウム水溶液","KOH",1],["水酸化カルシウム水溶液","Ca(OH)2",2],["水酸化バリウム水溶液","Ba(OH)2",2]]);
+   const r=Math.random();
+   if(r<0.2){const nS=pick(["0.10","0.20","0.50"]);const nb=+nS*A[2]/B[2];
+     return {q:`${A[0].replace("水溶液","")} [[${A[1]}]] ${nS} mol をちょうど中和するのに、[[${B[1]}]] は何 mol 必要か。`,ans:nb,kind:"num",unit:"mol",
+     steps:[`H⁺ の物質量 ＝ ${A[2]} × ${nS} ＝ ${exact(A[2]*nS)} mol`,`[[${B[1]}]] は ${B[2]} 価 → ${exact(A[2]*nS)} ÷ ${B[2]} ＝ ${exact(nb)} mol`]};}
+   const c=+pick(["0.050","0.10","0.20"]),V=+pick(["10.0","20.0","25.0"]),cb=+pick(["0.050","0.10","0.20"]);
+   if(r<0.65){const Vb=A[2]*c*V/(B[2]*cb);
+     return {q:`${c.toFixed(c<0.1?3:2)} mol/L の${A[0]} ${V.toFixed(1)} mL をちょうど中和するのに、${cb.toFixed(cb<0.1?3:2)} mol/L の${B[0]}は何 mL 必要か。`,ans:Vb,kind:"num",unit:"mL",
+     steps:["a c V ＝ b c′ V′",`${A[2]} × ${c} × ${V} ＝ ${B[2]} × ${cb} × V′`,`V′ ＝ ${nf(Vb)} mL`]};}
+   const Vb=+pick(["8.0","10.0","12.5","15.0","16.0","20.0"]);const ca=B[2]*cb*Vb/(A[2]*V);
+   return {q:`濃度のわからない${A[0]} ${V.toFixed(1)} mL を、${cb.toFixed(cb<0.1?3:2)} mol/L の${B[0]}で滴定したら ${Vb.toFixed(1)} mL で中和した。${A[0]}のモル濃度は何 mol/L か。`,ans:ca,kind:"num",unit:"mol/L",
+     steps:["a c V ＝ b c′ V′",`${A[2]} × c × ${V} ＝ ${B[2]} × ${cb} × ${Vb}`,`c ＝ ${nf(ca)} mol/L`]};
+ }}
+};
+let calcType="mix",calcQ=null,calcDone=false;
+function calcFilterSet(){
+  $("#calcfilter").innerHTML=[["mix","ミックス"]].concat(Object.keys(GEN).map(k=>[k,GEN[k].label])).map(o=>`<button class="chip" type="button" data-t="${o[0]}" aria-pressed="${o[0]===calcType}">${o[1]}</button>`).join("");
+}
+function newCalc(){
+  const t=calcType==="mix"?pick(Object.keys(GEN)):calcType;
+  let q,guard=0;do{q=GEN[t].fn();guard++;}while(calcQ&&q.q===calcQ.q&&guard<10);
+  q.type=t;calcQ=q;calcDone=false;
+  const inp=q.kind==="sci"
+    ?`<input id="am" inputmode="decimal" autocomplete="off" aria-label="仮数"> <span>× 10^</span><input id="ae" class="exp" inputmode="numeric" autocomplete="off" aria-label="指数"> <span>${q.unit}</span>`
+    :`<input id="am" inputmode="decimal" autocomplete="off" aria-label="答え"> <span>${q.unit}</span>`;
+  $("#calccard").innerHTML=`<div class="qlabel">${GEN[t].label}</div><div class="qtext">${tx(q.q)}</div>
+   <form class="ansrow" id="calcform">${inp}<button class="btn primary" type="submit">答え合わせ</button></form><div id="calcfb"></div>`;
+  $("#calcform").addEventListener("submit",e=>{e.preventDefault();checkCalc();});
+  const am=$("#am");if(am&&window.matchMedia("(pointer:fine)").matches)am.focus();
+}
+function norm(s){return String(s||"").replace(/[０-９．－＋]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).replace(/[\s,，]/g,"").replace(/[ー−–]/g,"-");}
+function parseUser(s){
+  s=norm(s);const m=s.match(/^([+-]?\d*\.?\d+)(?:(?:[×xX*]10\^?|e)([+-]?\d+))?$/);
+  if(!m)return NaN;let v=+m[1];if(m[2]!==undefined)v*=Math.pow(10,+m[2]);return v;
+}
+function checkCalc(){
+  if(calcDone){newCalc();return;}
+  const q=calcQ;let v=parseUser($("#am").value);
+  if(q.kind==="sci"){const e=norm($("#ae").value);if(e!==""){const ev=+e;v=isNaN(ev)?NaN:v*Math.pow(10,ev);}}
+  if(isNaN(v)){$("#calcfb").innerHTML=`<div class="fb bad"><span class="verdict">数字を入れてください</span><div class="small">例：0.25、1.2（× 10^ の欄に 24）</div></div>`;return;}
+  const ok=q.tolAbs!==undefined?Math.abs(v-q.ans)<=q.tolAbs:Math.abs(v-q.ans)/Math.abs(q.ans)<=(q.tol||0.02);
+  calcDone=true;
+  S.calc.t++;if(ok){S.calc.c++;S.calc.streak=(S.calc.streak||0)+1;S.calc.best=Math.max(S.calc.best||0,S.calc.streak);}else S.calc.streak=0;
+  save();
+  const ansH=q.kind==="sci"?sciH(q.ans):nf(q.ans);
+  $("#calcfb").innerHTML=`<div class="fb ${ok?"good":"bad"}"><div class="verdict">${ok?"正解！":"おしい！"}　答え：${ansH} ${q.unit}</div><ol class="steps">${q.steps.map(s=>"<li>"+tx(s)+"</li>").join("")}</ol></div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="calcnext">次の問題 →</button>${ok?`<span class="muted small">連続正解 ${S.calc.streak}</span>`:""}</div>`;
+  $("#calcnext").addEventListener("click",newCalc);
+  $("#calcnext").focus();
+}
+function initCalc(){
+  calcFilterSet();newCalc();
+  $("#calcfilter").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;calcType=b.dataset.t;calcFilterSet();newCalc();});
+}
+
+/* =================== 確認クイズ =================== */
+const AB=[["HCl","塩化水素","強酸",1],["HNO3","硝酸","強酸",1],["H2SO4","硫酸","強酸",2],["CH3COOH","酢酸","弱酸",1],["H2S","硫化水素","弱酸",2],["H2CO3","炭酸","弱酸",2],["(COOH)2","シュウ酸","弱酸",2],["H3PO4","リン酸","弱酸",3],["NaOH","水酸化ナトリウム","強塩基",1],["KOH","水酸化カリウム","強塩基",1],["Ca(OH)2","水酸化カルシウム","強塩基",2],["Ba(OH)2","水酸化バリウム","強塩基",2],["NH3","アンモニア","弱塩基",1],["Cu(OH)2","水酸化銅(II)","弱塩基",2],["Fe(OH)2","水酸化鉄(II)","弱塩基",2],["Mg(OH)2","水酸化マグネシウム","弱塩基",2],["Al(OH)3","水酸化アルミニウム","弱塩基",3]];
+const ABNOTE={"H3PO4":"リン酸は弱酸の中では比較的強い（中程度の強さ）。","Cu(OH)2":"水に溶けにくいが、酸と反応して塩をつくるので弱塩基に分類。","NH3":"OHを持たないが、水から H⁺ を受け取って OH⁻ を生じる。","CH3COOH":"H は4個あるが、H⁺ になるのは1個だけ。"};
+const SALTS=[["NaCl","塩化ナトリウム","HCl（強酸）","NaOH（強塩基）","中性","正塩"],["KNO3","硝酸カリウム","HNO3（強酸）","KOH（強塩基）","中性","正塩"],["K2SO4","硫酸カリウム","H2SO4（強酸）","KOH（強塩基）","中性","正塩"],["CaCl2","塩化カルシウム","HCl（強酸）","Ca(OH)2（強塩基）","中性","正塩"],["NH4Cl","塩化アンモニウム","HCl（強酸）","NH3（弱塩基）","酸性","正塩"],["CuSO4","硫酸銅(II)","H2SO4（強酸）","Cu(OH)2（弱塩基）","酸性","正塩"],["CH3COONa","酢酸ナトリウム","CH3COOH（弱酸）","NaOH（強塩基）","塩基性","正塩"],["Na2CO3","炭酸ナトリウム","H2CO3（弱酸）","NaOH（強塩基）","塩基性","正塩"],["NaHCO3","炭酸水素ナトリウム","H2CO3（弱酸）","NaOH（強塩基）","塩基性","酸性塩"],["NaHSO4","硫酸水素ナトリウム","H2SO4（強酸）","NaOH（強塩基）","酸性","酸性塩"],["KHSO4","硫酸水素カリウム","H2SO4（強酸）","KOH（強塩基）","酸性","酸性塩"],["MgCl(OH)","塩化水酸化マグネシウム","HCl","Mg(OH)2","","塩基性塩"],["CaCl(OH)","塩化水酸化カルシウム","HCl","Ca(OH)2","","塩基性塩"],["MgCl2","塩化マグネシウム","HCl","Mg(OH)2","","正塩"]];
+const OXIDES=[["CO2","酸性酸化物"],["SO2","酸性酸化物"],["SO3","酸性酸化物"],["NO2","酸性酸化物"],["P4O10","酸性酸化物"],["Na2O","塩基性酸化物"],["CaO","塩基性酸化物"],["MgO","塩基性酸化物"],["CuO","塩基性酸化物"],["K2O","塩基性酸化物"],["Al2O3","両性酸化物"],["ZnO","両性酸化物"]];
+const MCQ=[
+ // [category, question, [correct, wrong...], explanation]
+ ["mol","1 mol に含まれる粒子の数は？",["6.0×10^{23} 個","6.0×10^{22} 個","22.4 個","12 個"],"アボガドロ定数 6.0×10^{23} /mol。"],
+ ["mol","標準状態の条件として正しいものは？",["0 ℃, 1.013×10^{5} Pa","25 ℃, 1.013×10^{5} Pa","0 ℃, 1.0 Pa","100 ℃, 1.013×10^{5} Pa"],"標準状態は 0 ℃・1.013×10^{5} Pa。"],
+ ["mol","標準状態で 1 mol の気体の体積は？",["気体の種類によらず 22.4 L","分子量が大きいほど大きい","分子量が小さいほど大きい","22.4 mL"],"アボガドロの法則より、気体の種類によらず 22.4 L。"],
+ ["mol","原子量の基準になっている原子は？",["[[^{12}C]]（12とする）","[[^{1}H]]（1とする）","[[^{16}O]]（16とする）","[[^{14}N]]（14とする）"],"[[^{12}C]] 1個の質量を12として相対質量を決める。"],
+ ["mol","[[H2O]] 1.0 mol に含まれる水素原子の物質量は？",["2.0 mol","1.0 mol","3.0 mol","0.50 mol"],"H₂O 1個に H は2個 → 2.0 mol。"],
+ ["mol","[[O2]] 16 g の物質量は？",["0.50 mol","1.0 mol","2.0 mol","0.25 mol"],"O₂ のモル質量は 32 g/mol → 16 ÷ 32 ＝ 0.50 mol。"],
+ ["mol","次のうち、標準状態で 22.4 L/mol を使って体積を求められないものは？",["水 [[H2O]]","二酸化炭素 [[CO2]]","アンモニア [[NH3]]","ヘリウム He"],"水は標準状態（0 ℃）で液体（固体）なので、気体のモル体積は使えない。"],
+ ["mol","モル濃度の定義として正しいものは？",["溶液 1 L 中に溶けている溶質の物質量","溶媒 1 L に溶かした溶質の物質量","溶液 100 g 中の溶質の質量","溶媒 100 g に溶ける溶質の最大質量"],"モル濃度＝溶質の物質量 [mol] ÷ 溶液の体積 [L]。最後の選択肢は溶解度。"],
+ ["mol","温度による溶解度の差を利用して純粋な結晶を得る方法は？",["再結晶","蒸留","ろ過","昇華法"],"再結晶。"],
+ ["mol","[[CH4 + 2O2 → CO2 + 2H2O]] で、[[CH4]] 1 mol と反応する [[O2]] は？",["2 mol","1 mol","0.5 mol","4 mol"],"係数の比 ＝ 物質量の比 → 1:2。"],
+ ["mol","化学反応式の係数の比と等しくなるものは？",["物質量の比（気体なら同温・同圧の体積比）","質量の比","密度の比","分子量の比"],"係数の比 ＝ 物質量の比 ＝ 気体の体積比。質量の比ではない。"],
+ ["mol","a[[CH4]] ＋ b[[O2]] → c[[CO2]] ＋ d[[H2O]] の係数 (a, b, c, d) は？",["(1, 2, 1, 2)","(1, 1, 1, 2)","(2, 3, 2, 2)","(1, 2, 2, 1)"],"a=1 とおくと C から c=1、H から 4=2d で d=2、O から 2b=2c+d=4 で b=2。"],
+ ["mol","[[N2 + 3H2 → 2NH3]] で、標準状態の [[N2]] 1.0 L から生じる [[NH3]] は（同温・同圧）？",["2.0 L","1.0 L","3.0 L","0.67 L"],"気体の体積比 ＝ 係数比 1:2。"],
+ ["mol","気体の密度 [g/L] を表す式は？",["モル質量 ÷ 22.4 L/mol","22.4 L/mol ÷ モル質量","モル質量 × 22.4 L/mol","物質量 ÷ 22.4 L/mol"],"1 mol（モル質量 g）が 22.4 L を占める。"],
+ ["ab","アレニウスの定義で「酸」とは？",["水に溶けて H⁺ を生じる物質","水に溶けて OH⁻ を生じる物質","H⁺ を受け取る物質","電子を受け取る物質"],"アレニウス：酸＝H⁺、塩基＝OH⁻。"],
+ ["ab","ブレンステッド・ローリーの定義で「塩基」とは？",["H⁺ を受け取る物質","H⁺ を与える物質","OH⁻ を受け取る物質","水に溶けない物質"],"H⁺ を与える＝酸、受け取る＝塩基。"],
+ ["ab","[[NH3 + H2O ⇄ NH4^{+} + OH^{-}]] で、酸としてはたらいているのは？",["[[H2O]]","[[NH3]]","[[NH4^{+}]]","どれでもない"],"H₂O が NH₃ に H⁺ を与えているので H₂O が酸。"],
+ ["ab","[[HCl + H2O → H3O^{+} + Cl^{-}]] で、[[H2O]] のはたらきは？",["塩基","酸","中性","酸化剤"],"H₂O は H⁺ を受け取っている → 塩基。"],
+ ["ab","電離度について正しいものは？",["強酸は電離度が1に近い","価数が大きいほど電離度が大きい","弱酸は電離度が1より大きい","濃度を変えても電離度は変わらない"],"強弱は電離度で決まる。価数とは無関係。弱酸の電離度は濃度や温度で変わる。"],
+ ["ab","0.10 mol/L の塩酸と 0.10 mol/L の酢酸、同じ体積を中和するのに必要な NaOH の量は？",["同じ","塩酸のほうが多い","酢酸のほうが多い","酢酸は中和できない"],"どちらも1価で物質量が同じ → 必要な NaOH も同じ。強弱は関係ない。"],
+ ["ph","25 ℃の純水の [H⁺] は？",["1.0×10^{-7} mol/L","1.0×10^{-14} mol/L","0 mol/L","1.0 mol/L"],"[H⁺]＝[OH⁻]＝1.0×10^{-7} mol/L。"],
+ ["ph","pH 3 の水溶液の [H⁺] は、pH 5 の水溶液の何倍？",["100倍","2倍","1/100倍","10倍"],"pH が 1 小さいと [H⁺] は 10 倍 → 2 違うと 100 倍。"],
+ ["ph","[OH⁻] ＝ 1.0×10^{-3} mol/L の水溶液の pH は？",["11","3","7","14"],"[H⁺]＝1.0×10^{-14}÷1.0×10^{-3}＝1.0×10^{-11} → pH 11。"],
+ ["ph","酸性の水溶液について正しいのは？",["[H⁺] ＞ 1.0×10^{-7} mol/L ＞ [OH⁻]","[H⁺] ＜ [OH⁻]","pH ＞ 7","[OH⁻] ＝ 0"],"酸性でも OH⁻ はわずかに存在する。[H⁺] が大きく pH ＜ 7。"],
+ ["ph","pH 2 の塩酸を水で1000倍に薄めると pH は？",["5","2","7","8"],"[H⁺] が 1/1000 → pH が 3 上がる。（酸を薄めても 7 は超えない）"],
+ ["tit","中和滴定でビュレットが純水でぬれていた。正しい処置は？",["中に入れる溶液で2〜3回すすいでから使う（共洗い）","そのまま使う","加熱して乾かす","エタノールで洗う"],"ぬれたままだと滴下する溶液が薄まる。加熱乾燥は体積が狂うので不可。"],
+ ["tit","純水でぬれたまま使ってよい器具の組み合わせは？",["メスフラスコとコニカルビーカー","ホールピペットとビュレット","ビュレットとメスフラスコ","ホールピペットとコニカルビーカー"],"中に入れる溶質の物質量が変わらない器具はぬれていてもよい。"],
+ ["tit","一定体積の溶液を正確にはかり取る器具は？",["ホールピペット","ビュレット","メスシリンダー","コニカルビーカー"],"ホールピペット。ビュレットは滴下量をはかる器具。"],
+ ["tit","酢酸を水酸化ナトリウム水溶液で滴定するときの指示薬は？",["フェノールフタレイン","メチルオレンジ","どちらでもよい","指示薬は使えない"],"弱酸＋強塩基 → 中和点は塩基性側 → フェノールフタレイン。"],
+ ["tit","アンモニア水を塩酸で滴定するときの指示薬は？",["メチルオレンジ","フェノールフタレイン","どちらでもよい","BTB以外は使えない"],"強酸＋弱塩基 → 中和点は酸性側 → メチルオレンジ。"],
+ ["tit","メチルオレンジの変色域は？",["pH 3.1〜4.4（赤→黄）","pH 8.0〜9.8（無色→赤）","pH 6.0〜7.6（黄→青）","pH 4.2〜6.2（赤→黄）"],"3.1〜4.4、赤→黄。4.2〜6.2 はメチルレッド。"],
+ ["tit","フェノールフタレインの変色域は？",["pH 8.0〜9.8（無色→赤）","pH 3.1〜4.4（赤→黄）","pH 6.0〜7.6（黄→青）","pH 1〜3（無色→青）"],"8.0〜9.8、無色→赤（赤紫）。"],
+ ["tit","ブロモチモールブルー (BTB) の色の変化は？",["黄 → 緑 → 青（pH 6.0〜7.6）","赤 → 黄","無色 → 赤","青 → 赤"],"中性付近で緑。"],
+ ["tit","炭酸ナトリウム水溶液を塩酸で滴定すると、中和点はいくつ現れる？",["2つ","1つ","3つ","現れない"],"Na₂CO₃ → NaHCO₃（第1中和点）→ CO₂（第2中和点）の二段階。"],
+ ["tit","0.10 mol/L 硫酸 10 mL を中和する 0.10 mol/L NaOH 水溶液は？",["20 mL","10 mL","5.0 mL","40 mL"],"2 × 0.10 × 10 ＝ 1 × 0.10 × V′ → V′ ＝ 20 mL。"],
+ ["salt","「酸性塩」とはどんな塩？",["酸の H が残っている塩","水溶液が酸性を示す塩","強酸からできた塩","OH が残っている塩"],"分類は組成だけで決まる。水溶液の性質とは無関係。"],
+ ["salt","酢酸ナトリウムに塩酸を加えると何が起こる？",["酢酸が遊離する（弱酸の遊離）","塩素が発生する","水素が発生する","何も起こらない"],"[[CH3COONa + HCl → NaCl + CH3COOH]]"],
+ ["salt","塩化アンモニウムに水酸化ナトリウムを加えて加熱すると発生する気体は？",["アンモニア","塩化水素","水素","塩素"],"弱塩基の遊離：[[NH4Cl + NaOH → NaCl + H2O + NH3]]"]
+];
+const QCATS=[["mix","ミックス10問"],["mol","物質量・反応式"],["law","基礎法則"],["ab","酸と塩基"],["abk","強弱・価数"],["salt","塩"],["ph","pH"],["tit","中和滴定"]];
+function genQ(cat){
+  const mk=(q,correct,wrongs,exp)=>({q,correct,choices:shuffle([correct].concat(wrongs)),exp});
+  const gens={
+    law(){const l=pick(LAWS),others=shuffle(LAWS.filter(x=>x!==l));const r=Math.random();
+      if(r<0.35)return mk(`「${l.d}」は何という法則？`,l.law,others.slice(0,3).map(x=>x.law),`${l.law}（${l.who}, ${l.y}年）`);
+      if(r<0.7)return mk(`${l.law}を発表したのはだれ？`,l.who,others.slice(0,3).map(x=>x.who),`${l.who}（${l.c}, ${l.y}年）`);
+      return mk(`${l.who}が発表した法則は？`,l.law,others.slice(0,3).map(x=>x.law),`${l.law}：${l.d}`);},
+    abk(){const s=pick(AB);if(Math.random()<0.55)return mk(`${s[1]} [[${s[0]}]] は次のどれ？`,s[2],["強酸","弱酸","強塩基","弱塩基"].filter(x=>x!==s[2]),(ABNOTE[s[0]]||`${s[1]}は${s[2]}。`)+`（${s[3]}価）`);
+      return mk(`${s[1]} [[${s[0]}]] は何価の${s[2].slice(1)}？`,s[3]+"価",["1価","2価","3価","4価"].filter(x=>x!==s[3]+"価"),ABNOTE[s[0]]||`${s[3]}価の${s[2]}。`);},
+    salt(){const r=Math.random();
+      if(r<0.55){const s=pick(SALTS.filter(x=>x[4]));return mk(`${s[1]} [[${s[0]}]] の水溶液の性質は？`,s[4],["酸性","中性","塩基性"].filter(x=>x!==s[4]),`もとの酸 ${s[2]} ＋ 塩基 ${s[3]}`+(s[0]==="NaHSO4"||s[0]==="KHSO4"?"。HSO₄⁻ が電離して H⁺ を出すので酸性。":s[0]==="NaHCO3"?"。酸性塩だが水溶液は塩基性（ひっかけ注意）。":"。強いほうの性質が出る。"));}
+      if(r<0.85){const s=pick(SALTS);return mk(`[[${s[0]}]]（${s[1]}）の塩の分類は？`,s[5],["正塩","酸性塩","塩基性塩"].filter(x=>x!==s[5]),s[5]==="正塩"?"酸のHも塩基のOHも残っていない。":s[5]==="酸性塩"?"酸のHが残っている。":"塩基のOHが残っている。");}
+      const m=pick(MCQ.filter(x=>x[0]==="salt"));return mk(tx(m[1]),m[2][0],m[2].slice(1),m[3]);},
+    ab(){if(Math.random()<0.35){const o=pick(OXIDES);return mk(`[[${o[0]}]] は次のどれ？`,o[1],["酸性酸化物","塩基性酸化物","両性酸化物"].filter(x=>x!==o[1]),o[1]==="酸性酸化物"?"非金属元素の酸化物。":o[1]==="塩基性酸化物"?"金属元素の酸化物。":"Al, Zn などの酸化物は酸とも強塩基とも反応する。");}
+      const m=pick(MCQ.filter(x=>x[0]==="ab"));return mk(m[1],m[2][0],m[2].slice(1),m[3]);}
+  };
+  if(gens[cat])return gens[cat]();
+  const m=pick(MCQ.filter(x=>x[0]===cat));return mk(m[1],m[2][0],m[2].slice(1),m[3]);
+}
+let quizCat="mix",quiz=null;
+function quizFilterSet(){$("#quizfilter").innerHTML=QCATS.map(o=>`<button class="chip" type="button" data-q="${o[0]}" aria-pressed="${o[0]===quizCat}">${o[1]}</button>`).join("");}
+function startQuiz(retry){
+  let qs=[];
+  if(retry){qs=retry.map(q=>Object.assign({},q,{choices:shuffle(q.choices)}));}
+  else{
+    const seen=new Set();let guard=0;
+    const cats=["mol","law","ab","abk","salt","ph","tit"];
+    while(qs.length<10&&guard<300){guard++;const c=quizCat==="mix"?pick(cats):quizCat;const q=genQ(c);if(seen.has(q.q))continue;seen.add(q.q);qs.push(q);}
+  }
+  quiz={qs,i:0,score:0,wrong:[],answered:false};renderQuiz();
+}
+function renderQuiz(){
+  const z=quiz,area=$("#quizarea");
+  if(z.i>=z.qs.length){
+    const best=S.quiz.best[quizCat]||0;if(z.score>best&&z.qs.length===10){S.quiz.best[quizCat]=z.score;save();}
+    area.innerHTML=`<div class="qcard"><div class="qlabel">結果</div><div class="scorebig">${z.score} / ${z.qs.length}</div>
+      <p>${z.score===z.qs.length?"全問正解！この調子。":z.score>=z.qs.length*0.7?"よくできました。間違えたところを見直そう。":"まとめと暗記カードで復習してから、もう一度やってみよう。"}</p>
+      <div class="row"><button class="btn primary" type="button" id="qagain">新しい10問</button>${z.wrong.length?`<button class="btn" type="button" id="qretry">間違えた ${z.wrong.length} 問をやり直す</button>`:""}</div>
+      ${z.wrong.length?`<div class="reviewlist">${z.wrong.map(q=>`<div class="qcard"><div>${tx(q.q)}</div><div class="neu" style="margin-top:4px">答え：${tx(q.correct)}</div><div class="small muted">${tx(q.exp)}</div></div>`).join("")}</div>`:""}</div>`;
+    $("#qagain").addEventListener("click",()=>startQuiz());
+    const rt=$("#qretry");if(rt)rt.addEventListener("click",()=>startQuiz(z.wrong));
+    return;
+  }
+  const q=z.qs[z.i];
+  area.innerHTML=`<div class="meta" style="margin-bottom:6px"><span>${z.i+1} / ${z.qs.length} 問目</span><span>正解 ${z.score}</span></div>
+   <div class="prog"><i style="width:${z.i/z.qs.length*100}%;background:var(--accent)"></i></div>
+   <div class="qcard"><div class="qtext">${tx(q.q)}</div><div class="choices">${q.choices.map((c,k)=>`<button class="choice" type="button" data-k="${k}">${tx(c)}</button>`).join("")}</div><div id="qfb"></div></div>`;
+  area.querySelectorAll(".choice").forEach(b=>b.addEventListener("click",()=>answerQuiz(+b.dataset.k)));
+}
+function answerQuiz(k){
+  const z=quiz,q=z.qs[z.i];if(z.answered)return;z.answered=true;
+  const ok=q.choices[k]===q.correct;if(ok)z.score++;else z.wrong.push(q);
+  document.querySelectorAll(".choice").forEach((b,j)=>{b.disabled=true;if(q.choices[j]===q.correct)b.classList.add("right");else if(j===k)b.classList.add("wrong");});
+  $("#qfb").innerHTML=`<div class="fb ${ok?"good":"bad"}"><div class="verdict">${ok?"正解！":"ざんねん"}</div><div>${tx(q.exp)}</div></div><div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="qnext">${z.i+1<z.qs.length?"次へ →":"結果を見る"}</button></div>`;
+  $("#qnext").addEventListener("click",()=>{z.i++;z.answered=false;renderQuiz();});
+  $("#qnext").focus();
+}
+function initQuiz(){
+  quizFilterSet();startQuiz();
+  $("#quizfilter").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;quizCat=b.dataset.q;quizFilterSet();startQuiz();});
+}
+
+/* =================== shell =================== */
+function renderStats(){
+  const ok=CARDS.filter(c=>S.cards[c.id]==="ok").length;
+  const acc=S.calc.t?Math.round(S.calc.c/S.calc.t*100):0;
+  $("#stats").innerHTML=`<span class="stat">暗記カード <b>${ok}</b>/${CARDS.length} 覚えた</span><span class="stat">計算 <b>${S.calc.c}</b>/${S.calc.t} 正解${S.calc.t?`（${acc}%）`:""}</span><span class="stat">最高連続正解 <b>${S.calc.best||0}</b></span>`;
+}
+function showTab(t){
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===t)));
+  ["sum","card","calc","quiz"].forEach(k=>{$("#p-"+k).hidden=k!==t;});
+  S.tab=t;save();
+}
+document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b){showTab(b.dataset.tab);window.scrollTo({top:0});}});
+document.addEventListener("keydown",e=>{
+  if($("#p-card").hidden||e.target.tagName==="INPUT")return;
+  if(e.key===" "){if(e.target.closest("button"))return;e.preventDefault();cardOpen=!cardOpen;renderCard();}
+  else if(e.key==="ArrowRight")cardMark("ok");else if(e.key==="ArrowLeft")cardMark("ng");
+});
+buildSummary();initCards();initCalc();initQuiz();renderStats();
+const h=(location.hash||"").slice(1);
+showTab(["sum","card","calc","quiz"].includes(h)?h:(S.tab||"sum"));
+})();
+</script>
